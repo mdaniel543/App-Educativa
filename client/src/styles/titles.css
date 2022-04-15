@@ -1,0 +1,251 @@
+
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:500);
+ .xml body{
+     background:#003264; 
+     color:#C0C0C0;
+ }
+ .xml h1{
+     text-align:center;
+     font-size:3.5em;
+     margin-top:5%;
+   font-family: 'Source Code Pro';
+   text-shadow: 0px 2px 3px #333333;
+     -webkit-animation: colorFade 10s;
+     -moz-animation: colorFade 10s;
+     animation: colorFade 10s;
+     -webkit-animation-iteration-count: infinite;
+     -moz-animation-iteration-count: infinite;
+     animation-iteration-count: infinite;
+ }
+ .xml h2{
+  text-align:center;
+  font-size:2.5em;
+  margin-top:5%;
+font-family: 'Source Code Pro';
+text-shadow: 0px 2px 3px #C0C0C0;
+  -webkit-animation: colorFadese 7s;
+  -moz-animation: colorFadese 7s;
+  animation: colorFadese 7s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+ .xmt h2{
+  text-align:center;
+  font-size:3em;
+  margin-top:5%;
+font-family: 'Source Code Pro';
+text-shadow: 0px 2px 3px #C0C0C0;
+  -webkit-animation: colorFadeset 10s;
+  -moz-animation: colorFadeset 10s;
+  animation: colorFadeset 10s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+ .xml h3{
+  text-align:center;
+  font-size:2em;
+  margin-top:5%;
+font-family: 'Source Code Pro';
+text-shadow: 0px 2px 3px #5f5c5c;
+  -webkit-animation: colorFades 5s;
+  -moz-animation: colorFades 5s;
+  animation: colorFades 5s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+.xm text{
+  text-align:right;
+  font-size:1em;
+  margin-top:5%;
+ font-family: 'Source Code Pro';
+ text-shadow: 0px 2px 3px #C0C0C0;
+  -webkit-animation: colorFadesc 5s;
+  -moz-animation: colorFadesc 5s;
+  animation: colorFadesc 5s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+.xms text{
+  text-align:left;
+  font-size:1em;
+  margin-top:5%;
+ font-family: 'Source Code Pro';
+ text-shadow: 0px 2px 3px #C0C0C0;
+  -webkit-animation: colorFadesce 5s;
+  -moz-animation: colorFadesce 5s;
+  animation: colorFadesce 5s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+ @-webkit-keyframes colorFade {
+     0%   {color:#252525;}
+     50%  {color: #10c4ca;}
+ }
+ @-moz-keyframes colorFade{
+     0%   {color:#000000;}
+     50%  {color: #10c4ca;}
+ }
+ @keyframes colorFade{
+     0%   {color:#252525;}
+     50%  {color: #10c4ca;}
+ }
+ @-webkit-keyframes colorFades {
+  0%   {color:#193B48;}
+  50%  {color: #FDA543;}
+}
+@-moz-keyframes colorFades{
+  0%   {color:#193B48;}
+  50%  {color: #FDA543;}
+}
+@keyframes colorFades{
+  0%   {color:#193B48;}
+  50%  {color: #FDA543;}
+}
+@-webkit-keyframes colorFadese {
+  0%   {color:#91e4b4;}
+  50%  {color: #126b37c0;;}
+}
+@-moz-keyframes colorFadese{
+  0%   {color:#91e4b4;}
+  50%  {color: #126b37c0;}
+}
+@keyframes colorFadese{
+  0%   {color:#91e4b4;}
+  50%  {color: #126b37c0;;}
+}
+@-webkit-keyframes colorFadeset {
+  0%   {color:#5a6d62;}
+  50%  {color: #ff002bc0;;}
+}
+@-moz-keyframes colorFadeset{
+  0%   {color:#5a6d62;}
+  50%  {color: #ff002bc0;}
+}
+@keyframes colorFadeset{
+  0%   {color:#5a6d62;}
+  50%  {color: #ff002bc0;}
+}
+
+@-webkit-keyframes colorFadesc {
+  0%   {color:#000000;}
+  50%  {color: #12476bc0;;}
+}
+@-moz-keyframes colorFadesc{
+  0%   {color:#000000;}
+  50%  {color: #12476bc0;}
+}
+@keyframes colorFadesc{
+  0%   {color:#000000;}
+  50%  {color: #12476bc0;;}
+}
+
+@-webkit-keyframes colorFadesce {
+  0%   {color:#000000;}
+  50%  {color: #61126bc0;;}
+}
+@-moz-keyframes colorFadesce{
+  0%   {color:#000000;}
+  50%  {color: #61126bc0;}
+}
+@keyframes colorFadesce{
+  0%   {color:#000000;}
+  50%  {color: #61126bc0;;}
+}
+
+.load{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);
+  /*change these sizes to fit into your project*/
+  width:100px;
+  height:100px;
+}
+.load hr{border:0;margin:0;width:40%;height:40%;position:absolute;border-radius:50%;animation:spin 2s ease infinite}
+
+.load :first-child{background:#10c4ca;animation-delay:-1.5s}
+.load :nth-child(2){background:#F63D3A;animation-delay:-1s}
+.load :nth-child(3){background:#FDA543;animation-delay:-0.5s}
+.load :last-child{background:#193B48}
+
+
+
+@keyframes spin{
+  0%,100%{transform:translate(0)}
+  25%{transform:translate(160%)}
+  50%{transform:translate(160%, 160%)}
+  75%{transform:translate(0, 160%)}
+}
+.input-container .react-datepicker {
+  margin: 12px 0;
+  width: 100%;
+}
+
+.input-container .react-datepicker input {
+  padding: 4px 12px;
+}
+
+
+
+ .xml section{
+     width:100%;
+     margin:1% 1% 0 10%;
+     font-family: 'Source Code Pro'; 
+ }
+ .xml textarea{
+     background:#a3dad7; 
+     padding:1em; 
+     width:100%;
+     height:25em;
+     font-size:1.5em;
+     line-height:1.5em;
+     vertical-align:middle; 
+     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0);
+ }
+ .xml input[type=file]{
+     text-align:center; 
+     border:none;
+     width:30%;
+     padding:1em;
+     font-family: 'Source Code Pro'; 
+     font-size:1.0em;
+     display: inline-block;
+     -webkit-transition-duration: 0.3s;
+     transition-duration: 0.3s;
+     -webkit-transition-property: box-shadow;
+     transition-property: box-shadow;
+     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0);
+     -webkit-transform: translateZ(0);
+     transform: translateZ(0);
+ }
+ .xml button{
+  text-align:center; 
+  border:none;
+  width:30%;
+  padding:1em;
+  font-family: 'Source Code Pro'; 
+  font-size:1.5em;
+  display: inline-block;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: box-shadow;
+  transition-property: box-shadow;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+
+ .xml button:active{
+     box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 0, 0, 0);
+ }
+
+ .modal-backdrop {
+  opacity: 0.2;
+}
+
+.box{
+    height: 2cm;
+}
