@@ -61,8 +61,20 @@ class admin extends Component{
             load: '',
         }
         this.handleChange = this.handleChange.bind(this);
-        this.fetchTasks();
-        this.fetchTasks2();
+        this.fetchTest();
+        //this.fetchTasks();
+        //this.fetchTasks2();
+    }
+    fetchTest(){
+        fetch('/Test')
+        .then(res => res.json())
+        .them(data => {
+            Swal.fire(
+                'Mensaje !',
+                data.msg, //recibo mensaje 
+                'info'
+            )
+        })
     }
     fetchTasks() {
         fetch('/Select_Maestro') //consulta todos los maestros en el servidor
@@ -555,7 +567,7 @@ function Maestro(props){
                     <input
                         className="form-control"
                         name="dpi"
-                        type="text"
+                        type="number"
                         onChange={props.this.handleChange}
                     />
                 </FormGroup>
