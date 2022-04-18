@@ -66,15 +66,12 @@ class admin extends Component{
         //this.fetchTasks2();
     }
     fetchTest(){
-        fetch('/Test')
-        .then(res => res.json())
-        .them(data => {
-            Swal.fire(
-                'Mensaje !',
-                data.msg, //recibo mensaje 
-                'info'
-            )
+        fetch('http://localhost:8000/test',{method:'GET'})
+        .then(res => {
+            console.log(res)
         })
+        .catch(err => console.error(err));
+
     }
     fetchTasks() {
         fetch('/Select_Maestro') //consulta todos los maestros en el servidor
