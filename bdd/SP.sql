@@ -11,8 +11,9 @@ BEGIN
 	if (par_rol = 'A') THEN
 		SELECT count(*) into numresp from  Administrador where nombre = par_usuario and Pass = par_pass;
 
-		if numresp > 0 THEN
-			set resp = 'ok';
+		if numresp = 1 THEN
+			-- set resp = 'ok';
+			select cast(idAdministrador as char (100)) into resp from Administrador where nombre = par_usuario and Pass = par_pass;
 		ELSE
 			set msg_err = 'revisar las credenciales';
 		end if;
