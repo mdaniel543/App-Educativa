@@ -32,24 +32,42 @@ async function usuarioPostLogin(user){
     }
 }
 
+async function getUsers(){
+    const rows = await db.query(
+        `SELECT * FROM Administrador`
+    );
+    const data = rows;
+    return {
+        data
+    }    
+}
+
+
 /**
  * POST
  */
 
-async function addUser(educativeApp){
-    const result = await db.query(
-        `INSERT INTO users (name,lastname) 
-        VALUES
-        ("${educativeApp.name}","${educativeApp.lastname}")`
+async function adminRegister(user){
+    const rows = await db.query(
+        `CALL admin_create('${user.nombre}','${user.pass}');`
     );
+    const data = rows;
 
-    let msg = 'cretating user ERROR';
-    if(result.affectedRows){
-        msg = 'user created Successfully';
+    return {
+        data
     }
-
-    return {message};
 }
+
+async function login(user){
+    const rows = await db.query(
+        `CALL usuario_login('${user.nombre}','${user.pass}','${user.rol}');`
+    );
+    const resp = rows;
+    return {
+        resp
+    }
+}
+
 
 
 
@@ -57,5 +75,7 @@ async function addUser(educativeApp){
 
 module.exports = {
     usuarioPostLogin,
-    addUser
+    getUsers,
+    adminRegister,
+    login,
 }

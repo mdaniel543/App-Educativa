@@ -21,18 +21,35 @@ router.get('/test',async function(req,res,next){
     }
 });
 
+router.get('/getUsers',async function(req,res,next){
+    try {
+        res.json(await educative_app.getUsers());
+    } catch (err) {
+        console.error(`Error during getting Admins`,err.message);
+        next(err);
+    }
+})
+
 
 /**
  * POST
  */
-router.post('/addUser',async function(req,res,next){
+router.post('/login',async function(req,res,next){
     try {
-        res.json(await educative_app.addUser(req.body));
-    } catch (error) {
-        console.error(`Error during add user proccess`,next(error));
+        res.json(await educative_app.login(req.body));
+    } catch (error) {Error
+        console.error(`Error during sp login`,next(error));
     }
 })
 
+
+router.post('/adminRegister',async function(req,res,next){
+    try {
+        res.json(await educative_app.adminRegister(req.body));
+    } catch (error) {
+        console.error(`Error during sp admin register`,next(error));
+    }
+})
 
 
 
