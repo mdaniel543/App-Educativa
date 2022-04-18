@@ -1,15 +1,14 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Swal from "sweetalert2";
 
 const theme = createTheme();
 
@@ -17,13 +16,53 @@ export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    switch (data.get('rol')) {
-      case "A":
-        window.location.href = "./admin"
+    //fetchB(data);
+    switch (data.get("rol")) {
+      case "Admin":
+        window.location.href = "./admin/54";
         break;
       default:
         break;
     }
+  };
+
+  const fetchB = (dato) => {
+    fetch("/login", {
+      method: "POST",
+      body: JSON.stringify({
+        nombre: dato.get("user"),
+        pass: dato.get("password"),
+        rol: dato.get("rol"),
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.id === undefined) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Usuario y/o Contraseña incorrecta",
+          });
+        }
+        switch (dato.get("rol")) {
+          case "Admin":
+            window.location.href = `./admin/${data.id}`;
+            break;
+          case "Alumno":
+            window.location.href = `./student/${data.id}`;
+            break;
+          case "Maestro":
+            window.location.href = `./teacher/${data.id}`;
+            break;
+          default:
+            break;
+        }
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -33,24 +72,28 @@ export default function SignIn() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-          </Avatar>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
           <Typography component="h1" variant="h5">
-              Login
+            Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="user"
               label="Usuario"
-              name="email"
+              name="user"
               autoFocus
             />
             <TextField
@@ -66,15 +109,15 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id = "rol"
-              name = "rol"
+              id="rol"
+              name="rol"
               label="Rol"
               autoFocus
-              select 
+              select
             >
-                <MenuItem value="A">Admnistrador</MenuItem>
-                <MenuItem value="M">Maestro</MenuItem>
-                <MenuItem value="U">Usuario</MenuItem>
+              <MenuItem value="Admin">Admnistrador</MenuItem>
+              <MenuItem value="Maestro">Maestro</MenuItem>
+              <MenuItem value="Alumno">Usuario</MenuItem>
             </TextField>
 
             <Button

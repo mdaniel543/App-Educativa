@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from "react-router-dom";
+import React, { useState } from "react";
 
-import Login from './views/login'
-import Admin from './views/admin'
+import Login from "./views/login";
+import Admin from "./views/admin";
 
+import { Router, Route } from "wouter";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/admin" element={<Admin/>}/>
-        <Route path="/" element={<Login/>}/>
-      </Routes>
+      <Route path="/Admin/:id">{(params) => <Admin id={params.id} />}</Route>
+      <Route path="/">
+        <Login />
+      </Route>
     </Router>
   );
 }
