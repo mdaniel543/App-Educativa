@@ -26,5 +26,6 @@ create table Alumno(
     Telefono varchar(20),
     Direccion varchar(100),
     Correo_electronico varchar(100),
-    Pass varchar(100)
+    Pass varchar(100),
+    Estado int
 )
