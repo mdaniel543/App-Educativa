@@ -16,18 +16,11 @@ export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    //fetchB(data);
-    switch (data.get("rol")) {
-      case "Admin":
-        window.location.href = "./admin/54";
-        break;
-      default:
-        break;
-    }
+    fetchB(data);
   };
 
   const fetchB = (dato) => {
-    fetch("/login", {
+    fetch("/app/login", {
       method: "POST",
       body: JSON.stringify({
         nombre: dato.get("user"),
@@ -47,7 +40,11 @@ export default function SignIn() {
             title: "Oops...",
             text: "Usuario y/o Contraseña incorrecta",
           });
+          console.log(data)
+          return;
         }
+        console.log(data)
+        return;
         switch (dato.get("rol")) {
           case "Admin":
             window.location.href = `./admin/${data.id}`;
