@@ -62,15 +62,19 @@ async function login(user){
     const rows = await db.query(
         `CALL usuario_login('${user.nombre}','${user.pass}','${user.rol}');`
     );
-    const resp = rows;
-    return {
-        resp
+    const resp = rows[0];
+
+    console.log(resp[0].msg_err);
+    if(resp[0].msg_err == ""){
+        return {
+            "id_user":resp[0].resp
+        }
+    }else{
+        return {
+            "error":resp[0].msg_err
+        }
     }
 }
-
-
-
-
 
 
 module.exports = {
@@ -79,3 +83,4 @@ module.exports = {
     adminRegister,
     login,
 }
+
