@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 import Barra from "../components/menu_bar";
 
 import Dropdown from "react-dropdown";
@@ -52,7 +52,13 @@ class admin extends Component {
         dpi: "",
         pass: "",
         carnet: "",
+        rutaphoto: "",
       },
+      carrera_curso: {
+        nombre: "",
+        descripcion: "",
+      },
+      rutacsv: "",
       value: "",
       options: ["Maestro", "Alumno"],
       option: "",
@@ -112,12 +118,27 @@ class admin extends Component {
       },
     });
   }
+  handleChangeCC(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data: {
+        ...this.state.carrera_curso,
+        [name]: value,
+      },
+    });
+  }
+
   cargarFoto(e) {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
     this.setState({ load2: true });
     axios.post("/uploadphoto", formData, {}).then((res) => {
-      this.setState({ rutaphoto: res.data.msg, load2: false });
+      this.setState({
+        data: {
+          ...this.state.carrera_curso,
+          rutaphoto: res.data.msg
+        },
+      });
     });
   }
 
@@ -127,6 +148,11 @@ class admin extends Component {
       // Use reader.result
       this.setState({
         value: reader.result,
+      });
+      const formData = new FormData();
+      formData.append("file", e.target.files[0]);
+      axios.post("/carga_masiva", formData, {}).then((res) => {
+        this.setState({ rutacsv: res.data.msg });
       });
     };
     reader.readAsText(files[0]);
@@ -236,6 +262,7 @@ class admin extends Component {
         numero: dato.numero,
         telefono: dato.telefono,
         direccion: dato.direccion,
+        foto: dato.rutaphoto,
         correo: dato.correo,
         fecha: fecha_cambio,
         dpi: dato.dpi,
@@ -309,6 +336,7 @@ class admin extends Component {
         telefono: this.state.data.telefono,
         direccion: this.state.data.direccion,
         correo: this.state.data.correo,
+        foto: this.state.data.rutaphoto,
         fecha: fecha_cambio,
         dpi: this.state.data.dpi,
         pass: this.state.data.pass,
@@ -358,13 +386,20 @@ class admin extends Component {
   }
 
   Carga() {
-    this.setState({ load2: true });
-    fetch("/carga", {
-      ///insertar alumno
+    let usuarios = this.state.option;
+    if (usuarios === "Maestro") {
+      this.CargaMaestro();
+    } else if (usuarios === "Alumno") {
+      this.CargaAlumno();
+    }
+  }
+
+  CargaMaestro() {
+    fetch("/carga_sel", {
       method: "POST",
       body: JSON.stringify({
-        data: this.state.value, /// te envio todo en esta rama del json, si encuentro otra manera voy a buscar
-        user: this.state.option,
+        user: "Mestro",
+        ruta: this.state.rutacsv,
       }),
       headers: {
         Accept: "application/json",
@@ -375,10 +410,161 @@ class admin extends Component {
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
         this.fetchTasks1();
+        this.setState({ load2: false });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  CargaAlumno() {
+    fetch("/carga_sel", {
+      method: "POST",
+      body: JSON.stringify({
+        user: "Alumno",
+        ruta: this.state.rutacsv,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
         this.fetchTasks2();
         this.setState({ load2: false });
       })
       .catch((err) => console.error(err));
+  }
+
+  fetchCarreras() {
+    fetch("/Select_Carrera") //consulta todos los alumnos en el servidor
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      this.setState({ carreras: data });
+    });
+  }
+
+  fetchCursos() {
+    fetch("/Select_Cursos") //consulta todos los alumnos en el servidor
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      this.setState({ cursos: data });
+    });
+  }
+
+  fetchMaestros() {
+    fetch("/Select_Maestros") //consulta todos los alumnos en el servidor
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      this.setState({ maestros: data });
+    });
+  }
+
+  fetchAlumno() {
+    fetch("/Select_Alumnos") //consulta todos los alumnos en el servidor
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      this.setState({ alumnos: data });
+    });
+  }
+
+  crearCarrera() {
+    fetch("/insert_carrera", {
+      method: "POST",
+      body: JSON.stringify({
+        nombre: this.state.carrera_curso.nombre,
+        descripcion: this.state.carrera_curso.descripcion,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
+      })
+      .catch((err) => console.error(err));
+  }
+
+  crearCurso() {
+    fetch("/insert_curso", {
+      method: "POST",
+      body: JSON.stringify({
+        nombre: this.state.carrera_curso.nombre,
+        descripcion: this.state.carrera_curso.descripcion,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
+      })
+      .catch((err) => console.error(err));
+  }
+
+  Asignar_Curso_Carrera() {
+    fetch("/asignacion_curso_carrera", {
+        method: "POST",
+        body: JSON.stringify({
+          carrera: this.state.optcarrera,
+          curso: this.state.optcurso,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Swal.fire("Mensaje!", data.msg, "info");
+        })
+        .catch((err) => console.error(err));
+  }
+
+  Asignar_maestro_curso() {
+    fetch("/asignacion_curso_carrera", {
+        method: "POST",
+        body: JSON.stringify({
+          maestro: this.state.optmaestro,
+          curso: this.state.optcurso,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Swal.fire("Mensaje!", data.msg, "info");
+        })
+        .catch((err) => console.error(err));
+  }
+
+  Asignar_alumno_carrera() {
+    fetch("/asignacion_alumno_carrera", {
+        method: "POST",
+        body: JSON.stringify({
+          alumno: this.state.optalumno,
+          carrera: this.state.optcarrera,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Swal.fire("Mensaje!", data.msg, "info");
+        })
+        .catch((err) => console.error(err));
   }
 
   render() {
@@ -768,7 +954,7 @@ function IfyesM(props) {
         <td>{dato.correo}</td>
         <td>{dato.fecha}</td>
         <td>{dato.dpi}</td>
-        <td>{dato.foto}</td>
+        <td>{dato.rutaphoto}</td>
         <td>{dato.pass}</td>
         <td>
           <Button
@@ -798,7 +984,7 @@ function ElseM(props) {
         <td>{dato.correo}</td>
         <td>{dato.fecha}</td>
         <td>{dato.dpi}</td>
-        <td>{dato.foto}</td>
+        <td>{dato.rutaphoto}</td>
         <td>{dato.pass}</td>
         <td></td>
       </tr>
@@ -1065,11 +1251,13 @@ function Carrera(props) {
       <label>Descripicion</label>
       <textarea
         class="form-control"
-        name="des"
+        name="descripcion"
         onChange={props.this.handleChange}
       />
       <div className="box"></div>
-      <Button color="primary">Crear Carrera</Button>
+      <Button color="primary" onClick={() => props.this.crearCarrera}>
+        Crear Carrera
+      </Button>
     </FormGroup>
   );
 }
@@ -1090,11 +1278,13 @@ function Curso(props) {
       <label>Descripicion</label>
       <textarea
         class="form-control"
-        name="des"
+        name="descripcion"
         onChange={props.this.handleChange}
       />
       <div className="box"></div>
-      <Button color="primary">Crear Curso</Button>
+      <Button color="primary" onClick={() => props.this.crearCurso}>
+        Crear Curso
+      </Button>
     </FormGroup>
   );
 }
@@ -1120,7 +1310,9 @@ function Curso_Carrera(props) {
         placeholder="Seleccione el curso"
       />
       <div className="box"></div>
-      <Button color="primary">Crear Carrera</Button>
+      <Button color="primary" onClick={() => props.this.Asignar_Curso_Carrera}>
+        Asignar Curso a Carrera
+      </Button>
     </FormGroup>
   );
 }
@@ -1143,10 +1335,12 @@ function Curso_Maestro(props) {
         name="curso"
         options={props.this.state.maestros}
         value={props.this.state.optmaestro}
-        placeholder="Seleccione el maestro"
+        placeholder="Seleccione el registro del maestro"
       />
       <div className="box"></div>
-      <Button color="primary">Crear Carrera</Button>
+      <Button color="primary" onClick={() => props.this.Asignar_maestro_curso}>
+        Asignar maestro a curso
+      </Button>
     </FormGroup>
   );
 }
@@ -1169,10 +1363,12 @@ function Carrera_Alumno(props) {
         name="carrera"
         options={props.this.state.alumnos}
         value={props.this.state.optalumno}
-        placeholder="Seleccione Alumno"
+        placeholder="Seleccione carnet del alumno"
       />
       <div className="box"></div>
-      <Button color="primary">Crear Carrera</Button>
+      <Button color="primary" onClick={() => props.this.Asignar_alumno_carrera}>
+        Asignar Alumno a Carrera
+      </Button>
     </FormGroup>
   );
 }
