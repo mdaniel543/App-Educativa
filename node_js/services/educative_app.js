@@ -71,7 +71,7 @@ async function login(user){
         }
     }else{
         return {
-            "error":resp[0].msg_err
+            "msg":resp[0].msg_err
         }
     }
 }
