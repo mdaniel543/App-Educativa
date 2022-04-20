@@ -15,7 +15,8 @@ create table Maestro(
   Fecha_nacimiento date,
   DPI varchar(100),
   Path_foto varchar(300),
-  Pass varchar(100)
+  Pass varchar(100),
+  Estado int
 );
 
 create table Alumno(
