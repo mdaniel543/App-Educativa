@@ -88,7 +88,7 @@ router.post('/insert_maestro',professor.insert);
 
 router.get('/maestro_get_by_id',professor.get_by_id);
 
-router.get('/selectMaestros',async function(req,res,next){
+router.post('/selectMaestros',async function(req,res,next){
     try {
         res.json(await professor.selectMaestros(req.query.page));
 

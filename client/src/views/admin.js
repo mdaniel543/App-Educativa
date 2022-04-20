@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import axios from "axios";
 import Barra from "../components/menu_bar";
+import Moment from 'react-moment';
 
 import Dropdown from "react-dropdown";
 
@@ -66,6 +67,20 @@ class admin extends Component {
         Pass: "",
         Estado: "",
       },
+      data_maestro: {
+        idMaestro: "",
+        Nombre: "",
+        Apellido: "",
+        Registro: "",
+        Telefono: "",
+        Direccion: "",
+        Correo_electronico: "",
+        Fecha_nacimiento:"", 
+        DPI: "",
+        Path_foto: "",
+        Pass: "",
+        Estado: "",
+      },
       carrera_curso: {
         nombre: "",
         descripcion: "",
@@ -84,18 +99,21 @@ class admin extends Component {
       optalumno: "",
       load2: false,
       load: "",
-      pagina: 0
+      pagina: 0,
+      paginaM: 0,
+      fecha_aux: ""
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDT = this.handleChangeDT.bind(this);
+    this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleChangeMA = this.handleChangeMA.bind(this);
     this.handleChangeCC = this.handleChangeCC.bind(this);
     this.cargarFoto = this.cargarFoto.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
-    //this.fetchTest();
-    Swal.fire("Mi id", this.props.id, "info");
-    //this.fetchTasks();
-    //this.fetchTasks2();
+
+    //Swal.fire("Mi id", this.props.id, "info");
+
+    this.SigPagM();
     this.SigPag();
   }
   fetchTest() {
@@ -113,11 +131,22 @@ class admin extends Component {
   }
 
   fetchTasks() {
-    fetch("/app/select_maestro") //consulta todos los maestros en el servidor
+    var page = this.state.pagina
+    fetch("/app/selectMaestros", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        this.setState({ tasks: data, load: false });
+        //console.log(data.data[0]);
+        this.setState({ tasks: data.data[0] });
       });
   }
   fetchTasks2() {
@@ -137,6 +166,30 @@ class admin extends Component {
       .then((data) => {
         //console.log(data.data[0]);
         this.setState({ tasks2: data.data[0] });
+      });
+  }
+  SigPagM() {
+    var page = this.state.paginaM
+    page++;
+    console.log(page)
+    
+
+    fetch("/app/selectMaestros", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.data[0]);
+        this.setState({ tasks: data.data[0] });
+        this.setState({paginaM: page});
       });
   }
   SigPag() {
@@ -192,6 +245,12 @@ class admin extends Component {
         ...this.state.data,
         [name]: value,
       },
+    });
+  }
+  handleChangeDate(e) {
+    const { name, value } = e.target;
+    this.setState({
+      fecha_aux: value
     });
   }
   handleChangeDT(e) {
@@ -278,12 +337,26 @@ class admin extends Component {
   cerrarModalInsertarA() {
     this.setState({ modalInsertarA: false });
   }
-  mostrarModalActualizarM(dato) {
+  mostrarModalActualizarM(dato, date) {
     this.setState({
-      data: dato,
+      data_maestro: dato,
       modalEditarM: true,
     });
+    this.parsearFecha(date)
   }
+
+  parsearFecha(date){
+    var fecha = "";
+    for (let index = 0; index < 10; index++) {
+      fecha += date[index];      
+    }
+    console.log(fecha)
+  
+    this.setState({
+      fecha_aux: fecha
+    })
+  }
+
   mostrarModalActualizarA(dato) {
     this.setState({
       data_alumno: dato,
@@ -299,12 +372,11 @@ class admin extends Component {
 
   eliminarM(dato) {
     this.setState({ load2: true });
-    console.log(this.state.data);
-    fetch("/delete_maestro", {
+    fetch("/app/delete_maestro", {
       //eliminar maestro
       method: "DELETE",
       body: JSON.stringify({
-        dpi: dato.dpi, //envio solo dpi
+        Registro: dato.Registro, //envio solo dpi
       }),
       headers: {
         Accept: "application/json",
@@ -350,26 +422,23 @@ class admin extends Component {
       .catch((err) => console.error(err));
   }
 
-  editarM(dato, fecha) {
-    let fecha_cambio = `${fecha.getFullYear()}-${
-      fecha.getMonth() + 1
-    }-${fecha.getDate()}`;
+  editarM(dato) {
     this.setState({ load2: true });
-    console.log(this.state.data);
-    fetch("/update_maestro", {
+    console.log(this.state.fecha_aux);
+    fetch("/app/update_maestro", {
       // metodo put a editar el maestro
       method: "PUT",
       body: JSON.stringify({
-        nombre: dato.nombre,
-        apellido: dato.apellido,
-        numero: dato.numero,
-        telefono: dato.telefono,
-        direccion: dato.direccion,
-        foto: dato.rutaphoto,
-        correo: dato.correo,
-        fecha: fecha_cambio,
-        dpi: dato.dpi,
-        pass: dato.pass,
+        Nombre: dato.Nombre,
+        Apellido: dato.Apellido,
+        Registro: dato.Registro,
+        Telefono: dato.Telefono,
+        Direccion: dato.Direccion,
+        Correo: dato.Correo_electronico,
+        Fecha_nacimiento: this.state.fecha_aux,
+        Dpi: dato.DPI,
+        Path_foto: dato.Path_foto,
+        Estado: dato.Estado,
       }),
       headers: {
         Accept: "application/json",
@@ -402,7 +471,6 @@ class admin extends Component {
         Telefono: dato.Telefono,
         Direccion: dato.Direccion,
         Correo: dato.Correo_electronico,
-        Pass: dato.Pass,
         estado: dato.Estado,
       }),
       headers: {
@@ -425,26 +493,26 @@ class admin extends Component {
   }
 
   insertarM(fecha) {
-    let fecha_cambio = `${fecha.getFullYear()}-${
+    let fecha_cambio = `${fecha.getFullYear()}/${
       fecha.getMonth() + 1
-    }-${fecha.getDate()}`;
+    }/${fecha.getDate()}`;
     this.setState({ load2: true });
     console.log(this.state.data);
     console.log(fecha_cambio);
-    fetch("/insert_maestro", {
+    fetch("/app/insert_maestro", {
       ///insertar maestro
       method: "POST",
       body: JSON.stringify({
         Nombre: this.state.data.nombre,
         Apellido: this.state.data.apellido,
-        Numero: this.state.data.numero,
+        Registro: this.state.data.numero,
         Telefono: this.state.data.telefono,
         Direccion: this.state.data.direccion,
         Correo: this.state.data.correo,
-        Foto: this.state.data.rutaphoto,
-        Fecha: fecha_cambio,
-        Dpi: this.state.data.dpi,
-        Pass: this.state.data.pass,
+        path_foto: this.state.data.rutaphoto,
+        fecha_nacimiento: fecha_cambio,
+        dpi: this.state.data.dpi,
+        pass: this.state.data.pass,
       }),
       headers: {
         Accept: "application/json",
@@ -805,7 +873,7 @@ function Maestro(props) {
           </thead>
           {props.this.state.tasks.map((dato) =>
             (() => {
-              if (dato.Estado === "1") {
+              if (dato.Estado === 1) {
                 return <IfyesM dato={dato} this={props.this} />;
               } else {
                 return <ElseM dato={dato} this={props.this} />;
@@ -813,6 +881,21 @@ function Maestro(props) {
             })()
           )}
         </Table>
+        <center><b>{props.this.state.paginaM}</b></center>
+        <Button
+          color="secondary"
+          onClick={() => props.this.AntPagM()}
+        >
+          Anterior Pagina
+        </Button>
+        <Button
+          style={{ float: "right" }}
+          color="secondary"
+          onClick={() => props.this.SigPagM()}
+        >
+          Siguiente Pagina
+        </Button>
+        <div className="box"></div>
       </Container>
 
       <Modal isOpen={props.this.state.modalInsertarM} fade={false}>
@@ -883,6 +966,7 @@ function Maestro(props) {
               name="fecha"
               dateFormat="dd/MM/yyyy"
               isClearable
+              showYearDropdown
               placeholderText="Selecciona Fecha"
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -999,22 +1083,17 @@ function Maestro(props) {
               name="Correo_electronico"
               type="email"
               onChange={props.this.handleChangeMA}
-              value={props.this.state.data_maestro.Correo}
+              value={props.this.state.data_maestro.Correo_electronico}
             />
           </FormGroup>
           <FormGroup>
             <label>Fecha Nacimiento:</label>
-            <DatePicker
+            <input
               className="form-control"
-              name="Path_foto"
-              dateFormat="dd/MM/yyyy"
-              isClearable
-              placeholderText="Selecciona Fecha"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              value={props.this.state.data_maestro.Path_foto}
-              fixedHeight
-              //withPortal
+              name="Fecha_nacimiento"
+              type="date"
+              onChange={props.this.handleChangeDate}
+              value={props.this.state.fecha_aux}
             />
           </FormGroup>
           <FormGroup>
@@ -1063,21 +1142,19 @@ function IfyesM(props) {
   var dato = props.dato;
   return (
     <tbody>
-      <tr key={dato.registro}>
+      <tr key={dato.Registro}>
         <td>{dato.Nombre}</td>
         <td>{dato.Apellido}</td>
         <td>{dato.Registro}</td>
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
-        <td>{dato.Correo}</td>
-        <td>{dato.Fecha}</td>
-        <td>{dato.dpi}</td>
-        <td>{dato.rutaphoto}</td>
-        <td>{dato.pass}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td><Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment></td>
+        <td>{dato.DPI}</td>
         <td>
           <Button
             color="primary"
-            onClick={() => props.this.mostrarModalActualizarM(dato)}
+            onClick={() => props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)}
           >
             Editar
           </Button>
@@ -1094,17 +1171,15 @@ function ElseM(props) {
   var dato = props.dato;
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
-      <tr key={dato.registro}>
-        <td>{dato.nombre}</td>
-        <td>{dato.apellido}</td>
-        <td>{dato.registro}</td>
-        <td>{dato.telefono}</td>
-        <td>{dato.direccion}</td>
-        <td>{dato.correo}</td>
-        <td>{dato.fecha}</td>
-        <td>{dato.dpi}</td>
-        <td>{dato.rutaphoto}</td>
-        <td>{dato.pass}</td>
+      <tr key={dato.Registro}>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Registro}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td><Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment></td>
+        <td>{dato.DPI}</td>
         <td></td>
       </tr>
     </tbody>
@@ -1153,7 +1228,6 @@ function Alumno(props) {
         >
           Anterior Pagina
         </Button>
-        
         <Button
           style={{ float: "right" }}
           color="secondary"
@@ -1161,6 +1235,7 @@ function Alumno(props) {
         >
           Siguiente Pagina
         </Button>
+        <div className="box"></div>
       </Container>
 
       <Modal isOpen={props.this.state.modalInsertarA} fade={false}>

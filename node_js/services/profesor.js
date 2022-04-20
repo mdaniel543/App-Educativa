@@ -11,9 +11,7 @@ async function insert(req, res) {
     const resp = rows[0];
     if (resp[0].msg_err != "") {
       console.log(resp[0].msg_err);
-      return {
-        msg: resp[0].msg_err,
-      };
+      res.json({ msg: `${resp[0].msg_err}` });
     }
     res.json({ msg: "datos cargados correctamente" });
   }
