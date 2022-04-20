@@ -2,9 +2,6 @@ const express = require('express');
 const { append } = require('express/lib/response');
 const router = express.Router();
 const educative_app = require('../services/educative_app');
-
-const upload = require('../services/upload');
-const bulk = require('../services/bulk_load');
 const student = require('../services/student')
 //const csv = require('fast-csv');
 //const multer = require('multer');
@@ -35,6 +32,8 @@ router.get('/getUsers',async function(req,res,next){
 })
 
 
+
+
 /**
  * POST
  */
@@ -56,10 +55,24 @@ router.post('/adminRegister',async function(req,res,next){
 })
 
 
-router.post('/carga', upload);
+/**
+ * CRUD ALUMNO
+ */
 
-router.post('/carga_sel', bulk);
+router.put('/update_delete_alumno',student.update_delete);
+router.get('/select_alumno', student.select);
+router.get('/alumno_get_by_id',student.get_by_id);
 
-router.post('/insert_alumno', student.insert);
+
+router.get('/selectEstudiantes',async function(req,res,next){
+    try {
+        res.json(await student.selectEstudiantes(req.query.page));
+
+    }catch(err){
+        console.error(`Error while getting students`,err.message);
+        next(err);
+    }
+});
+
 
  module.exports = router
