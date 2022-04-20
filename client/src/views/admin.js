@@ -1,7 +1,7 @@
 import React, { Component, useState } from "react";
 import axios from "axios";
 import Barra from "../components/menu_bar";
-import Moment from 'react-moment';
+import Moment from "react-moment";
 
 import Dropdown from "react-dropdown";
 
@@ -74,7 +74,7 @@ class admin extends Component {
         Telefono: "",
         Direccion: "",
         Correo_electronico: "",
-        Fecha_nacimiento:"", 
+        Fecha_nacimiento: "",
         DPI: "",
         Path_foto: "",
         Pass: "",
@@ -100,7 +100,7 @@ class admin extends Component {
       load: "",
       pagina: 0,
       paginaM: 0,
-      fecha_aux: ""
+      fecha_aux: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDT = this.handleChangeDT.bind(this);
@@ -130,12 +130,12 @@ class admin extends Component {
   }
 
   fetchTasks() {
-    var page = this.state.paginaM
+    var page = this.state.paginaM;
     fetch("/app/selectMaestros", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -149,12 +149,12 @@ class admin extends Component {
       });
   }
   fetchTasks2() {
-    var page = this.state.pagina
+    var page = this.state.pagina;
     fetch("/app/selectEstudiantes", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -168,16 +168,15 @@ class admin extends Component {
       });
   }
   AntPagM() {
-    var page = this.state.paginaM
+    var page = this.state.paginaM;
     page--;
-    console.log(page)
-    
+    console.log(page);
 
     fetch("/app/selectMaestros", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -188,20 +187,19 @@ class admin extends Component {
       .then((data) => {
         console.log(data.data[0]);
         this.setState({ tasks: data.data[0] });
-        this.setState({paginaM: page});
+        this.setState({ paginaM: page });
       });
   }
   SigPagM() {
-    var page = this.state.paginaM
+    var page = this.state.paginaM;
     page++;
-    console.log(page)
-    
+    console.log(page);
 
     fetch("/app/selectMaestros", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -212,20 +210,19 @@ class admin extends Component {
       .then((data) => {
         console.log(data.data[0]);
         this.setState({ tasks: data.data[0] });
-        this.setState({paginaM: page});
+        this.setState({ paginaM: page });
       });
   }
   SigPag() {
-    var page = this.state.pagina
+    var page = this.state.pagina;
     page++;
-    console.log(page)
-    
+    console.log(page);
 
     fetch("/app/selectEstudiantes", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -236,18 +233,18 @@ class admin extends Component {
       .then((data) => {
         //console.log(data.data[0]);
         this.setState({ tasks2: data.data[0] });
-        this.setState({pagina: page});
+        this.setState({ pagina: page });
       });
   }
   AntPag() {
-    var page = this.state.pagina
+    var page = this.state.pagina;
     page--;
-    console.log(page)
+    console.log(page);
     fetch("/app/selectEstudiantes", {
       //eliminar maestro
       method: "POST",
       body: JSON.stringify({
-          page: page
+        page: page,
       }),
       headers: {
         Accept: "application/json",
@@ -258,7 +255,7 @@ class admin extends Component {
       .then((data) => {
         //console.log(data.data[0]);
         this.setState({ tasks2: data.data[0] });
-        this.setState({pagina: page});
+        this.setState({ pagina: page });
       });
   }
   handleChange(e) {
@@ -273,7 +270,7 @@ class admin extends Component {
   handleChangeDate(e) {
     const { name, value } = e.target;
     this.setState({
-      fecha_aux: value
+      fecha_aux: value,
     });
   }
   handleChangeDT(e) {
@@ -365,19 +362,19 @@ class admin extends Component {
       data_maestro: dato,
       modalEditarM: true,
     });
-    this.parsearFecha(date)
+    this.parsearFecha(date);
   }
 
-  parsearFecha(date){
+  parsearFecha(date) {
     var fecha = "";
     for (let index = 0; index < 10; index++) {
-      fecha += date[index];      
+      fecha += date[index];
     }
-    console.log(fecha)
-  
+    console.log(fecha);
+
     this.setState({
-      fecha_aux: fecha
-    })
+      fecha_aux: fecha,
+    });
   }
 
   mostrarModalActualizarA(dato) {
@@ -875,14 +872,14 @@ function Maestro(props) {
         <Table>
           <thead>
             <tr>
+              <th>Registro</th>
+              <th>DPI</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Registro</th>
               <th>Telefono</th>
               <th>Direccion</th>
-              <th>Correo</th>
               <th>Fecha Nacimiento</th>
-              <th>DPI</th>
+              <th>Correo</th>
               <th>ACCIONES</th>
             </tr>
           </thead>
@@ -896,11 +893,10 @@ function Maestro(props) {
             })()
           )}
         </Table>
-        <center><b>{props.this.state.paginaM}</b></center>
-        <Button
-          color="secondary"
-          onClick={() => props.this.AntPagM()}
-        >
+        <center>
+          <b>{props.this.state.paginaM}</b>
+        </center>
+        <Button color="secondary" onClick={() => props.this.AntPagM()}>
           Anterior Pagina
         </Button>
         <Button
@@ -1159,21 +1155,37 @@ function IfyesM(props) {
   return (
     <tbody>
       <tr key={dato.Registro}>
+        <td>{dato.Registro}</td>
+        <td>{dato.DPI}</td>
         <td>{dato.Nombre}</td>
         <td>{dato.Apellido}</td>
-        <td>{dato.Registro}</td>
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
+        <td>
+          <Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment>
+        </td>
         <td>{dato.Correo_electronico}</td>
-        <td><Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment></td>
-        <td>{dato.DPI}</td>
         <td>
           <Button
             color="primary"
-            onClick={() => props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)}
+            onClick={() =>
+              props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)
+            }
           >
             Editar
           </Button>
+        </td>
+        <td>
+          <Button
+            color="success"
+            onClick={() =>
+              props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)
+            }
+          >
+            Asignar
+          </Button>
+        </td>
+        <td>
           <Button color="danger" onClick={() => props.this.eliminarM(dato)}>
             Eliminar
           </Button>
@@ -1188,14 +1200,18 @@ function ElseM(props) {
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
       <tr key={dato.Registro}>
+        <td>{dato.Registro}</td>
+        <td>{dato.DPI}</td>
         <td>{dato.Nombre}</td>
         <td>{dato.Apellido}</td>
-        <td>{dato.Registro}</td>
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
+        <td>
+          <Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment>
+        </td>
         <td>{dato.Correo_electronico}</td>
-        <td><Moment format="DD/MM/YYYY">{dato.Fecha_nacimiento}</Moment></td>
-        <td>{dato.DPI}</td>
+        <td></td>
+        <td></td>
         <td></td>
       </tr>
     </tbody>
@@ -1237,11 +1253,10 @@ function Alumno(props) {
             })()
           )}
         </Table>
-        <center><b>{props.this.state.pagina}</b></center>
-        <Button
-          color="secondary"
-          onClick={() => props.this.AntPag()}
-        >
+        <center>
+          <b>{props.this.state.pagina}</b>
+        </center>
+        <Button color="secondary" onClick={() => props.this.AntPag()}>
           Anterior Pagina
         </Button>
         <Button
@@ -1444,6 +1459,18 @@ function IfyesA(props) {
           >
             Editar
           </Button>
+        </td>
+        <td>
+          <Button
+            color="success"
+            onClick={() =>
+              props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)
+            }
+          >
+            Asignar
+          </Button>
+        </td>
+        <td>
           <Button color="danger" onClick={() => props.this.eliminarA(dato)}>
             Eliminar
           </Button>
@@ -1464,6 +1491,8 @@ function ElseA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
+        <td></td>
+        <td></td>
         <td></td>
       </tr>
     </tbody>
@@ -1551,7 +1580,5 @@ function Curso_Carrera(props) {
     </FormGroup>
   );
 }
-
-
 
 export default admin;
