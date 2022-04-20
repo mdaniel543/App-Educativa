@@ -86,6 +86,7 @@ class admin extends Component {
       load: "",
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeDT = this.handleChangeDT.bind(this);
     this.handleChangeCC = this.handleChangeCC.bind(this);
     this.cargarFoto = this.cargarFoto.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -129,6 +130,15 @@ class admin extends Component {
     this.setState({
       data: {
         ...this.state.data,
+        [name]: value,
+      },
+    });
+  }
+  handleChangeDT(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data_alumno: {
+        ...this.state.data_alumno,
         [name]: value,
       },
     });
@@ -248,7 +258,7 @@ class admin extends Component {
   eliminarA(dato) {
     this.setState({ load2: true });
     console.log(this.state.data);
-    fetch("/delete_alumno", {
+    fetch("/app/delete_alumno", {
       //eliminar alumno
       method: "DELETE",
       body: JSON.stringify({
@@ -314,18 +324,18 @@ class admin extends Component {
 
   editarA(dato) {
     this.setState({ load2: true });
-    console.log(this.state.data);
-    fetch("/update_alumno", {
+    fetch("/app/update_alumno", {
       // metodo put a editar el alumno
       method: "PUT",
       body: JSON.stringify({
-        nombre: dato.nombre,
-        apellido: dato.apellido,
-        carnet: dato.numero,
-        telefono: dato.telefono,
-        direccion: dato.direccion,
-        correo: dato.correo,
-        pass: dato.pass,
+        Nombre: dato.Nombre,
+        Apellido: dato.Apellido,
+        Carnet: dato.Carnet,
+        Telefono: dato.Telefono,
+        Direccion: dato.Direccion,
+        Correo: dato.Correo_electronico,
+        Pass: dato.Pass,
+        estado: dato.Estado
       }),
       headers: {
         Accept: "application/json",
@@ -1065,7 +1075,6 @@ function Alumno(props) {
               <th>Telefono</th>
               <th>Direccion</th>
               <th>Correo</th>
-              <th>Contraseña</th>
               <th>ACCIONES</th>
             </tr>
           </thead>
@@ -1176,9 +1185,9 @@ function Alumno(props) {
             <label>Nombre</label>
             <input
               className="form-control"
-              name="nombre"
+              name="Nombre"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Nombre}
             />
           </FormGroup>
@@ -1186,9 +1195,9 @@ function Alumno(props) {
             <label>Apellido</label>
             <input
               className="form-control"
-              name="apellido"
+              name="Apellido"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Apellido}
             />
           </FormGroup>
@@ -1196,9 +1205,10 @@ function Alumno(props) {
             <label>Carnet:</label>
             <input
               className="form-control"
-              name="carnet"
+              name="Carnet"
+              disabled
               type="number"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Carnet}
             />
           </FormGroup>
@@ -1206,9 +1216,9 @@ function Alumno(props) {
             <label>Telefono:</label>
             <input
               className="form-control"
-              name="telefono"
+              name="Telefono"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Telefono}
             />
           </FormGroup>
@@ -1216,9 +1226,9 @@ function Alumno(props) {
             <label>Direccion:</label>
             <input
               className="form-control"
-              name="direccion"
+              name="Direccion"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Direccion}
             />
           </FormGroup>
@@ -1226,20 +1236,10 @@ function Alumno(props) {
             <label>Correo:</label>
             <input
               className="form-control"
-              name="correo"
+              name="Correo_electronico"
               type="email"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Correo_electronico}
-            />
-          </FormGroup>
-          <FormGroup>
-            <label>Contraseña</label>
-            <input
-              className="form-control"
-              name="pass"
-              type="password"
-              onChange={props.this.handleChange}
-              value={props.this.state.data_alumno.Pass}
             />
           </FormGroup>
         </ModalBody>
@@ -1273,7 +1273,6 @@ function IfyesA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
-        <td>{dato.Pass}</td>
         <td>
           <Button
             color="primary"
@@ -1301,7 +1300,6 @@ function ElseA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
-        <td>{dato.Pass}</td>
         <td></td>
       </tr>
     </tbody>

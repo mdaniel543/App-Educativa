@@ -5,7 +5,7 @@ const educative_app = require('../services/educative_app');
 
 const upload = require('../services/upload');
 const bulk = require('../services/bulk_load');
-const student = require('../services/student')
+const student = require('../services/student');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -63,5 +63,7 @@ router.post('/carga_sel', bulk);
 router.post('/insert_alumno', student.insert);
 
 router.get('/select_alumno', student.select);
+
+router.put('/update_alumno', student.update)
 
  module.exports = router
