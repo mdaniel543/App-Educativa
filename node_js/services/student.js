@@ -32,7 +32,7 @@ async function select(req, res) {
 async function selectEstudiantes(page =1){
   const offet = helper.getOffset(page,config.listPerPage);
   const rows = await db.query(
-    `CALL alumno_TODO() LIMIT ${offet},${config.listPerPage};`
+    `CALL alumno_TODO("${offet}","${config.listPerPage}");`
   );
 
   const data = helper.emptyOrRows(rows);
