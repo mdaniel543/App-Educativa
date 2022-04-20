@@ -87,6 +87,7 @@ class admin extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDT = this.handleChangeDT.bind(this);
+    this.handleChangeMA = this.handleChangeMA.bind(this);
     this.handleChangeCC = this.handleChangeCC.bind(this);
     this.cargarFoto = this.cargarFoto.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -110,7 +111,7 @@ class admin extends Component {
   }
 
   fetchTasks() {
-    fetch("/Select_Maestro") //consulta todos los maestros en el servidor
+    fetch("/app/select_maestro") //consulta todos los maestros en el servidor
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -139,6 +140,15 @@ class admin extends Component {
     this.setState({
       data_alumno: {
         ...this.state.data_alumno,
+        [name]: value,
+      },
+    });
+  }
+  handleChangeMA(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data_maestro: {
+        ...this.state.data_maestro,
         [name]: value,
       },
     });
@@ -257,12 +267,11 @@ class admin extends Component {
 
   eliminarA(dato) {
     this.setState({ load2: true });
-    console.log(this.state.data);
     fetch("/app/delete_alumno", {
       //eliminar alumno
       method: "DELETE",
       body: JSON.stringify({
-        carnet: dato.carnet, //envio solo carnet
+        Carnet: dato.Carnet, //envio solo carnet
       }),
       headers: {
         Accept: "application/json",
@@ -732,14 +741,12 @@ function Maestro(props) {
               <th>Correo</th>
               <th>Fecha Nacimiento</th>
               <th>DPI</th>
-              <th>Fotografia</th>
-              <th>Contraseña</th>
               <th>ACCIONES</th>
             </tr>
           </thead>
           {props.this.state.tasks.map((dato) =>
             (() => {
-              if (dato.estado === "1") {
+              if (dato.Estado === "1") {
                 return <IfyesM dato={dato} this={props.this} />;
               } else {
                 return <ElseM dato={dato} this={props.this} />;
@@ -880,73 +887,73 @@ function Maestro(props) {
             <label>Nombre</label>
             <input
               className="form-control"
-              name="nombre"
+              name="Nombre"
               type="text"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.nombre}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Nombre}
             />
           </FormGroup>
           <FormGroup>
             <label>Apellido</label>
             <input
               className="form-control"
-              name="apellido"
+              name="Apellido"
               type="text"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.apellido}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Apellido}
             />
           </FormGroup>
           <FormGroup>
             <label>Numero registro:</label>
             <input
               className="form-control"
-              name="numero"
+              name="Registro"
               type="number"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.numero}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Registro}
             />
           </FormGroup>
           <FormGroup>
             <label>Telefono:</label>
             <input
               className="form-control"
-              name="telefono"
+              name="Telefono"
               type="text"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.telefono}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Telefono}
             />
           </FormGroup>
           <FormGroup>
             <label>Direccion:</label>
             <input
               className="form-control"
-              name="direccion"
+              name="Direccion"
               type="text"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.direccion}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Direccion}
             />
           </FormGroup>
           <FormGroup>
             <label>Correo:</label>
             <input
               className="form-control"
-              name="correo"
+              name="Correo_electronico"
               type="email"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.correo}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.Correo}
             />
           </FormGroup>
           <FormGroup>
             <label>Fecha Nacimiento:</label>
             <DatePicker
               className="form-control"
-              name="fecha"
+              name="Path_foto"
               dateFormat="dd/MM/yyyy"
               isClearable
               placeholderText="Selecciona Fecha"
               selected={startDate}
               onChange={(date) => setStartDate(date)}
-              value={props.this.state.data.fecha}
+              value={props.this.state.data_maestro.Path_foto}
               fixedHeight
               //withPortal
             />
@@ -955,10 +962,10 @@ function Maestro(props) {
             <label>DPI:</label>
             <input
               className="form-control"
-              name="dpi"
+              name="DPI"
               type="text"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.dpi}
+              onChange={props.this.handleChangeMA}
+              value={props.this.state.data_maestro.DPI}
             />
           </FormGroup>
           <FormGroup>
@@ -971,21 +978,11 @@ function Maestro(props) {
               onChange={props.this.cargarFoto}
             />
           </FormGroup>
-          <FormGroup>
-            <label>Contraseña</label>
-            <input
-              className="form-control"
-              name="pass"
-              type="password"
-              onChange={props.this.handleChange}
-              value={props.this.state.data.pass}
-            />
-          </FormGroup>
         </ModalBody>
         <ModalFooter>
           <Button
             color="primary"
-            onClick={() => props.this.editarM(props.this.state.data, startDate)}
+            onClick={() => props.this.editarM(props.this.state.data_maestro, startDate)}
           >
             Editar
           </Button>
@@ -1187,7 +1184,7 @@ function Alumno(props) {
               className="form-control"
               name="Nombre"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Nombre}
             />
           </FormGroup>
@@ -1197,7 +1194,7 @@ function Alumno(props) {
               className="form-control"
               name="Apellido"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Apellido}
             />
           </FormGroup>
@@ -1208,7 +1205,7 @@ function Alumno(props) {
               name="Carnet"
               disabled
               type="number"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Carnet}
             />
           </FormGroup>
@@ -1218,7 +1215,7 @@ function Alumno(props) {
               className="form-control"
               name="Telefono"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Telefono}
             />
           </FormGroup>
@@ -1228,7 +1225,7 @@ function Alumno(props) {
               className="form-control"
               name="Direccion"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Direccion}
             />
           </FormGroup>
@@ -1238,8 +1235,18 @@ function Alumno(props) {
               className="form-control"
               name="Correo_electronico"
               type="email"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Correo_electronico}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Contraseña</label>
+            <input
+              className="form-control"
+              name="pass"
+              type="password"
+              onChange={props.this.handleChange}
+              value={props.this.state.data_alumno.Pass}
             />
           </FormGroup>
         </ModalBody>
@@ -1273,6 +1280,7 @@ function IfyesA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td>
           <Button
             color="primary"
@@ -1300,6 +1308,7 @@ function ElseA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td></td>
       </tr>
     </tbody>

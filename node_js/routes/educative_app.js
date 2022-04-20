@@ -2,10 +2,10 @@ const express = require('express');
 const { append } = require('express/lib/response');
 const router = express.Router();
 const educative_app = require('../services/educative_app');
-
 const upload = require('../services/upload');
 const bulk = require('../services/bulk_load');
 const student = require('../services/student');
+const professor = require('../services/profesor');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -34,7 +34,6 @@ router.get('/getUsers',async function(req,res,next){
     }
 })
 
-
 /**
  * POST
  */
@@ -55,10 +54,57 @@ router.post('/adminRegister',async function(req,res,next){
     }
 })
 
+router.post('/carga', upload);
 
+/**
+ * CRUD ALUMNO
+ */
+
+router.get('/alumno_get_by_id',student.get_by_id);
+
+
+router.get('/selectEstudiantes',async function(req,res,next){
+    try {
+        res.json(await student.selectEstudiantes(req.query.page));
+
+    }catch(err){
+        console.error(`Error while getting students`,err.message);
+        next(err);
+    }
+});
+
+router.post('/insert_alumno',student.insert);
 
 router.get('/select_alumno', student.select);
 
-router.put('/update_alumno', student.update)
+router.put('/update_alumno', student.update);
+
+router.delete('/delete_alumno', student.delete_);
+
+
+/**
+ * CRUD MAESTRO
+ */
+
+router.post('/insert_maestro',professor.insert);
+
+router.get('/maestro_get_by_id',professor.get_by_id);
+
+router.get('/selectMaestros',async function(req,res,next){
+    try {
+        res.json(await professor.selectMaestros(req.query.page));
+
+    }catch(err){
+        console.error(`Error while getting professors`,err.message);
+        next(err);
+    }
+});
+
+router.put('/update_maestro',professor.update);
+
+router.delete('/delete_maestro',professor.delete_);
+
+
+
 
  module.exports = router
