@@ -69,14 +69,14 @@ DELIMITER ;
 -- Alumno obtiene todos los registros de la tabla alumno
 DELIMITER //
 Drop PROCEDURE if EXISTS alumno_TODO//
-CREATE PROCEDURE alumno_TODO()
+CREATE PROCEDURE alumno_TODO(par_offset int, par_page int)
 BEGIN
 
 	DECLARE resp VARCHAR(100) DEFAULT '';
 	DECLARE msg_err VARCHAR(100) DEFAULT '';
     DECLARE numresp int;
 
-    select * from Alumno;
+    select * from Alumno Limit par_offset, par_page;
 
 END//
 DELIMITER ;
