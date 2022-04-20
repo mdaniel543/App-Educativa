@@ -63,9 +63,9 @@ router.post('/carga', upload);
 router.get('/alumno_get_by_id',student.get_by_id);
 
 
-router.get('/selectEstudiantes',async function(req,res,next){
+router.post('/selectEstudiantes',async function(req,res,next){
     try {
-        res.json(await student.selectEstudiantes(req.query.page));
+        res.json(await student.selectEstudiantes(req.body.page));
 
     }catch(err){
         console.error(`Error while getting students`,err.message);
@@ -74,8 +74,6 @@ router.get('/selectEstudiantes',async function(req,res,next){
 });
 
 router.post('/insert_alumno',student.insert);
-
-router.get('/select_alumno', student.select);
 
 router.put('/update_alumno', student.update);
 

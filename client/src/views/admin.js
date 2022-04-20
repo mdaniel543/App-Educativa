@@ -84,6 +84,7 @@ class admin extends Component {
       optalumno: "",
       load2: false,
       load: "",
+      pagina: 0
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeDT = this.handleChangeDT.bind(this);
@@ -94,7 +95,8 @@ class admin extends Component {
     //this.fetchTest();
     Swal.fire("Mi id", this.props.id, "info");
     //this.fetchTasks();
-    this.fetchTasks2();
+    //this.fetchTasks2();
+    this.SigPag();
   }
   fetchTest() {
     fetch("/test")
@@ -119,11 +121,68 @@ class admin extends Component {
       });
   }
   fetchTasks2() {
-    fetch("/app/select_alumno") //consulta todos los alumnos en el servidor
+    var page = this.state.pagina
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        this.setState({ tasks2: data});
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+      });
+  }
+  SigPag() {
+    var page = this.state.pagina
+    page++;
+    console.log(page)
+    
+
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+        this.setState({pagina: page});
+      });
+  }
+  AntPag() {
+    var page = this.state.pagina
+    page--;
+    console.log(page)
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+        this.setState({pagina: page});
       });
   }
   handleChange(e) {
@@ -241,7 +300,7 @@ class admin extends Component {
   eliminarM(dato) {
     this.setState({ load2: true });
     console.log(this.state.data);
-    fetch("/delete_alumno", {
+    fetch("/delete_maestro", {
       //eliminar maestro
       method: "DELETE",
       body: JSON.stringify({
@@ -344,7 +403,7 @@ class admin extends Component {
         Direccion: dato.Direccion,
         Correo: dato.Correo_electronico,
         Pass: dato.Pass,
-        estado: dato.Estado
+        estado: dato.Estado,
       }),
       headers: {
         Accept: "application/json",
@@ -982,7 +1041,9 @@ function Maestro(props) {
         <ModalFooter>
           <Button
             color="primary"
-            onClick={() => props.this.editarM(props.this.state.data_maestro, startDate)}
+            onClick={() =>
+              props.this.editarM(props.this.state.data_maestro, startDate)
+            }
           >
             Editar
           </Button>
@@ -1085,6 +1146,19 @@ function Alumno(props) {
             })()
           )}
         </Table>
+        <Button
+          color="secondary"
+          onClick={() => props.this.AntPag()}
+        >
+          Anterior Pagina
+        </Button>
+        <Button
+          style={{ float: "right" }}
+          color="secondary"
+          onClick={() => props.this.SigPag()}
+        >
+          Siguiente Pagina
+        </Button>
       </Container>
 
       <Modal isOpen={props.this.state.modalInsertarA} fade={false}>
@@ -1184,7 +1258,7 @@ function Alumno(props) {
               className="form-control"
               name="Nombre"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Nombre}
             />
           </FormGroup>
@@ -1194,7 +1268,7 @@ function Alumno(props) {
               className="form-control"
               name="Apellido"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Apellido}
             />
           </FormGroup>
@@ -1205,7 +1279,7 @@ function Alumno(props) {
               name="Carnet"
               disabled
               type="number"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Carnet}
             />
           </FormGroup>
@@ -1215,7 +1289,7 @@ function Alumno(props) {
               className="form-control"
               name="Telefono"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Telefono}
             />
           </FormGroup>
@@ -1225,7 +1299,7 @@ function Alumno(props) {
               className="form-control"
               name="Direccion"
               type="text"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Direccion}
             />
           </FormGroup>
@@ -1235,18 +1309,8 @@ function Alumno(props) {
               className="form-control"
               name="Correo_electronico"
               type="email"
-              onChange={props.this.handleChange}
+              onChange={props.this.handleChangeDT}
               value={props.this.state.data_alumno.Correo_electronico}
-            />
-          </FormGroup>
-          <FormGroup>
-            <label>Contraseña</label>
-            <input
-              className="form-control"
-              name="pass"
-              type="password"
-              onChange={props.this.handleChange}
-              value={props.this.state.data_alumno.Pass}
             />
           </FormGroup>
         </ModalBody>

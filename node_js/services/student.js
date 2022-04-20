@@ -19,14 +19,6 @@ async function insert(req, res) {
   res.json({ msg: "datos cargados correctamente" });
 }
 
-async function select(req, res) {
-    console.log('gola')
-    var rows = await db.query(
-      `CALL alumno_TODO();`
-    );
-    //console.log(rows[0])
-    res.json(rows[0]);
-}
 
 async function update(req, res){
   console.log(req.body);
@@ -67,7 +59,8 @@ async function get_by_id(req,res){
 
 }
 
-async function selectEstudiantes(page =1){
+async function selectEstudiantes(page){
+  console.log(page)
   const offet = helper.getOffset(page,config.listPerPage);
   const rows = await db.query(
     `CALL alumno_TODO("${offet}","${config.listPerPage}");`
@@ -75,7 +68,7 @@ async function selectEstudiantes(page =1){
 
   const data = helper.emptyOrRows(rows);
   const meta = {page};
-
+ 
   return {
     data,
     meta
@@ -85,7 +78,6 @@ async function selectEstudiantes(page =1){
 
 module.exports = {
   insert,
-  select, 
   update, 
   delete_,
   get_by_id,
