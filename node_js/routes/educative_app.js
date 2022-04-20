@@ -56,6 +56,9 @@ router.post('/adminRegister',async function(req,res,next){
 
 router.post('/carga', upload);
 
+router.post('/carga_sel', bulk);
+
+
 /**
  * CRUD ALUMNO
  */
@@ -90,7 +93,7 @@ router.get('/maestro_get_by_id',professor.get_by_id);
 
 router.post('/selectMaestros',async function(req,res,next){
     try {
-        res.json(await professor.selectMaestros(req.query.page));
+        res.json(await professor.selectMaestros(req.body.page));
 
     }catch(err){
         console.error(`Error while getting professors`,err.message);

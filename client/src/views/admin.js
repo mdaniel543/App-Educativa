@@ -18,7 +18,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import Swal from "sweetalert2";
 
-import { useParams } from "react-router";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
@@ -131,7 +130,7 @@ class admin extends Component {
   }
 
   fetchTasks() {
-    var page = this.state.pagina
+    var page = this.state.paginaM
     fetch("/app/selectMaestros", {
       //eliminar maestro
       method: "POST",
@@ -166,6 +165,30 @@ class admin extends Component {
       .then((data) => {
         //console.log(data.data[0]);
         this.setState({ tasks2: data.data[0] });
+      });
+  }
+  AntPagM() {
+    var page = this.state.paginaM
+    page--;
+    console.log(page)
+    
+
+    fetch("/app/selectMaestros", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+          page: page
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.data[0]);
+        this.setState({ tasks: data.data[0] });
+        this.setState({paginaM: page});
       });
   }
   SigPagM() {
@@ -571,7 +594,7 @@ class admin extends Component {
     fetch("/app/carga_sel", {
       method: "POST",
       body: JSON.stringify({
-        user: "Mestro",
+        user: "Maestro",
         ruta: this.state.rutacsv,
       }),
       headers: {
@@ -581,8 +604,9 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         Swal.fire("Mensaje!", data.msg, "info");
-        this.fetchTasks1();
+        this.fetchTasks();
         this.setState({ load2: false });
       })
       .catch((err) => console.error(err));
@@ -759,9 +783,6 @@ class admin extends Component {
               <Tab>Crear carrera</Tab>
               <Tab>Crear curso</Tab>
               <Tab>Asignar curso a carrera</Tab>
-              <Tab>Asignar curso a maestro</Tab>
-              <Tab>Asignar carrera a alumno</Tab>
-              <Tab></Tab>
             </TabList>
             <TabPanel>
               <Carga this={this} />
@@ -780,12 +801,6 @@ class admin extends Component {
             </TabPanel>
             <TabPanel>
               <Curso_Carrera this={this} />
-            </TabPanel>
-            <TabPanel>
-              <Curso_Maestro this={this} />
-            </TabPanel>
-            <TabPanel>
-              <Carrera_Alumno this={this} />
             </TabPanel>
           </Tabs>
         </Container>
@@ -862,7 +877,7 @@ function Maestro(props) {
             <tr>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>No. Registro</th>
+              <th>Registro</th>
               <th>Telefono</th>
               <th>Direccion</th>
               <th>Correo</th>
@@ -1052,6 +1067,7 @@ function Maestro(props) {
               className="form-control"
               name="Registro"
               type="number"
+              disabled
               onChange={props.this.handleChangeMA}
               value={props.this.state.data_maestro.Registro}
             />
@@ -1213,7 +1229,7 @@ function Alumno(props) {
           </thead>
           {props.this.state.tasks2.map((dato) =>
             (() => {
-              if (dato.Estado == "1") {
+              if (dato.Estado === 1) {
                 return <IfyesA dato={dato} this={props.this} />;
               } else {
                 return <ElseA dato={dato} this={props.this} />;
@@ -1536,60 +1552,6 @@ function Curso_Carrera(props) {
   );
 }
 
-function Curso_Maestro(props) {
-  return (
-    <FormGroup>
-      <div className="boxer"></div>
-      <label>Curso:</label>
-      <Dropdown
-        name="curso"
-        options={props.this.state.cursos}
-        value={props.this.state.optcurso}
-        placeholder="Seleccione el curso"
-      />
-      <div className="boxer" />
-      <div className="boxer" />
-      <label>Maestro</label>
-      <Dropdown
-        name="curso"
-        options={props.this.state.maestros}
-        value={props.this.state.optmaestro}
-        placeholder="Seleccione el registro del maestro"
-      />
-      <div className="box"></div>
-      <Button color="primary" onClick={() => props.this.Asignar_maestro_curso}>
-        Asignar maestro a curso
-      </Button>
-    </FormGroup>
-  );
-}
 
-function Carrera_Alumno(props) {
-  return (
-    <FormGroup>
-      <div className="boxer"></div>
-      <label>Nombre Carrera:</label>
-      <Dropdown
-        name="carrera"
-        options={props.this.state.carreras}
-        value={props.this.state.optcarrera}
-        placeholder="Seleccione la carrera"
-      />
-      <div className="boxer" />
-      <div className="boxer" />
-      <label>Alumno</label>
-      <Dropdown
-        name="carrera"
-        options={props.this.state.alumnos}
-        value={props.this.state.optalumno}
-        placeholder="Seleccione carnet del alumno"
-      />
-      <div className="box"></div>
-      <Button color="primary" onClick={() => props.this.Asignar_alumno_carrera}>
-        Asignar Alumno a Carrera
-      </Button>
-    </FormGroup>
-  );
-}
 
 export default admin;

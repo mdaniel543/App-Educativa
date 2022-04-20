@@ -1,6 +1,7 @@
 const mysql = require("mysql2/promise");
 const config = require("../config");
 const db = require('./db');
+var moment = require('moment');  
 
 async function carga(req, res) {
   var data = req.body;
@@ -29,16 +30,9 @@ async function carga_maestros(data) {
   const connection = await mysql.createConnection(config.db);
   // var pool = mysql.createPool(config.db);
   await data.map(async (maestro) => {
-    let fecha = maestro.FechaNacimiento[6]
-    fecha += maestro.FechaNacimiento[7]
-    fecha += maestro.FechaNacimiento[8]
-    fecha += maestro.FechaNacimiento[9]
-    fecha += "/"
-    fecha += maestro.FechaNacimiento[3]
-    fecha += maestro.FechaNacimiento[4]
-    fecha += "/"
-    fecha += maestro.FechaNacimiento[0]
-    fecha += maestro.FechaNacimiento[1]
+    let fecha = moment(maestro.FechaNacimiento, "MM/DD/YYYY").format('YYYY/MM/DD');
+    if (fecha == "Invalid date") fecha = moment(maestro.FechaNacimiento, "MM-DD-YY").format('YYYY/MM/DD');
+    //console.log(fecha)
     var rows = await db.queryOnly( connection, 
       `CALL maestro_create("${maestro.Nombre}","${maestro.Apellido}", "${maestro.id}", "${maestro.Telefono}", "${maestro.Direccion}", "${maestro.Correo}", "${fecha}", "${maestro.DPI}", "", "${maestro.Contrasena}" );`
     );

@@ -55,7 +55,7 @@ async function insert(req, res) {
   
   }
 
-  async function selectMaestros(page =1){
+  async function selectMaestros(page){
     const offet = helper.getOffset(page,config.listPerPage);
     const rows = await db.query(
       `CALL maestro_TODO("${offet}","${config.listPerPage}");`
