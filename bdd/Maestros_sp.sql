@@ -73,7 +73,7 @@ DELIMITER ;
 -- maestro obtiene todos los registros de la tabla maestro
 DELIMITER //
 Drop PROCEDURE if EXISTS maestro_TODO//
-CREATE PROCEDURE maestro_TODO(ar_offset int, par_page int)
+CREATE PROCEDURE maestro_TODO(par_offset int, par_page int)
 BEGIN
 
 	DECLARE resp VARCHAR(100) DEFAULT '';
