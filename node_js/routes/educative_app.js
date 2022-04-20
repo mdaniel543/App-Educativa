@@ -53,4 +53,6 @@ router.post('/adminRegister',async function(req,res,next){
 
 
 
+router.get('/select_alumno', student.select);
+
  module.exports = router
