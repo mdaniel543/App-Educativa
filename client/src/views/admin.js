@@ -55,6 +55,17 @@ class admin extends Component {
         carnet: "",
         rutaphoto: "",
       },
+      data_alumno: {
+        idAlumno: "",
+        Nombre: "",
+        Apellido: "",
+        Carnet: "",
+        Telefono: "",
+        Direccion: "",
+        Correo_electronico: "",
+        Pass: "",
+        Estado: "",
+      },
       carrera_curso: {
         nombre: "",
         descripcion: "",
@@ -81,7 +92,7 @@ class admin extends Component {
     //this.fetchTest();
     Swal.fire("Mi id", this.props.id, "info");
     //this.fetchTasks();
-    //this.fetchTasks2();
+    this.fetchTasks2();
   }
   fetchTest() {
     fetch("/test")
@@ -106,11 +117,11 @@ class admin extends Component {
       });
   }
   fetchTasks2() {
-    fetch("/Select_Alumno") //consulta todos los alumnos en el servidor
+    fetch("/app/select_alumno") //consulta todos los alumnos en el servidor
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ tasks: data, load: false });
+        this.setState({ tasks2: data});
       });
   }
   handleChange(e) {
@@ -124,9 +135,9 @@ class admin extends Component {
   }
   handleChangeP(e) {
     this.setState({
-        option: e.value
+      option: e.value,
     });
-}
+  }
 
   handleChangeCC(e) {
     const { name, value } = e.target;
@@ -142,14 +153,14 @@ class admin extends Component {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
     axios.post("/app/carga", formData, {}).then((res) => {
-      console.log(res.data.msg)
+      console.log(res.data.msg);
       this.setState({
         data: {
           ...this.state.data,
-          rutaphoto: res.data.msg
+          rutaphoto: res.data.msg,
         },
       });
-      console.log(this.state.data)
+      console.log(this.state.data);
     });
   }
 
@@ -167,12 +178,12 @@ class admin extends Component {
     formData.append("file", files[0]);
     axios.post("/app/carga", formData, {}).then((res) => {
       this.setState({ rutacsv: res.data.msg });
-      console.log(this.state.rutacsv)
+      console.log(this.state.rutacsv);
     });
   };
 
   cerrarSesion = () => {
-    window.location.href = '../';
+    window.location.href = "../";
   };
 
   mostrarModalInsertar() {
@@ -196,7 +207,7 @@ class admin extends Component {
   }
   mostrarModalActualizarA(dato) {
     this.setState({
-      data: dato,
+      data_alumno: dato,
       modalEditarA: true,
     });
   }
@@ -402,7 +413,7 @@ class admin extends Component {
 
   Carga() {
     let usuarios = this.state.option;
-    console.log(usuarios)
+    console.log(usuarios);
     if (usuarios === "Maestro") {
       this.CargaMaestro();
     } else if (usuarios === "Alumno") {
@@ -445,7 +456,7 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         Swal.fire("Mensaje!", data.msg, "info");
         //this.fetchTasks2();
         this.setState({ load2: false });
@@ -455,38 +466,38 @@ class admin extends Component {
 
   fetchCarreras() {
     fetch("/Select_Carrera") //consulta todos los alumnos en el servidor
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      this.setState({ carreras: data });
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ carreras: data });
+      });
   }
 
   fetchCursos() {
     fetch("/Select_Cursos") //consulta todos los alumnos en el servidor
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      this.setState({ cursos: data });
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ cursos: data });
+      });
   }
 
   fetchMaestros() {
     fetch("/Select_Maestros") //consulta todos los alumnos en el servidor
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      this.setState({ maestros: data });
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ maestros: data });
+      });
   }
 
   fetchAlumno() {
     fetch("/Select_Alumnos") //consulta todos los alumnos en el servidor
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      this.setState({ alumnos: data });
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ alumnos: data });
+      });
   }
 
   crearCarrera() {
@@ -529,59 +540,59 @@ class admin extends Component {
 
   Asignar_Curso_Carrera() {
     fetch("/asignacion_curso_carrera", {
-        method: "POST",
-        body: JSON.stringify({
-          carrera: this.state.optcarrera,
-          curso: this.state.optcurso,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+      method: "POST",
+      body: JSON.stringify({
+        carrera: this.state.optcarrera,
+        curso: this.state.optcurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
       })
-        .then((res) => res.json())
-        .then((data) => {
-          Swal.fire("Mensaje!", data.msg, "info");
-        })
-        .catch((err) => console.error(err));
+      .catch((err) => console.error(err));
   }
 
   Asignar_maestro_curso() {
     fetch("/asignacion_curso_carrera", {
-        method: "POST",
-        body: JSON.stringify({
-          maestro: this.state.optmaestro,
-          curso: this.state.optcurso,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+      method: "POST",
+      body: JSON.stringify({
+        maestro: this.state.optmaestro,
+        curso: this.state.optcurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
       })
-        .then((res) => res.json())
-        .then((data) => {
-          Swal.fire("Mensaje!", data.msg, "info");
-        })
-        .catch((err) => console.error(err));
+      .catch((err) => console.error(err));
   }
 
   Asignar_alumno_carrera() {
     fetch("/asignacion_alumno_carrera", {
-        method: "POST",
-        body: JSON.stringify({
-          alumno: this.state.optalumno,
-          carrera: this.state.optcarrera,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+      method: "POST",
+      body: JSON.stringify({
+        alumno: this.state.optalumno,
+        carrera: this.state.optcarrera,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
       })
-        .then((res) => res.json())
-        .then((data) => {
-          Swal.fire("Mensaje!", data.msg, "info");
-        })
-        .catch((err) => console.error(err));
+      .catch((err) => console.error(err));
   }
 
   render() {
@@ -985,13 +996,13 @@ function IfyesM(props) {
   return (
     <tbody>
       <tr key={dato.registro}>
-        <td>{dato.nombre}</td>
-        <td>{dato.apellido}</td>
-        <td>{dato.registro}</td>
-        <td>{dato.telefono}</td>
-        <td>{dato.direccion}</td>
-        <td>{dato.correo}</td>
-        <td>{dato.fecha}</td>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Registro}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo}</td>
+        <td>{dato.Fecha}</td>
         <td>{dato.dpi}</td>
         <td>{dato.rutaphoto}</td>
         <td>{dato.pass}</td>
@@ -1016,7 +1027,7 @@ function ElseM(props) {
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
       <tr key={dato.registro}>
-         <td>{dato.nombre}</td>
+        <td>{dato.nombre}</td>
         <td>{dato.apellido}</td>
         <td>{dato.registro}</td>
         <td>{dato.telefono}</td>
@@ -1060,7 +1071,7 @@ function Alumno(props) {
           </thead>
           {props.this.state.tasks2.map((dato) =>
             (() => {
-              if (dato.estado === "1") {
+              if (dato.Estado == "1") {
                 return <IfyesA dato={dato} this={props.this} />;
               } else {
                 return <ElseA dato={dato} this={props.this} />;
@@ -1168,7 +1179,7 @@ function Alumno(props) {
               name="nombre"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.nombre}
+              value={props.this.state.data_alumno.Nombre}
             />
           </FormGroup>
           <FormGroup>
@@ -1178,7 +1189,7 @@ function Alumno(props) {
               name="apellido"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.apellido}
+              value={props.this.state.data_alumno.Apellido}
             />
           </FormGroup>
           <FormGroup>
@@ -1188,7 +1199,7 @@ function Alumno(props) {
               name="carnet"
               type="number"
               onChange={props.this.handleChange}
-              value={props.this.state.data.carnet}
+              value={props.this.state.data_alumno.Carnet}
             />
           </FormGroup>
           <FormGroup>
@@ -1198,7 +1209,7 @@ function Alumno(props) {
               name="telefono"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.telefono}
+              value={props.this.state.data_alumno.Telefono}
             />
           </FormGroup>
           <FormGroup>
@@ -1208,7 +1219,7 @@ function Alumno(props) {
               name="direccion"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.direccion}
+              value={props.this.state.data_alumno.Direccion}
             />
           </FormGroup>
           <FormGroup>
@@ -1218,7 +1229,7 @@ function Alumno(props) {
               name="correo"
               type="email"
               onChange={props.this.handleChange}
-              value={props.this.state.data.correo}
+              value={props.this.state.data_alumno.Correo_electronico}
             />
           </FormGroup>
           <FormGroup>
@@ -1228,14 +1239,14 @@ function Alumno(props) {
               name="pass"
               type="password"
               onChange={props.this.handleChange}
-              value={props.this.state.data.pass}
+              value={props.this.state.data_alumno.Pass}
             />
           </FormGroup>
         </ModalBody>
         <ModalFooter>
           <Button
             color="primary"
-            onClick={() => props.this.editarA(props.this.state.data)}
+            onClick={() => props.this.editarA(props.this.state.data_alumno)}
           >
             Editar
           </Button>
@@ -1255,14 +1266,14 @@ function IfyesA(props) {
   var dato = props.dato;
   return (
     <tbody>
-      <tr key={dato.carnet}>
-        <td>{dato.nombre}</td>
-        <td>{dato.apellido}</td>
-        <td>{dato.carnet}</td>
-        <td>{dato.telefono}</td>
-        <td>{dato.direccion}</td>
-        <td>{dato.correo}</td>
-        <td>{dato.pass}</td>
+      <tr key={dato.idAlumno}>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Carnet}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td>
           <Button
             color="primary"
@@ -1283,14 +1294,14 @@ function ElseA(props) {
   var dato = props.dato;
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
-      <tr key={dato.carnet}>
-        <td>{dato.nombre}</td>
-        <td>{dato.apellido}</td>
-        <td>{dato.carnet}</td>
-        <td>{dato.telefono}</td>
-        <td>{dato.direccion}</td>
-        <td>{dato.correo}</td>
-        <td>{dato.pass}</td>
+      <tr key={dato.idAlumno}>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Carnet}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td></td>
       </tr>
     </tbody>

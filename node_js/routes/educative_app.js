@@ -62,4 +62,6 @@ router.post('/carga_sel', bulk);
 
 router.post('/insert_alumno', student.insert);
 
+router.get('/select_alumno', student.select);
+
  module.exports = router

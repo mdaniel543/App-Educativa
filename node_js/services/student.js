@@ -16,6 +16,16 @@ async function insert(req, res) {
   res.json({ msg: "datos cargados correctamente" });
 }
 
+async function select(req, res) {
+    console.log('gola')
+    var rows = await db.query(
+      `CALL alumno_TODO();`
+    );
+    //console.log(rows[0])
+    res.json(rows[0]);
+}
+
 module.exports = {
   insert,
+  select
 };
