@@ -1146,12 +1146,14 @@ function Alumno(props) {
             })()
           )}
         </Table>
+        <center><b>{props.this.state.pagina}</b></center>
         <Button
           color="secondary"
           onClick={() => props.this.AntPag()}
         >
           Anterior Pagina
         </Button>
+        
         <Button
           style={{ float: "right" }}
           color="secondary"
@@ -1344,7 +1346,6 @@ function IfyesA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
-        <td>{dato.Pass}</td>
         <td>
           <Button
             color="primary"
@@ -1372,7 +1373,6 @@ function ElseA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
-        <td>{dato.Pass}</td>
         <td></td>
       </tr>
     </tbody>
