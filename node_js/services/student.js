@@ -1,4 +1,7 @@
 const db = require("./db");
+const helper = require("../helper");
+const config = require("../config");
+
 
 async function insert(req, res) {
   console.log(req.body);
@@ -53,9 +56,38 @@ async function delete_(req, res){
   res.json({ msg: "dato eliminado correctamente" });
 }
 
+
+async function get_by_id(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL alumno_get_by_id(${data.idAlumno},"${data.carnet}")`
+  );
+  const resp = result[0];
+  res.json(resp[0]);
+
+}
+
+async function selectEstudiantes(page =1){
+  const offet = helper.getOffset(page,config.listPerPage);
+  const rows = await db.query(
+    `CALL alumno_TODO("${offet}","${config.listPerPage}");`
+  );
+
+  const data = helper.emptyOrRows(rows);
+  const meta = {page};
+
+  return {
+    data,
+    meta
+  }
+}
+
+
 module.exports = {
   insert,
   select, 
   update, 
-  delete_
+  delete_,
+  get_by_id,
+  selectEstudiantes
 };

@@ -21,5 +21,5 @@ app.get("/", (req,res)=>{
 app.use("/app",educativeApp);
 
 app.listen(port,()=>{
-    console.log("hello world");
+    console.log("app listening on PORT:8000");
 })

@@ -66,20 +66,6 @@ class admin extends Component {
         Pass: "",
         Estado: "",
       },
-      data_maestro: {
-        idMaestro: "",
-        Nombre: "",
-        Apellido: "",
-        Registro: "",
-        Telefono: "",
-        Direccion: "",
-        Correo_electronico: "",
-        Fecha_Nacimiento:"", 
-        DPI: "",
-        Path_foto: "",
-        Pass: "",
-        Estado: "",
-      },
       carrera_curso: {
         nombre: "",
         descripcion: "",
@@ -1016,15 +1002,17 @@ function IfyesM(props) {
   var dato = props.dato;
   return (
     <tbody>
-      <tr key={dato.idMaestro}>
+      <tr key={dato.registro}>
         <td>{dato.Nombre}</td>
         <td>{dato.Apellido}</td>
         <td>{dato.Registro}</td>
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
-        <td>{dato.Correo_electronico}</td>
-        <td>{dato.Fecha_Nacimiento}</td>
-        <td>{dato.DPI}</td>
+        <td>{dato.Correo}</td>
+        <td>{dato.Fecha}</td>
+        <td>{dato.dpi}</td>
+        <td>{dato.rutaphoto}</td>
+        <td>{dato.pass}</td>
         <td>
           <Button
             color="primary"
@@ -1045,15 +1033,18 @@ function ElseM(props) {
   var dato = props.dato;
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
-      <tr key={dato.idMaestro}>
-        <td>{dato.Nombre}</td>
-        <td>{dato.Apellido}</td>
-        <td>{dato.Registro}</td>
-        <td>{dato.Telefono}</td>
-        <td>{dato.Direccion}</td>
-        <td>{dato.Correo_electronico}</td>
-        <td>{dato.Fecha_nacimiento}</td>
-        <td>{dato.DPI}</td>
+      <tr key={dato.registro}>
+        <td>{dato.nombre}</td>
+        <td>{dato.apellido}</td>
+        <td>{dato.registro}</td>
+        <td>{dato.telefono}</td>
+        <td>{dato.direccion}</td>
+        <td>{dato.correo}</td>
+        <td>{dato.fecha}</td>
+        <td>{dato.dpi}</td>
+        <td>{dato.rutaphoto}</td>
+        <td>{dato.pass}</td>
+        <td></td>
       </tr>
     </tbody>
   );
@@ -1193,7 +1184,7 @@ function Alumno(props) {
               className="form-control"
               name="Nombre"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Nombre}
             />
           </FormGroup>
@@ -1203,7 +1194,7 @@ function Alumno(props) {
               className="form-control"
               name="Apellido"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Apellido}
             />
           </FormGroup>
@@ -1214,7 +1205,7 @@ function Alumno(props) {
               name="Carnet"
               disabled
               type="number"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Carnet}
             />
           </FormGroup>
@@ -1224,7 +1215,7 @@ function Alumno(props) {
               className="form-control"
               name="Telefono"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Telefono}
             />
           </FormGroup>
@@ -1234,7 +1225,7 @@ function Alumno(props) {
               className="form-control"
               name="Direccion"
               type="text"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Direccion}
             />
           </FormGroup>
@@ -1244,8 +1235,18 @@ function Alumno(props) {
               className="form-control"
               name="Correo_electronico"
               type="email"
-              onChange={props.this.handleChangeDT}
+              onChange={props.this.handleChange}
               value={props.this.state.data_alumno.Correo_electronico}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Contraseña</label>
+            <input
+              className="form-control"
+              name="pass"
+              type="password"
+              onChange={props.this.handleChange}
+              value={props.this.state.data_alumno.Pass}
             />
           </FormGroup>
         </ModalBody>
@@ -1279,6 +1280,7 @@ function IfyesA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td>
           <Button
             color="primary"
@@ -1306,6 +1308,7 @@ function ElseA(props) {
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>{dato.Correo_electronico}</td>
+        <td>{dato.Pass}</td>
         <td></td>
       </tr>
     </tbody>
