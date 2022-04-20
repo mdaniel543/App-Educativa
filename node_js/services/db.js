@@ -8,8 +8,14 @@ async function query(sql,params){
     return results;
 }
 
+async function queryOnly (connection, sql,params){
+    const [results, ] = await connection.execute(sql,params);
+    return results;
+}
+
 
 module.exports = {
-    query
+    query,
+    queryOnly
 }
 

@@ -44,15 +44,15 @@ export default function SignIn() {
           return;
         }
         console.log(data)
-        return;
+        console.log(dato.get("rol"))
         switch (dato.get("rol")) {
-          case "Admin":
+          case "A":
             window.location.href = `./admin/${data.id}`;
             break;
-          case "Alumno":
+          case "E":
             window.location.href = `./student/${data.id}`;
             break;
-          case "Maestro":
+          case "M":
             window.location.href = `./teacher/${data.id}`;
             break;
           default:
@@ -112,9 +112,9 @@ export default function SignIn() {
               autoFocus
               select
             >
-              <MenuItem value="Admin">Admnistrador</MenuItem>
-              <MenuItem value="Maestro">Maestro</MenuItem>
-              <MenuItem value="Alumno">Usuario</MenuItem>
+              <MenuItem value="A">Admnistrador</MenuItem>
+              <MenuItem value="M">Maestro</MenuItem>
+              <MenuItem value="E">Usuario</MenuItem>
             </TextField>
 
             <Button

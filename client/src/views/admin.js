@@ -43,7 +43,8 @@ class admin extends Component {
       tasks: [],
       tasks2: [],
       data: {
-        user: "",
+        nombre: "",
+        apellido: "",
         numero: "",
         telefono: "",
         direccion: "",
@@ -74,6 +75,9 @@ class admin extends Component {
       load: "",
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCC = this.handleChangeCC.bind(this);
+    this.cargarFoto = this.cargarFoto.bind(this);
+    this.handleChangeP = this.handleChangeP.bind(this);
     //this.fetchTest();
     Swal.fire("Mi id", this.props.id, "info");
     //this.fetchTasks();
@@ -118,10 +122,16 @@ class admin extends Component {
       },
     });
   }
+  handleChangeP(e) {
+    this.setState({
+        option: e.value
+    });
+}
+
   handleChangeCC(e) {
     const { name, value } = e.target;
     this.setState({
-      data: {
+      carrera_curso: {
         ...this.state.carrera_curso,
         [name]: value,
       },
@@ -131,14 +141,15 @@ class admin extends Component {
   cargarFoto(e) {
     const formData = new FormData();
     formData.append("file", e.target.files[0]);
-    this.setState({ load2: true });
-    axios.post("/uploadphoto", formData, {}).then((res) => {
+    axios.post("/app/carga", formData, {}).then((res) => {
+      console.log(res.data.msg)
       this.setState({
         data: {
-          ...this.state.carrera_curso,
+          ...this.state.data,
           rutaphoto: res.data.msg
         },
       });
+      console.log(this.state.data)
     });
   }
 
@@ -149,17 +160,19 @@ class admin extends Component {
       this.setState({
         value: reader.result,
       });
-      const formData = new FormData();
-      formData.append("file", e.target.files[0]);
-      axios.post("/carga_masiva", formData, {}).then((res) => {
-        this.setState({ rutacsv: res.data.msg });
-      });
+      console.log("hola");
     };
     reader.readAsText(files[0]);
+    const formData = new FormData();
+    formData.append("file", files[0]);
+    axios.post("/app/carga", formData, {}).then((res) => {
+      this.setState({ rutacsv: res.data.msg });
+      console.log(this.state.rutacsv)
+    });
   };
 
   cerrarSesion = () => {
-    window.location.href = "./";
+    window.location.href = '../';
   };
 
   mostrarModalInsertar() {
@@ -258,7 +271,8 @@ class admin extends Component {
       // metodo put a editar el maestro
       method: "PUT",
       body: JSON.stringify({
-        user: dato.user,
+        nombre: dato.nombre,
+        apellido: dato.apellido,
         numero: dato.numero,
         telefono: dato.telefono,
         direccion: dato.direccion,
@@ -294,7 +308,8 @@ class admin extends Component {
       // metodo put a editar el alumno
       method: "PUT",
       body: JSON.stringify({
-        user: dato.user,
+        nombre: dato.nombre,
+        apellido: dato.apellido,
         carnet: dato.numero,
         telefono: dato.telefono,
         direccion: dato.direccion,
@@ -331,15 +346,16 @@ class admin extends Component {
       ///insertar maestro
       method: "POST",
       body: JSON.stringify({
-        user: this.state.data.user,
-        numero: this.state.data.numero,
-        telefono: this.state.data.telefono,
-        direccion: this.state.data.direccion,
-        correo: this.state.data.correo,
-        foto: this.state.data.rutaphoto,
-        fecha: fecha_cambio,
-        dpi: this.state.data.dpi,
-        pass: this.state.data.pass,
+        Nombre: this.state.data.nombre,
+        Apellido: this.state.data.apellido,
+        Numero: this.state.data.numero,
+        Telefono: this.state.data.telefono,
+        Direccion: this.state.data.direccion,
+        Correo: this.state.data.correo,
+        Foto: this.state.data.rutaphoto,
+        Fecha: fecha_cambio,
+        Dpi: this.state.data.dpi,
+        Pass: this.state.data.pass,
       }),
       headers: {
         Accept: "application/json",
@@ -357,18 +373,18 @@ class admin extends Component {
   }
 
   insertarA() {
-    this.setState({ load2: true });
     console.log(this.state.data);
-    fetch("/insert_alumno", {
+    fetch("/app/insert_alumno", {
       ///insertar alumno
       method: "POST",
       body: JSON.stringify({
-        user: this.state.data.user,
-        carnet: this.state.data.carnet,
-        telefono: this.state.data.telefono,
-        direccion: this.state.data.direccion,
-        correo: this.state.data.correo,
-        pass: this.state.data.pass,
+        Nombre: this.state.data.nombre,
+        Apellido: this.state.data.apellido,
+        Carnet: this.state.data.carnet,
+        Telefono: this.state.data.telefono,
+        Direccion: this.state.data.direccion,
+        Correo: this.state.data.correo,
+        Pass: this.state.data.pass,
       }),
       headers: {
         Accept: "application/json",
@@ -378,8 +394,7 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
-        this.fetchTasks2();
-        this.setState({ load2: false });
+        //this.fetchTasks2();
       })
       .catch((err) => console.error(err));
     this.cerrarModalInsertarA();
@@ -387,6 +402,7 @@ class admin extends Component {
 
   Carga() {
     let usuarios = this.state.option;
+    console.log(usuarios)
     if (usuarios === "Maestro") {
       this.CargaMaestro();
     } else if (usuarios === "Alumno") {
@@ -395,7 +411,7 @@ class admin extends Component {
   }
 
   CargaMaestro() {
-    fetch("/carga_sel", {
+    fetch("/app/carga_sel", {
       method: "POST",
       body: JSON.stringify({
         user: "Mestro",
@@ -416,7 +432,7 @@ class admin extends Component {
   }
 
   CargaAlumno() {
-    fetch("/carga_sel", {
+    fetch("/app/carga_sel", {
       method: "POST",
       body: JSON.stringify({
         user: "Alumno",
@@ -429,8 +445,9 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         Swal.fire("Mensaje!", data.msg, "info");
-        this.fetchTasks2();
+        //this.fetchTasks2();
         this.setState({ load2: false });
       })
       .catch((err) => console.error(err));
@@ -649,6 +666,7 @@ function Carga(props) {
       <FormGroup>
         <Dropdown
           name="Dep"
+          onChange={props.this.handleChangeP}
           options={props.this.state.options}
           value={props.this.state.option}
           placeholder="Seleccione usuarios a cargar"
@@ -685,7 +703,8 @@ function Maestro(props) {
         <Table>
           <thead>
             <tr>
-              <th>Nombre y Apellido</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
               <th>No. Registro</th>
               <th>Telefono</th>
               <th>Direccion</th>
@@ -717,10 +736,19 @@ function Maestro(props) {
         </ModalHeader>
         <ModalBody>
           <FormGroup>
-            <label>Nombre y Apellido:</label>
+            <label>Nombre</label>
             <input
               className="form-control"
-              name="user"
+              name="nombre"
+              type="text"
+              onChange={props.this.handleChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Apellido</label>
+            <input
+              className="form-control"
+              name="apellido"
               type="text"
               onChange={props.this.handleChange}
             />
@@ -828,13 +856,23 @@ function Maestro(props) {
         </ModalHeader>
         <ModalBody>
           <FormGroup>
-            <label>Nombre y Apellido:</label>
+            <label>Nombre</label>
             <input
               className="form-control"
-              name="user"
+              name="nombre"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.user}
+              value={props.this.state.data.nombre}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Apellido</label>
+            <input
+              className="form-control"
+              name="apellido"
+              type="text"
+              onChange={props.this.handleChange}
+              value={props.this.state.data.apellido}
             />
           </FormGroup>
           <FormGroup>
@@ -947,7 +985,8 @@ function IfyesM(props) {
   return (
     <tbody>
       <tr key={dato.registro}>
-        <td>{dato.nombre_apellido}</td>
+        <td>{dato.nombre}</td>
+        <td>{dato.apellido}</td>
         <td>{dato.registro}</td>
         <td>{dato.telefono}</td>
         <td>{dato.direccion}</td>
@@ -977,7 +1016,8 @@ function ElseM(props) {
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
       <tr key={dato.registro}>
-        <td>{dato.nombre_apellido}</td>
+         <td>{dato.nombre}</td>
+        <td>{dato.apellido}</td>
         <td>{dato.registro}</td>
         <td>{dato.telefono}</td>
         <td>{dato.direccion}</td>
@@ -1008,7 +1048,8 @@ function Alumno(props) {
         <Table>
           <thead>
             <tr>
-              <th>Nombre y Apellido</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
               <th>Carne</th>
               <th>Telefono</th>
               <th>Direccion</th>
@@ -1037,10 +1078,19 @@ function Alumno(props) {
         </ModalHeader>
         <ModalBody>
           <FormGroup>
-            <label>Nombre y Apellido:</label>
+            <label>Nombre</label>
             <input
               className="form-control"
-              name="user"
+              name="nombre"
+              type="text"
+              onChange={props.this.handleChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Apellido</label>
+            <input
+              className="form-control"
+              name="apellido"
               type="text"
               onChange={props.this.handleChange}
             />
@@ -1112,13 +1162,23 @@ function Alumno(props) {
         </ModalHeader>
         <ModalBody>
           <FormGroup>
-            <label>Nombre y Apellido:</label>
+            <label>Nombre</label>
             <input
               className="form-control"
-              name="user"
+              name="nombre"
               type="text"
               onChange={props.this.handleChange}
-              value={props.this.state.data.user}
+              value={props.this.state.data.nombre}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Apellido</label>
+            <input
+              className="form-control"
+              name="apellido"
+              type="text"
+              onChange={props.this.handleChange}
+              value={props.this.state.data.apellido}
             />
           </FormGroup>
           <FormGroup>
@@ -1196,7 +1256,8 @@ function IfyesA(props) {
   return (
     <tbody>
       <tr key={dato.carnet}>
-        <td>{dato.nombre_apellido}</td>
+        <td>{dato.nombre}</td>
+        <td>{dato.apellido}</td>
         <td>{dato.carnet}</td>
         <td>{dato.telefono}</td>
         <td>{dato.direccion}</td>
@@ -1223,7 +1284,8 @@ function ElseA(props) {
   return (
     <tbody style={{ backgroundColor: "#F44336" }}>
       <tr key={dato.carnet}>
-        <td>{dato.nombre_apellido}</td>
+        <td>{dato.nombre}</td>
+        <td>{dato.apellido}</td>
         <td>{dato.carnet}</td>
         <td>{dato.telefono}</td>
         <td>{dato.direccion}</td>

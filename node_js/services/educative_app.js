@@ -63,11 +63,12 @@ async function login(user){
         `CALL usuario_login('${user.nombre}','${user.pass}','${user.rol}');`
     );
     const resp = rows[0];
-
+    console.log(user)
     console.log(resp[0].msg_err);
-    if(resp[0].msg_err == ""){
+    if(resp[0].msg_err == ''){
+        console.log('hola');
         return {
-            "id_user":resp[0].resp
+            "id":resp[0].resp
         }
     }else{
         return {

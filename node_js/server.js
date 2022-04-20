@@ -1,16 +1,16 @@
 const express = require('express');
-const app = express();
 const port = 8000;
 const educativeApp = require("./routes/educative_app")
+const cors = require('cors');
+const morgan = require('morgan');
+const app = express();
 
-
-
+app.use(morgan('dev'));
+app.use(cors());
 app.use(express.json());
-app.use(
-    express.urlencoded({
-        extended:true,
-    })
-);
+app.use(express.urlencoded({ extended: false }));
+app.use('/static', express.static('upload'));
+
 
 app.get("/", (req,res)=>{
     res.json({"message":"ok"});
@@ -19,13 +19,6 @@ app.get("/", (req,res)=>{
 
 
 app.use("/app",educativeApp);
-
-app.use((err,req,res,next)=>{
-    const statusCode = err.statusCode || 500;
-    console.error(err.message,err.stack);
-    res.status(statusCode).json({message:err.message});
-    return;
-});
 
 app.listen(port,()=>{
     console.log("hello world");
