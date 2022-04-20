@@ -39,8 +39,23 @@ async function update(req, res){
   res.json({ msg: "datos actualizado correctamente" });
 }
 
+async function delete_(req, res){
+  console.log(req.body);
+  let data = req.body
+  var rows = await db.query(
+    `CALL alumno_update_delete("2", "","", "${data.Carnet}", "", "", "", "0");`
+  );
+  const resp = rows[0];
+  if (resp[0].msg_err != "") {
+    console.log(resp[0].msg_err);
+    res.json({ msg: `${resp[0].msg_err}` });
+  }
+  res.json({ msg: "dato eliminado correctamente" });
+}
+
 module.exports = {
   insert,
   select, 
-  update
+  update, 
+  delete_
 };

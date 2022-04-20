@@ -25,7 +25,23 @@ async function carga(req, res) {
   res.json({ msg: "datos cargados correctamente" });
 }
 
-async function carga_maestros(data) {}
+async function carga_maestros(data) {
+  const connection = await mysql.createConnection(config.db);
+  // var pool = mysql.createPool(config.db);
+  await data.map(async (maestro) => {
+    var rows = await db.queryOnly( connection, 
+      `CALL maestro_create("${maestro.Nombre}","${maestro.Apellido}","${maestro.Carnet}", "${maestro.Telefono}", "${maestro.Direccion}", "${maestro.Correo}", "${maestro.Contrasena}");`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      return {
+        msg: resp[0].msg_err,
+      };
+    }
+  });
+
+}
 
 async function carga_alumnos(data) {
   const connection = await mysql.createConnection(config.db);

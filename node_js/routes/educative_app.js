@@ -55,10 +55,16 @@ router.post('/adminRegister',async function(req,res,next){
     }
 })
 
+router.post('/carga', upload);
 
+router.post('/carga_sel', bulk);
+
+router.post('/insert_alumno', student.insert);
 
 router.get('/select_alumno', student.select);
 
-router.put('/update_alumno', student.update)
+router.put('/update_alumno', student.update);
+
+router.delete('/delete_alumno', student.delete_);
 
  module.exports = router
