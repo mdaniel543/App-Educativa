@@ -63,19 +63,38 @@ async function login(user){
         `CALL usuario_login('${user.nombre}','${user.pass}','${user.rol}');`
     );
     const resp = rows[0];
-    console.log(user)
+
     console.log(resp[0].msg_err);
-    if(resp[0].msg_err == ''){
-        console.log('hola');
-        return {
-            "id":resp[0].resp
-        }
-    }else{
-        return {
-            "msg":resp[0].msg_err
-        }
+
+    const aux = {
+        "msg":resp[0].msg_err
+    }
+    if(resp[0].msg_err !== ""){
+        return aux
+    }
+
+    return {
+        "id":resp[0].resp
     }
 }
+
+
+/**
+ * UPDATE DELETE ALUMNO
+ */
+
+ async function update_delete(alumno){
+    const result = await db.query(
+        `CALL alumno_update_delete(${alumno.tipo_operacion},"${alumno.nombre}","${alumno.apellido}","${alumno.carnet}","${alumno.telefono}","${alumno.direccion}","${alumno.correo}",${alumno.estado});`
+    );
+    const resp = rows;
+
+    let msg = 'Error during update_delete procces';
+    if (result.affectedRows) message = 'User update_delete successfully';
+    return {message};
+}
+
+
 
 
 module.exports = {

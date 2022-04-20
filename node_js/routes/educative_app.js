@@ -2,10 +2,6 @@ const express = require('express');
 const { append } = require('express/lib/response');
 const router = express.Router();
 const educative_app = require('../services/educative_app');
-
-const upload = require('../services/upload');
-const bulk = require('../services/bulk_load');
-const student = require('../services/student')
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -56,10 +52,5 @@ router.post('/adminRegister',async function(req,res,next){
 })
 
 
-router.post('/carga', upload);
-
-router.post('/carga_sel', bulk);
-
-router.post('/insert_alumno', student.insert);
 
  module.exports = router
