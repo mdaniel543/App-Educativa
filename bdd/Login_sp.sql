@@ -12,11 +12,30 @@ BEGIN
 		SELECT count(*) into numresp from  Administrador where nombre = par_usuario and Pass = par_pass;
 
 		if numresp = 1 THEN
-			-- set resp = 'ok';
 			select cast(idAdministrador as char (100)) into resp from Administrador where nombre = par_usuario and Pass = par_pass;
 		ELSE
 			set msg_err = 'revisar las credenciales';
 		end if;
+
+	elseif (par_rol = 'E') THEN
+		SELECT count(*) into numresp from Alumno where carnet = par_usuario and Pass = par_pass;
+
+		if numresp = 1 THEN
+			select cast(idAlumno as char (100)) into resp from Alumno where carnet = par_usuario and Pass = par_pass;
+		ELSE
+			set msg_err = 'revisar las credenciales';
+		end if;
+
+	elseif (par_rol = 'M') THEN
+		SELECT count(*) into numresp from Maestro where registro = par_usuario and Pass = par_pass;
+
+		if numresp = 1 THEN
+			select cast(idMaestro as char (100)) into resp from Maestro where registro = par_usuario and Pass = par_pass;
+		ELSE
+			set msg_err = 'revisar las credenciales';
+		end if;
+	ELSE
+		set msg_err = 'Rol no reconocido';
 	end if;
 
 	SELECT msg_err, resp;
