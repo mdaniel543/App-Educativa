@@ -40,6 +40,8 @@ class admin extends Component {
       modalInsertarA: false,
       modalEditarM: false,
       modalEditarA: false,
+      ModalAsignarM: false,
+      ModalAsignarE: false,
       tasks: [],
       tasks2: [],
       data: {
@@ -92,10 +94,6 @@ class admin extends Component {
       optcarrera: "",
       cursos: [],
       optcurso: "",
-      maestros: [],
-      optmaestro: "",
-      alumnos: [],
-      optalumno: "",
       load2: false,
       load: "",
       pagina: 0,
@@ -344,6 +342,20 @@ class admin extends Component {
     window.location.href = "../";
   };
 
+  mostrarModalAsignacionM(dato) {
+    this.setState({ ModalAsignarM: true, data_maestro: dato });
+  }
+  cerrarModalAsignacionM() {
+    this.setState({ ModalAsignarM: false });
+  }
+
+  mostrarModalAsignacionA(dato) {
+    this.setState({ ModalAsignarE: true, data_alumno: dato });
+  }
+  cerrarModalAsignacionA() {
+    this.setState({ ModalAsignarE: false });
+  }
+
   mostrarModalInsertar() {
     this.setState({ modalInsertarM: true });
   }
@@ -457,7 +469,7 @@ class admin extends Component {
         Correo: dato.Correo_electronico,
         Fecha_nacimiento: this.state.fecha_aux,
         Dpi: dato.DPI,
-        Path_foto: dato.Path_foto,
+        Path_foto: this.state.data.rutaphoto,
         Estado: dato.Estado,
       }),
       headers: {
@@ -632,7 +644,7 @@ class admin extends Component {
   }
 
   fetchCarreras() {
-    fetch("/Select_Carrera") //consulta todos los alumnos en el servidor
+    fetch("/app/Select_Carrera") //consulta todos los alumnos en el servidor
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -641,29 +653,11 @@ class admin extends Component {
   }
 
   fetchCursos() {
-    fetch("/Select_Cursos") //consulta todos los alumnos en el servidor
+    fetch("/app/Select_Cursos") //consulta todos los alumnos en el servidor
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ cursos: data });
-      });
-  }
-
-  fetchMaestros() {
-    fetch("/Select_Maestros") //consulta todos los alumnos en el servidor
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        this.setState({ maestros: data });
-      });
-  }
-
-  fetchAlumno() {
-    fetch("/Select_Alumnos") //consulta todos los alumnos en el servidor
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        this.setState({ alumnos: data });
+        this.setState({ cursos: data.data[0] });
       });
   }
 
@@ -1146,6 +1140,60 @@ function Maestro(props) {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={props.this.state.ModalAsignarM} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Asignar Maestro a curso</h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label>
+              Registro:<b> {props.this.state.data_maestro.Registro} </b>
+            </label>
+            <img
+              src={
+                "http://localhost:8000/static/" +
+                props.this.state.data_maestro.Path_foto
+              }
+              style={{ float: "right" }}
+              alt="Sin Foto"
+              width="80"
+              height="80"
+            ></img>
+          </FormGroup>
+          <FormGroup>
+            <label>
+              {props.this.state.data_maestro.Nombre}{" "}
+              {props.this.state.data_maestro.Apellido}
+            </label>
+          </FormGroup>
+          <FormGroup>
+            <label>Asignar :</label>
+            <Dropdown
+              name="curso"
+              options={props.this.state.cursos}
+              value={props.this.state.optcurso}
+              placeholder="Seleccione el curso"
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={() => props.this.AsignarM(props.this.state.data_maestro)}
+          >
+            Asignar
+          </Button>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalAsignacionM()}
+          >
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }
@@ -1178,9 +1226,7 @@ function IfyesM(props) {
         <td>
           <Button
             color="success"
-            onClick={() =>
-              props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)
-            }
+            onClick={() => props.this.mostrarModalAsignacionM(dato)}
           >
             Asignar
           </Button>
@@ -1204,6 +1250,7 @@ function ElseM(props) {
         <td>{dato.DPI}</td>
         <td>{dato.Nombre}</td>
         <td>{dato.Apellido}</td>
+
         <td>{dato.Telefono}</td>
         <td>{dato.Direccion}</td>
         <td>
@@ -1236,7 +1283,7 @@ function Alumno(props) {
             <tr>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Carne</th>
+              <th>Carnet</th>
               <th>Telefono</th>
               <th>Direccion</th>
               <th>Correo</th>
@@ -1437,6 +1484,50 @@ function Alumno(props) {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={props.this.state.ModalAsignarE} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Asignar Alumno a Carrera</h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label>
+              Carnet:<b> {props.this.state.data_alumno.Carnet} </b>
+            </label>
+          </FormGroup>
+          <FormGroup>
+            <label>
+              {props.this.state.data_alumno.Nombre}{" "}
+              {props.this.state.data_alumno.Apellido}
+            </label>
+          </FormGroup>
+          <FormGroup>
+            <label>Asignar :</label>
+            <Dropdown
+              name="curso"
+              options={props.this.state.carreras}
+              value={props.this.state.optcarrera}
+              placeholder="Seleccione la carrera"
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={() => props.this.AsignarE(props.this.state.data_alumno)}
+          >
+            Asignar
+          </Button>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalAsignacionA()}
+          >
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }
@@ -1464,7 +1555,7 @@ function IfyesA(props) {
           <Button
             color="success"
             onClick={() =>
-              props.this.mostrarModalActualizarM(dato, dato.Fecha_nacimiento)
+              props.this.mostrarModalAsignacionA(dato)
             }
           >
             Asignar
