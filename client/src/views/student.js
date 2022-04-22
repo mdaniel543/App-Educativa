@@ -6,7 +6,6 @@ import Moment from "react-moment";
 import Dropdown from "react-dropdown";
 
 import "../styles/profile.css";
-import "../styles/card.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-dropdown/style.css";
 
@@ -33,24 +32,24 @@ import {
   ModalFooter,
 } from "reactstrap";
 
-class teacher extends Component {
+class student extends Component {
   constructor(props) {
     super(props);
     this.state = {
       id: props.id,
+      Carrera: [],
       datos: [],
-      materias: []
     };
-    this.fetchMaestro();
+    this.fetchAlumno();
   }
 
-  fetchMaestro() {
+  fetchAlumno() {
     console.log(this.state.id);
-    fetch("/app/maestro_get_by_id", {
+    fetch("/app/alumno_get_by_id", {
       method: "POST",
       body: JSON.stringify({
-        idMaestro: this.state.id,
-        Registro: "",
+        idAlumno: this.state.id,
+        carnet: "",
       }),
       headers: {
         Accept: "application/json",
@@ -61,12 +60,33 @@ class teacher extends Component {
       .then((data) => {
         console.log(data);
         this.setState({ datos: data });
+        this.fetchCarrera(data.idCarrera);
       });
   }
 
-  fetchMaterias(idMaestro){
-
+  fetchCarrera(idCarrera){
+    if(idCarrera == null){
+        return;
+    }
+    fetch("/app/carrera_get_by_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idCarrera: idCarrera,
+        Nombre_carrera: "",
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Carrera: data });
+      });
   }
+
+  fetch
 
   cerrarSesion = () => {
     window.location.href = "../";
@@ -77,66 +97,31 @@ class teacher extends Component {
       <div>
         <Barra this={this} />
         <div style={{ float: "right" }} class="containere">
-          <div class="avatar-flip">
-            <img
-              src={"http://localhost:8000/static/" + this.state.datos.Path_foto}
-              height="150"
-              width="150"
-            />
-            <img
-              src={"http://localhost:8000/static/" + this.state.datos.Path_foto}
-              height="150"
-              width="150"
-            />
-          </div>
           <h2>
             {this.state.datos.Nombre} {this.state.datos.Apellido}
           </h2>
           <h4>{this.state.datos.Correo_electronico}</h4>
+          <h3 style={{ textTransform: "uppercase"}}>{this.state.Carrera.Nombre_carrera}</h3>
         </div>
         <div className="box"></div>
         <div className="xmt">
-          <h2>Modulo Maestro</h2>
+          <h2>Modulo Alumno</h2>
         </div>
         <div className="box"></div>
-        <div class="main-container">
-          <div class="heading">
-            <h2 class="heading__title">Materias Asignadas</h2>
-          </div>
-          <div class="cards">
-            <div class="card card-1">
-              <p class="card__exit">
-                <i class="fas fa-times"></i>
-              </p>
-              <h2 class="card__title">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </h2>
-              <p class="card__apply">
-                <a class="card__link" href="#">
-                  Ir <i class="fas fa-arrow-right"></i>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Container>
+          <Tabs>
+            <TabList>
+              <Tab>Publicacion</Tab>
+              <Tab>Actividades</Tab>
+              <Tab>Notas</Tab>
+              <Tab>Notificaciones</Tab>
+              <Tab>Examenes</Tab>
+            </TabList>
+          </Tabs>
+        </Container>
       </div>
     );
   }
 }
 
-function Materia() {
-  return (
-    <Container>
-      <Tabs>
-        <TabList>
-          <Tab>Publicacion</Tab>
-          <Tab>Actividades</Tab>
-          <Tab>Examen</Tab>
-          <Tab>Alumnos</Tab>
-        </TabList>
-      </Tabs>
-    </Container>
-  );
-}
-
-export default teacher;
+export default student;

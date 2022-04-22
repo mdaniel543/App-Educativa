@@ -783,7 +783,7 @@ class admin extends Component {
   }
 
   Asignar_alumno_carrera(data) {
-    fetch("/asignacion_alumno_carrera", {
+    fetch("/app/assign_alumno_carrera", {
       method: "POST",
       body: JSON.stringify({
         idAlumno: data.idAlumno,

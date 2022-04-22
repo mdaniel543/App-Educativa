@@ -67,7 +67,7 @@ router.post('/carga_sel', bulk);
  * CRUD ALUMNO
  */
 
-router.get('/alumno_get_by_id',student.get_by_id);
+router.post('/alumno_get_by_id',student.get_by_id);
 
 
 router.post('/selectEstudiantes',async function(req,res,next){
@@ -93,7 +93,7 @@ router.delete('/delete_alumno', student.delete_);
 
 router.post('/insert_maestro',professor.insert);
 
-router.get('/maestro_get_by_id',professor.get_by_id);
+router.post('/maestro_get_by_id',professor.get_by_id);
 
 router.post('/selectMaestros',async function(req,res,next){
     try {
@@ -121,7 +121,7 @@ router.put('/update_carrera', carrera.update);
 
 router.delete('/delete_carrera', carrera.delete_);
 
-router.get('/carrera_get_by_id',carrera.get_by_id);
+router.post('/carrera_get_by_id',carrera.get_by_id);
 
 /**
  * CURSOS
