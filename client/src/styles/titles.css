@@ -111,7 +111,7 @@
     color: #193b48;
   }
   50% {
-    color: #fda543;
+    color: #000000;
   }
 }
 @-moz-keyframes colorFades {
@@ -119,7 +119,7 @@
     color: #193b48;
   }
   50% {
-    color: #fda543;
+    color: #000000;
   }
 }
 @keyframes colorFades {
@@ -127,7 +127,7 @@
     color: #193b48;
   }
   50% {
-    color: #fda543;
+    color: #000000;
   }
 }
 @-webkit-keyframes colorFadese {

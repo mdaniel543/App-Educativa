@@ -41,6 +41,7 @@ class teacher extends Component {
       datos: [],
       materias: [],
       bandera: true,
+      seleccion:{}
     };
     this.fetchMaestro();
     //
@@ -84,8 +85,8 @@ class teacher extends Component {
         this.setState({ materias: data });
       });
   }
-  mostrar() {
-    this.setState({ bandera: false });
+  mostrar(datos) {
+    this.setState({ bandera: false, seleccion: datos });
   }
   cerrarMostrar(){
     this.setState({ bandera: true });
@@ -148,7 +149,7 @@ function MateriasA(props) {
               <i class="fas fa-times"></i>
             </p>
             <p class="card__apply">
-              <a class="card__link" onClick={() => props.this.mostrar()}>
+              <a class="card__link" onClick={() => props.this.mostrar(dato)}>
               <h2 class="card__title">{dato.Nombre}</h2> <i class="fas fa-arrow-right"></i>
               </a>
             </p>
@@ -163,6 +164,9 @@ function MateriasA(props) {
 function Materia(props) {
   return (
     <Container>
+    <div className="xml">
+        <u><h3 style={{ textTransform: "uppercase" }}>{props.this.state.seleccion.Nombre}</h3></u>
+    </div>
       <Button
         style={{ float: "right" }} 
         className="btn btn-danger"
