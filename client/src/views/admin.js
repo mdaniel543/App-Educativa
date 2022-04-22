@@ -91,6 +91,7 @@ class admin extends Component {
       options: ["Maestro", "Alumno"],
       option: "",
       carreras: [],
+      listCarreras: [],
       optcarrera: "",
       cursos: [],
       optcurso: "",
@@ -107,6 +108,8 @@ class admin extends Component {
     this.handleChangeCC = this.handleChangeCC.bind(this);
     this.cargarFoto = this.cargarFoto.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
+    this.handleChangeOPC = this.handleChangeOPC.bind(this);
+    this.handleChangeOPCU = this.handleChangeOPCU.bind(this);
 
     //Swal.fire("Mi id", this.props.id, "info");
     this.fetchCarreras();
@@ -303,6 +306,20 @@ class admin extends Component {
         ...this.state.carrera_curso,
         [name]: value,
       },
+    });
+  }
+
+  handleChangeOPC(e) {
+    const { name, value } = e.target;
+    this.setState({
+       optcarrera: value
+    });
+  }
+
+  handleChangeOPCU(e) {
+    const { name, value } = e.target;
+    this.setState({
+       optcurso: value
     });
   }
 
@@ -667,7 +684,7 @@ class admin extends Component {
         for (const i of data) {
           aux.push(i.Nombre_carrera);
         }
-        this.setState({carreras: aux})
+        this.setState({ listCarreras: data, carreras: aux });
       });
   }
 
@@ -680,7 +697,7 @@ class admin extends Component {
         for (const i of data) {
           aux.push(i.Nombre);
         }
-        this.setState({cursos: aux})
+        this.setState({ listCursos:data,  cursos: aux });
       });
   }
 
@@ -725,7 +742,9 @@ class admin extends Component {
   }
 
   Asignar_Curso_Carrera() {
-    fetch("/asignacion_curso_carrera", {
+    console.log(this.state.optcarrera)
+    console.log(this.state.optcurso)
+    fetch("/app/asignacion_curso_carrera", {
       method: "POST",
       body: JSON.stringify({
         carrera: this.state.optcarrera,
@@ -741,6 +760,7 @@ class admin extends Component {
         Swal.fire("Mensaje!", data.msg, "info");
       })
       .catch((err) => console.error(err));
+
   }
 
   Asignar_maestro_curso() {
@@ -1672,23 +1692,31 @@ function Curso_Carrera(props) {
     <FormGroup>
       <div className="boxer"></div>
       <label>Carrera</label>
-      <Dropdown
-        name="carrera"
-        options={props.this.state.carreras}
-        value={props.this.state.optcarrera}
-        placeholder="Seleccione la carrera"
-      />
+      <p></p>
+      <select onChange={props.this.handleChangeOPC} class="form-select" aria-label="Default select example">
+      <option value='0' selected>Seleccione Carrera</option>
+      {props.this.state.listCarreras.map((dep) => (
+        <option key={dep.idCarrera} value={dep.idCarrera}>
+          {dep.Nombre_carrera}
+        </option>
+      ))}
+     </select>
       <div className="boxer" />
       <div className="boxer" />
       <label>Curso</label>
-      <Dropdown
-        name="curso"
-        options={props.this.state.cursos}
-        value={props.this.state.optcurso}
-        placeholder="Seleccione el curso"
-      />
+      <select onChange={props.this.handleChangeOPCU} class="form-select" aria-label="Default select example">
+      <option value='0' selected>Seleccione Curso</option>
+      {props.this.state.listCursos.map((dep) => (
+        <option key={dep.idMateria} value={dep.idMateria}>
+          {dep.Nombre}
+        </option>
+      ))}
+     </select>
       <div className="box"></div>
-      <Button color="primary" onClick={() => props.this.Asignar_Curso_Carrera}>
+      <Button
+        color="primary"
+        onClick={() => props.this.Asignar_Curso_Carrera()}
+      >
         Asignar Curso a Carrera
       </Button>
     </FormGroup>
