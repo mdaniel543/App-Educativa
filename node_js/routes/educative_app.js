@@ -135,6 +135,7 @@ router.put('/update_curso',materia.update);
 
 router.delete('/delete_curso',materia.delete_);
 
+router.post('/materias_get_by_maestro_id', materia.by_maestro_id)
 
 /**
  * ASIGNACION

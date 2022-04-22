@@ -57,12 +57,12 @@
   .card__icon {
     position: relative;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(10, 10, 10, 0.9);
   }
   
   .card__link::after {
     position: absolute;
-    top: 25px;
+    top: 0px;
     left: 0;
     content: "";
     width: 0%;
@@ -88,7 +88,7 @@
   .card__title {
     grid-row: 3/4;
     font-weight: 400;
-    color: #ffffff;
+    color: #000000;
   }
   
   .card__apply {
@@ -99,7 +99,7 @@
   /* CARD BACKGROUNDS */
   
   .card-1 {
-    background: radial-gradient(#285b8b, #1a8fce);
+    background: radial-gradient(#d4ffd2, #ffffff);
   }
   
   .card-2 {

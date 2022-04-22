@@ -22,9 +22,9 @@
   margin-top: 5%;
   font-family: "Source Code Pro";
   text-shadow: 0px 2px 3px #c0c0c0;
-  -webkit-animation: colorFadese 7s;
-  -moz-animation: colorFadese 7s;
-  animation: colorFadese 7s;
+  -webkit-animation: colorFadese 3s;
+  -moz-animation: colorFadese 3s;
+  animation: colorFadese 3s;
   -webkit-animation-iteration-count: infinite;
   -moz-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
@@ -156,26 +156,26 @@
 }
 @-webkit-keyframes colorFadeset {
   0% {
-    color: #5a6d62;
+    color: #7be2a6;
   }
   50% {
-    color: #000000c0;
+    color: #47af58c0;
   }
 }
 @-moz-keyframes colorFadeset {
   0% {
-    color: #5a6d62;
+    color: #7be2a6;
   }
   50% {
-    color: #000000c0;
+    color: #47af58c0;
   }
 }
 @keyframes colorFadeset {
   0% {
-    color: #5a6d62;
+    color: #7be2a6;
   }
   50% {
-    color: #000000c0;
+    color: #47af58c0;
   }
 }
 

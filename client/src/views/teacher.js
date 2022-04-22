@@ -39,9 +39,11 @@ class teacher extends Component {
     this.state = {
       id: props.id,
       datos: [],
-      materias: []
+      materias: [],
+      bandera: true,
     };
     this.fetchMaestro();
+    //
   }
 
   fetchMaestro() {
@@ -61,11 +63,32 @@ class teacher extends Component {
       .then((data) => {
         console.log(data);
         this.setState({ datos: data });
+        this.fetchMaterias();
       });
   }
 
-  fetchMaterias(idMaestro){
-
+  fetchMaterias() {
+    fetch("/app/materias_get_by_maestro_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idMaestro: this.state.id,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ materias: data });
+      });
+  }
+  mostrar() {
+    this.setState({ bandera: false });
+  }
+  cerrarMostrar(){
+    this.setState({ bandera: true });
   }
 
   cerrarSesion = () => {
@@ -94,39 +117,60 @@ class teacher extends Component {
           </h2>
           <h4>{this.state.datos.Correo_electronico}</h4>
         </div>
-        <div className="box"></div>
         <div className="xmt">
           <h2>Modulo Maestro</h2>
         </div>
         <div className="box"></div>
-        <div class="main-container">
-          <div class="heading">
-            <h2 class="heading__title">Materias Asignadas</h2>
-          </div>
-          <div class="cards">
-            <div class="card card-1">
-              <p class="card__exit">
-                <i class="fas fa-times"></i>
-              </p>
-              <h2 class="card__title">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </h2>
-              <p class="card__apply">
-                <a class="card__link" href="#">
-                  Ir <i class="fas fa-arrow-right"></i>
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
+        {(() => {
+          if (this.state.bandera === true) {
+            return <MateriasA this={this} />;
+          } else {
+            return <Materia this={this} />;
+          }
+        })()}
       </div>
     );
   }
 }
 
-function Materia() {
+function MateriasA(props) {
+  return (
+    <div class="main-container">
+      <div class="heading">
+        <u>
+          <h4 class="heading__title">Materias Asignadas</h4>
+        </u>
+      </div>
+      <div class="cards">
+        {props.this.state.materias.map((dato) => (
+          <div class="card card-1">
+            <p class="card__exit">
+              <i class="fas fa-times"></i>
+            </p>
+            <p class="card__apply">
+              <a class="card__link" onClick={() => props.this.mostrar()}>
+              <h2 class="card__title">{dato.Nombre}</h2> <i class="fas fa-arrow-right"></i>
+              </a>
+            </p>
+            <text>{dato.Descripcion}</text>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Materia(props) {
   return (
     <Container>
+      <Button
+        style={{ float: "right" }} 
+        className="btn btn-danger"
+        onClick={() => props.this.cerrarMostrar()}
+      >
+        X
+      </Button>
+        <div className="box"></div>
       <Tabs>
         <TabList>
           <Tab>Publicacion</Tab>
