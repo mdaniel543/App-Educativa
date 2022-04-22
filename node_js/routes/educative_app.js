@@ -142,6 +142,7 @@ router.delete('/delete_curso',materia.delete_);
 
 router.post('/assign_curso_carrera',asignacion.assing_curso_carrera);
 
+router.post('/assign_maestro_curso',asignacion.assign_maestro_curso);
 
 
  module.exports = router
