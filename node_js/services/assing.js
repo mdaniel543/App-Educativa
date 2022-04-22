@@ -14,7 +14,7 @@ async function assign_alumno_curso(req,res){
 async function assing_curso_carrera(req,res){
     let data = req.body;
     const rows = await db.query(
-        `CALL pensum_asignar(${data.idCarrera},${data.idCurso});`
+        `CALL pensum_asignar(${data.idCurso},${data.idCarrera});`
     );
 
     const resp = rows[0];
