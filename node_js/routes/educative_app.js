@@ -131,6 +131,9 @@ router.post('/insert_curso', materia.insert);
 
 router.get('/Select_Cursos', materia.select);
 
+router.put('/update_curso',materia.update);
+
+router.delete('/delete_curso',materia.delete_);
 
 
 

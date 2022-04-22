@@ -22,7 +22,43 @@ async function select(req, res) {
   res.json(resp);
 }
 
+
+async function update(req,res){
+  let data = req.body;
+  const rows = await db.query(
+    `CALL materia_update_delete(1,${data.idMateria},"${data.nombre_materia}","${data.descripcion}",${data.estado});`
+  );
+
+  const resp = rows[0];
+  if (resp[0].msg_err != "") {
+    //console.log(resp[0].msg_err);
+    res.json({ msg: `${resp[0].msg_err}` });
+  }
+  res.json({ msg: resp[0].resp });
+  
+
+}
+
+async function delete_(req,res){
+  let data = req.body;
+  const rows = await db.query(
+    `CALL materia_update_delete(2,${data.idMateria},"${data.nombre_materia}","",0);`
+  );
+
+  const resp = rows[0];
+  if (resp[0].msg_err != "") {
+    //console.log(resp[0].msg_err);
+    res.json({ msg: `${resp[0].msg_err}` });
+  }
+  res.json({ msg: resp[0].resp });
+  
+
+}
+
 module.exports = {
   insert,
   select,
+  update,
+  delete_
+
 };
