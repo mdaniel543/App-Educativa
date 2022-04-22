@@ -50,10 +50,20 @@ async function delete_(req,res){
 
 }
 
+async function get_by_id(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL carrera_get_by_id(${data.idCarrera},"${data.Nombre_carrera}");`
+  );
+  const resp = result[0];
+  res.json(resp[0]);
+}
+
 
 module.exports = {
   insert,
   select,
   update,
   delete_,
+  get_by_id,
 };

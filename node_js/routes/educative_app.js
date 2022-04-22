@@ -117,9 +117,11 @@ router.post('/insert_carrera', carrera.insert);
 
 router.get('/Select_Carrera', carrera.select);
 
-router.post('/update_carrera', carrera.update);
+router.put('/update_carrera', carrera.update);
 
 router.delete('/delete_carrera', carrera.delete_);
+
+router.get('/carrera_get_by_id',carrera.get_by_id);
 
 /**
  * CURSOS
