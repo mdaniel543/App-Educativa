@@ -39,6 +39,9 @@ class student extends Component {
       id: props.id,
       Carrera: [],
       datos: [],
+      Pensum: [],
+      bandera: true,
+      seleccion: {},
     };
     this.fetchAlumno();
   }
@@ -61,6 +64,7 @@ class student extends Component {
         console.log(data);
         this.setState({ datos: data });
         this.fetchCarrera(data.idCarrera);
+        this.fetchPensum(data.idCarrera);
       });
   }
 
@@ -90,7 +94,7 @@ class student extends Component {
     if (idCarrera == null) {
       return;
     }
-    fetch("/app/carrera_get_by_id", {
+    fetch("/app/materias_get_by_carrera_id", {
       method: "POST",
       body: JSON.stringify({
         idCarrera: idCarrera,
@@ -105,6 +109,12 @@ class student extends Component {
         console.log(data);
         this.setState({ Pensum: data });
       });
+  }
+  mostrar(datos) {
+    this.setState({ bandera: false, seleccion: datos });
+  }
+  cerrarMostrar() {
+    this.setState({ bandera: true });
   }
 
   cerrarSesion = () => {
@@ -128,23 +138,75 @@ class student extends Component {
           <h2>Modulo Alumno</h2>
         </div>
         <div className="box"></div>
+        {(() => {
+          if (this.state.bandera === true) {
+            return <MateriasA this={this} />;
+          } else {
+            return <Materia this={this} />;
+          }
+        })()}
       </div>
     );
   }
 }
 
-function Curso(props) {
-  <Container>
-    <Tabs>
-      <TabList>
-        <Tab>Publicacion</Tab>
-        <Tab>Actividades</Tab>
-        <Tab>Notas</Tab>
-        <Tab>Notificaciones</Tab>
-        <Tab>Examenes</Tab>
-      </TabList>
-    </Tabs>
-  </Container>;
+function MateriasA(props) {
+  return (
+    <div class="main-container">
+      <div class="heading">
+        <u>
+          <h4 class="heading__title">Materias de la carrera</h4>
+        </u>
+      </div>
+      <div class="cards">
+        {props.this.state.Pensum.map((dato) => (
+          <div class="card card-1">
+            <p class="card__exit">
+              <i class="fas fa-times"></i>
+            </p>
+            <p class="card__apply">
+              <a class="card__link" onClick={() => props.this.mostrar(dato)}>
+                <h2 class="card__title">{dato.Nombre}</h2>{" "}
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </p>
+            <text>{dato.Descripcion}</text>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Materia(props) {
+  return (
+    <Container>
+      <div className="xml">
+        <u>
+          <h3 style={{ textTransform: "uppercase" }}>
+            {props.this.state.seleccion.Nombre}
+          </h3>
+        </u>
+      </div>
+      <Button
+        style={{ float: "right" }}
+        className="btn btn-danger"
+        onClick={() => props.this.cerrarMostrar()}
+      >
+        X
+      </Button>
+      <div className="box"></div>
+      <Tabs>
+        <TabList>
+          <Tab>Publicacion</Tab>
+          <Tab>Actividades</Tab>
+          <Tab>Notas</Tab>
+          <Tab>Notificaciones</Tab>
+          <Tab>Examenes</Tab>
+        </TabList>
+      </Tabs>
+    </Container>
+  );
 }
 
 export default student;
