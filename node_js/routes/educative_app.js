@@ -123,6 +123,8 @@ router.delete('/delete_carrera', carrera.delete_);
 
 router.post('/carrera_get_by_id',carrera.get_by_id);
 
+router.get('/materias_get_by_carrera_id',carrera.get_cursos);
+
 /**
  * CURSOS
  */
