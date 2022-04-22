@@ -32,7 +32,7 @@ BEGIN
     DECLARE numresp int;
 
     if(par_id_alumno >0) then
-        select * from Materia m 
+        select m.* from Materia m 
         join Pensum p on p.idMateria = m.idMateria
         join Carrera c on c.idCarrera = p.idCarrera
         join Alumno a on a.idCarrera = c.idCarrera
