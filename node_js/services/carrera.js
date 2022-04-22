@@ -22,7 +22,23 @@ async function select(req, res) {
   res.json(resp);
 }
 
+async function update(req,res){
+  //console.log(req.body);
+  let data = req.body;
+  const rows = await db.query(
+    `CALL carrera_update_delete(${data.tipo_operacion},${data.idCarrera},"${data.nombre_carrera}","${data.descripcion}",${data.estado});`
+  );
+  const resp = rows[0];
+  if (resp[0].msg_err != "") {
+    console.log(resp[0].msg_err);
+    res.json({ msg: `${resp[0].msg_err}` });
+  }
+  res.json({ msg: resp[0].resp });
+}
+
+
 module.exports = {
   insert,
   select,
+  update,
 };

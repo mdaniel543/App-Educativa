@@ -109,16 +109,25 @@ router.put('/update_maestro',professor.update);
 
 router.delete('/delete_maestro',professor.delete_);
 
-/*carrera
-*/
+/**
+ * CARRERAS
+ */
 
 router.post('/insert_carrera', carrera.insert);
 
 router.get('/Select_Carrera', carrera.select);
 
+router.post('/update_carrera', carrera.update);
+
+/**
+ * CURSOS
+ */
+
 router.post('/insert_curso', materia.insert);
 
 router.get('/Select_Cursos', materia.select);
+
+
 
 
  module.exports = router
