@@ -1,7 +1,7 @@
--- Alumno: Creacion
+-- Asignacion_maestro: Creacion
 DELIMITER //
-Drop PROCEDURE if EXISTS alumno_asignar_carrera//
-CREATE PROCEDURE alumno_asignar_carrera(par_id_carrera int, par_id_alumno int)
+Drop PROCEDURE if EXISTS materia_asignar_maestro//
+CREATE PROCEDURE materia_asignar_maestro(par_id_materia int, par_id_maestro int)
 BEGIN
 
 	DECLARE resp VARCHAR(100) DEFAULT '';
@@ -9,11 +9,14 @@ BEGIN
 
 	DECLARE numresp int;
 
-	select COUNT(*) into numresp from Alumno where idAlumno = par_id_alumno;
+	select COUNT(*) into numresp from Asignacion_maestro where idMateria = par_id_materia and idMaestro = par_id_maestro;
 
 	if (numresp >0) THEN
-		update Alumno set idCarrera = par_id_carrera where idAlumno = par_id_alumno;
-		set resp = 'Se ha asignado correctamente el alumno a la carrera';
+		set msg_err = 'La materia ya tiene maestro asignado';
+	ELSE
+		insert into Asignacion_maestro(idMateria, idMaestro) 
+        values (par_id_materia, par_id_maestro);
+		set resp = 'El maestro fue asignado correctamente a la materia';
 	END IF;
 
 	SELECT msg_err, resp;
@@ -21,22 +24,38 @@ BEGIN
 END//
 DELIMITER ;
 
--- Asignacion_maestro se obtiene uno en especifico
+-- Asignacion_maestro obtiene todos los registros de la tabla Asignacion_maestro
 DELIMITER //
-Drop PROCEDURE if EXISTS materias_get_by_alumno_id//
-CREATE PROCEDURE materias_get_by_alumno_id(par_id_alumno int)
+Drop PROCEDURE if EXISTS Asignacion_maestro_TODO//
+CREATE PROCEDURE Asignacion_maestro_TODO()
 BEGIN
 
 	DECLARE resp VARCHAR(100) DEFAULT '';
 	DECLARE msg_err VARCHAR(100) DEFAULT '';
     DECLARE numresp int;
 
-    if(par_id_alumno >0) then
-        select * from Materia m 
-        join Pensum p on p.idMateria = m.idMateria
-        join Carrera c on c.idCarrera = p.idCarrera
-        join Alumno a on a.idCarrera = c.idCarrera
-        where a.idAlumno = par_id_alumno;    
+    select * from Maestro m 
+    join Asignacion_maestro am on am.idMaestro = m.idMaestro
+    join Materia mt on mt.idMateria = mt.idMateria;
+
+END//
+DELIMITER ;
+
+-- Asignacion_maestro se obtiene uno en especifico
+DELIMITER //
+Drop PROCEDURE if EXISTS materias_get_by_maestro_id//
+CREATE PROCEDURE materias_get_by_maestro_id(par_id_maestro int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    if(par_id_maestro >0) then
+        select mt.* from Maestro m 
+        join Asignacion_maestro am on am.idMaestro = m.idMaestro
+        join Materia mt on mt.idMateria = am.idMateria
+        where m.idMaestro = par_id_maestro;    
     end if;
     
 END//
