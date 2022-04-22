@@ -762,12 +762,12 @@ class admin extends Component {
       .catch((err) => console.error(err));
   }
 
-  Asignar_maestro_curso() {
-    fetch("/asignacion_curso_carrera", {
+  Asignar_maestro_curso(data) {
+    fetch("/app/assign_maestro_curso", {
       method: "POST",
       body: JSON.stringify({
-        maestro: this.state.optmaestro,
-        curso: this.state.optcurso,
+        idMaestro: data.idMaestro,
+        idCurso: this.state.optcurso,
       }),
       headers: {
         Accept: "application/json",
@@ -776,17 +776,18 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        Swal.fire("Mensaje!", data.msg, "info");
+        this.setState({ModalAsignarM: false})
+        Swal.fire("Mensaje!", data.msg, "success");
       })
       .catch((err) => console.error(err));
   }
 
-  Asignar_alumno_carrera() {
+  Asignar_alumno_carrera(data) {
     fetch("/asignacion_alumno_carrera", {
       method: "POST",
       body: JSON.stringify({
-        alumno: this.state.optalumno,
-        carrera: this.state.optcarrera,
+        idAlumno: data.idAlumno,
+        idCarrera: this.state.optcarrera,
       }),
       headers: {
         Accept: "application/json",
@@ -795,7 +796,8 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        Swal.fire("Mensaje!", data.msg, "info");
+        this.setState({ModalAsignarE: false})
+        Swal.fire("Mensaje!", data.msg, "success");
       })
       .catch((err) => console.error(err));
   }
@@ -1234,7 +1236,9 @@ function Maestro(props) {
         <ModalFooter>
           <Button
             color="primary"
-            onClick={() => props.this.AsignarM(props.this.state.data_maestro)}
+            onClick={() =>
+              props.this.Asignar_maestro_curso(props.this.state.data_maestro)
+            }
           >
             Asignar
           </Button>
@@ -1576,7 +1580,9 @@ function Alumno(props) {
         <ModalFooter>
           <Button
             color="primary"
-            onClick={() => props.this.AsignarE(props.this.state.data_alumno)}
+            onClick={() =>
+              props.this.Asignar_alumno_carrera(props.this.state.data_alumno)
+            }
           >
             Asignar
           </Button>
