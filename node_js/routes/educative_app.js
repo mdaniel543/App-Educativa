@@ -6,6 +6,10 @@ const upload = require('../services/upload');
 const bulk = require('../services/bulk_load');
 const student = require('../services/student');
 const professor = require('../services/profesor');
+
+const carrera = require('../services/carrera');
+const materia = require('../services/materia');
+
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -105,7 +109,16 @@ router.put('/update_maestro',professor.update);
 
 router.delete('/delete_maestro',professor.delete_);
 
+/*carrera
+*/
 
+router.post('/insert_carrera', carrera.insert);
+
+router.get('/Select_Carrera', carrera.select);
+
+router.post('/insert_curso', materia.insert);
+
+router.get('/Select_Cursos', materia.select);
 
 
  module.exports = router

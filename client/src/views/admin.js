@@ -109,7 +109,8 @@ class admin extends Component {
     this.handleChangeP = this.handleChangeP.bind(this);
 
     //Swal.fire("Mi id", this.props.id, "info");
-
+    this.fetchCarreras();
+    this.fetchCursos();
     this.SigPagM();
     this.SigPag();
   }
@@ -403,55 +404,71 @@ class admin extends Component {
   }
 
   eliminarM(dato) {
-    this.setState({ load2: true });
-    fetch("/app/delete_maestro", {
-      //eliminar maestro
-      method: "DELETE",
-      body: JSON.stringify({
-        Registro: dato.Registro, //envio solo dpi
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        Swal.fire(
-          "Mensaje !",
-          data.msg, //recibo mensaje
-          "info"
-        );
-        this.fetchTasks();
-        this.setState({ load2: false });
-      })
-      .catch((err) => console.error(err));
+    Swal.fire({
+      title: "Deseas eliminar el maestro?",
+      text: "No se puede revertir!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ load2: true });
+        fetch("/app/delete_maestro", {
+          //eliminar maestro
+          method: "DELETE",
+          body: JSON.stringify({
+            Registro: dato.Registro, //envio solo dpi
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            Swal.fire("Eliminado!", data.msg, "success");
+            this.fetchTasks();
+            this.setState({ load2: false });
+          })
+          .catch((err) => console.error(err));
+      }
+    });
   }
 
   eliminarA(dato) {
-    this.setState({ load2: true });
-    fetch("/app/delete_alumno", {
-      //eliminar alumno
-      method: "DELETE",
-      body: JSON.stringify({
-        Carnet: dato.Carnet, //envio solo carnet
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        Swal.fire(
-          "Mensaje !",
-          data.msg, //recibo mensaje
-          "info"
-        );
-        this.fetchTasks2();
-        this.setState({ load2: false });
-      })
-      .catch((err) => console.error(err));
+    Swal.fire({
+      title: "Deseas eliminar el alumno?",
+      text: "No se puede revertir!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ load2: true });
+        fetch("/app/delete_alumno", {
+          //eliminar alumno
+          method: "DELETE",
+          body: JSON.stringify({
+            Carnet: dato.Carnet, //envio solo carnet
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            Swal.fire("Eliminado!", data.msg, "success");
+            this.fetchTasks2();
+            this.setState({ load2: false });
+          })
+          .catch((err) => console.error(err));
+      }
+    });
   }
 
   editarM(dato) {
@@ -479,13 +496,12 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        Swal.fire(
-          "Mensaje !",
-          data.msg, // solo un mensaje
-          "info"
-        );
+        Swal.fire("Editado!", data.msg, "success");
         this.fetchTasks();
-        this.setState({ load2: false });
+        this.setState({
+          load2: false,
+          data: { ...this.state.data, rutaphoto: "" },
+        });
       })
       .catch((err) => console.error(err));
     this.cerrarModalActualizarM();
@@ -512,11 +528,7 @@ class admin extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        Swal.fire(
-          "Mensaje !",
-          data.msg, // solo un mensaje
-          "info"
-        );
+        Swal.fire("Editado!", data.msg, "success");
         this.fetchTasks2();
         this.setState({ load2: false });
       })
@@ -555,7 +567,10 @@ class admin extends Component {
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
         this.fetchTasks();
-        this.setState({ load2: false });
+        this.setState({
+          load2: false,
+          data: { ...this.state.data, rutaphoto: "" },
+        });
       })
       .catch((err) => console.error(err));
     this.cerrarModalInsertarM();
@@ -648,7 +663,11 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ carreras: data });
+        const aux = [];
+        for (const i of data) {
+          aux.push(i.Nombre_carrera);
+        }
+        this.setState({carreras: aux})
       });
   }
 
@@ -657,12 +676,16 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ cursos: data.data[0] });
+        const aux = [];
+        for (const i of data) {
+          aux.push(i.Nombre);
+        }
+        this.setState({cursos: aux})
       });
   }
 
   crearCarrera() {
-    fetch("/insert_carrera", {
+    fetch("/app/insert_carrera", {
       method: "POST",
       body: JSON.stringify({
         nombre: this.state.carrera_curso.nombre,
@@ -676,12 +699,13 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
+        this.fetchCarreras();
       })
       .catch((err) => console.error(err));
   }
 
   crearCurso() {
-    fetch("/insert_curso", {
+    fetch("/app/insert_curso", {
       method: "POST",
       body: JSON.stringify({
         nombre: this.state.carrera_curso.nombre,
@@ -695,6 +719,7 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
+        this.fetchCursos();
       })
       .catch((err) => console.error(err));
   }
@@ -1554,9 +1579,7 @@ function IfyesA(props) {
         <td>
           <Button
             color="success"
-            onClick={() =>
-              props.this.mostrarModalAsignacionA(dato)
-            }
+            onClick={() => props.this.mostrarModalAsignacionA(dato)}
           >
             Asignar
           </Button>
@@ -1599,7 +1622,7 @@ function Carrera(props) {
         className="form-control"
         name="nombre"
         type="text"
-        onChange={props.this.handleChange}
+        onChange={props.this.handleChangeCC}
       />
       <div className="boxer" />
       <div className="boxer" />
@@ -1607,10 +1630,10 @@ function Carrera(props) {
       <textarea
         class="form-control"
         name="descripcion"
-        onChange={props.this.handleChange}
+        onChange={props.this.handleChangeCC}
       />
       <div className="box"></div>
-      <Button color="primary" onClick={() => props.this.crearCarrera}>
+      <Button color="primary" onClick={() => props.this.crearCarrera()}>
         Crear Carrera
       </Button>
     </FormGroup>
@@ -1626,7 +1649,7 @@ function Curso(props) {
         className="form-control"
         name="nombre"
         type="text"
-        onChange={props.this.handleChange}
+        onChange={props.this.handleChangeCC}
       />
       <div className="boxer" />
       <div className="boxer" />
@@ -1634,10 +1657,10 @@ function Curso(props) {
       <textarea
         class="form-control"
         name="descripcion"
-        onChange={props.this.handleChange}
+        onChange={props.this.handleChangeCC}
       />
       <div className="box"></div>
-      <Button color="primary" onClick={() => props.this.crearCurso}>
+      <Button color="primary" onClick={() => props.this.crearCurso()}>
         Crear Curso
       </Button>
     </FormGroup>
