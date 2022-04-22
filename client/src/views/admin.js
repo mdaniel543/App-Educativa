@@ -312,14 +312,14 @@ class admin extends Component {
   handleChangeOPC(e) {
     const { name, value } = e.target;
     this.setState({
-       optcarrera: value
+      optcarrera: value,
     });
   }
 
   handleChangeOPCU(e) {
     const { name, value } = e.target;
     this.setState({
-       optcurso: value
+      optcurso: value,
     });
   }
 
@@ -697,7 +697,7 @@ class admin extends Component {
         for (const i of data) {
           aux.push(i.Nombre);
         }
-        this.setState({ listCursos:data,  cursos: aux });
+        this.setState({ listCursos: data, cursos: aux });
       });
   }
 
@@ -742,13 +742,13 @@ class admin extends Component {
   }
 
   Asignar_Curso_Carrera() {
-    console.log(this.state.optcarrera)
-    console.log(this.state.optcurso)
-    fetch("/app/asignacion_curso_carrera", {
+    console.log(this.state.optcarrera);
+    console.log(this.state.optcurso);
+    fetch("/app/assign_curso_carrera", {
       method: "POST",
       body: JSON.stringify({
-        carrera: this.state.optcarrera,
-        curso: this.state.optcurso,
+        idCarrera: this.state.optcarrera,
+        idCurso: this.state.optcurso,
       }),
       headers: {
         Accept: "application/json",
@@ -760,7 +760,6 @@ class admin extends Component {
         Swal.fire("Mensaje!", data.msg, "info");
       })
       .catch((err) => console.error(err));
-
   }
 
   Asignar_maestro_curso() {
@@ -1216,12 +1215,20 @@ function Maestro(props) {
           </FormGroup>
           <FormGroup>
             <label>Asignar :</label>
-            <Dropdown
-              name="curso"
-              options={props.this.state.cursos}
-              value={props.this.state.optcurso}
-              placeholder="Seleccione el curso"
-            />
+            <select
+              onChange={props.this.handleChangeOPCU}
+              class="form-select"
+              aria-label="Default select example"
+            >
+              <option value="0" selected>
+                Seleccione Curso
+              </option>
+              {props.this.state.listCursos.map((dep) => (
+                <option key={dep.idMateria} value={dep.idMateria}>
+                  {dep.Nombre}
+                </option>
+              ))}
+            </select>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
@@ -1550,12 +1557,20 @@ function Alumno(props) {
           </FormGroup>
           <FormGroup>
             <label>Asignar :</label>
-            <Dropdown
-              name="curso"
-              options={props.this.state.carreras}
-              value={props.this.state.optcarrera}
-              placeholder="Seleccione la carrera"
-            />
+            <select
+              onChange={props.this.handleChangeOPC}
+              class="form-select"
+              aria-label="Default select example"
+            >
+              <option value="0" selected>
+                Seleccione Carrera
+              </option>
+              {props.this.state.listCarreras.map((dep) => (
+                <option key={dep.idCarrera} value={dep.idCarrera}>
+                  {dep.Nombre_carrera}
+                </option>
+              ))}
+            </select>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
@@ -1693,25 +1708,37 @@ function Curso_Carrera(props) {
       <div className="boxer"></div>
       <label>Carrera</label>
       <p></p>
-      <select onChange={props.this.handleChangeOPC} class="form-select" aria-label="Default select example">
-      <option value='0' selected>Seleccione Carrera</option>
-      {props.this.state.listCarreras.map((dep) => (
-        <option key={dep.idCarrera} value={dep.idCarrera}>
-          {dep.Nombre_carrera}
+      <select
+        onChange={props.this.handleChangeOPC}
+        class="form-select"
+        aria-label="Default select example"
+      >
+        <option value="0" selected>
+          Seleccione Carrera
         </option>
-      ))}
-     </select>
+        {props.this.state.listCarreras.map((dep) => (
+          <option key={dep.idCarrera} value={dep.idCarrera}>
+            {dep.Nombre_carrera}
+          </option>
+        ))}
+      </select>
       <div className="boxer" />
       <div className="boxer" />
       <label>Curso</label>
-      <select onChange={props.this.handleChangeOPCU} class="form-select" aria-label="Default select example">
-      <option value='0' selected>Seleccione Curso</option>
-      {props.this.state.listCursos.map((dep) => (
-        <option key={dep.idMateria} value={dep.idMateria}>
-          {dep.Nombre}
+      <select
+        onChange={props.this.handleChangeOPCU}
+        class="form-select"
+        aria-label="Default select example"
+      >
+        <option value="0" selected>
+          Seleccione Curso
         </option>
-      ))}
-     </select>
+        {props.this.state.listCursos.map((dep) => (
+          <option key={dep.idMateria} value={dep.idMateria}>
+            {dep.Nombre}
+          </option>
+        ))}
+      </select>
       <div className="box"></div>
       <Button
         color="primary"
