@@ -59,6 +59,26 @@ async function get_by_id(req,res){
   res.json(resp[0]);
 }
 
+async function get_cursos(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL materias_get_by_carrera_id(${data.idCarrera});`
+  );
+  let Cursos = []
+  result[0].map(curso =>{
+    let cursoSchema = {
+      "idCurso":curso.idMateria,
+      "Nombre":curso.Nombre,
+      "Descripcion": curso.Descripcion
+    }
+    Cursos.push(cursoSchema)
+  });
+
+  res.contentType('aplication/json').status(200);
+  res.send(JSON.stringify(Cursos));
+
+}
+
 
 module.exports = {
   insert,
@@ -66,4 +86,5 @@ module.exports = {
   update,
   delete_,
   get_by_id,
+  get_cursos
 };
