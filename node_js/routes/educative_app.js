@@ -119,6 +119,8 @@ router.get('/Select_Carrera', carrera.select);
 
 router.post('/update_carrera', carrera.update);
 
+router.delete('/delete_carrera', carrera.delete_);
+
 /**
  * CURSOS
  */
