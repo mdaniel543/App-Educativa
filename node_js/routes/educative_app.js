@@ -9,7 +9,7 @@ const professor = require('../services/profesor');
 
 const carrera = require('../services/carrera');
 const materia = require('../services/materia');
-
+const asignacion = require('../services/assing');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -134,6 +134,13 @@ router.get('/Select_Cursos', materia.select);
 router.put('/update_curso',materia.update);
 
 router.delete('/delete_curso',materia.delete_);
+
+
+/**
+ * ASIGNACION
+ */
+
+router.post('/assign_curso_carrera',asignacion.assing_curso_carrera);
 
 
 
