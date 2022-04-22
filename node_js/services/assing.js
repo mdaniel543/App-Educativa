@@ -18,6 +18,8 @@ async function assign_maestro_curso(req,res){
 }
 
 
+
+
 async function assing_curso_carrera(req,res){
     let data = req.body;
     const rows = await db.query(
@@ -35,10 +37,28 @@ async function assing_curso_carrera(req,res){
 
 }
 
+async function assing_alumno_carrera(req,res){
+  let data = req.body;
+  const rows = await db.query(
+      `CALL alumno_asignar_carrera(${data.idCarrera},${data.idAlumno});`
+  );
+
+  const resp = rows[0];
+if (resp[0].msg_err != "") {
+  console.log(resp[0].msg_err);
+  return {
+    msg: resp[0].msg_err,
+  };
+}
+res.json({ msg: resp[0].resp});
+
+}
+
 
 
 
 module.exports = {
     assign_maestro_curso,
     assing_curso_carrera,
+    assing_alumno_carrera,
 }

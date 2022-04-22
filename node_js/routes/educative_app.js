@@ -144,5 +144,6 @@ router.post('/assign_curso_carrera',asignacion.assing_curso_carrera);
 
 router.post('/assign_maestro_curso',asignacion.assign_maestro_curso);
 
+router.post('/assign_alumno_carrera',asignacion.assing_alumno_carrera);
 
  module.exports = router
