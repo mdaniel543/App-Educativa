@@ -51,10 +51,10 @@ BEGIN
 	DECLARE msg_err VARCHAR(100) DEFAULT '';
     DECLARE numresp int;
 
-    if(par_id_carrera >0) then
-        select * from Maestro m 
+    if(par_id_maestro >0) then
+        select mt.* from Maestro m 
         join Asignacion_maestro am on am.idMaestro = m.idMaestro
-        join Materia mt on mt.idMateria = mt.idMateria
+        join Materia mt on mt.idMateria = am.idMateria
         where m.idMaestro = par_id_maestro;    
     end if;
     
