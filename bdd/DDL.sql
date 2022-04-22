@@ -15,8 +15,10 @@ CREATE TABLE Carrera(
 CREATE TABLE Materia(
   idMateria int auto_increment PRIMARY KEY,
   Nombre varchar(100),
-  Descripcion varchar(100)
+  Descripcion varchar(100),
+  Estado int,
 );
+-- alter table Materia add column Estado int;
 
 create table Maestro(
   idMaestro int auto_increment PRIMARY KEY,
