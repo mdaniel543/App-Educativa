@@ -59,6 +59,6 @@ module.exports = {
   insert,
   select,
   update,
-  delete_
+  delete_,
 
 };
