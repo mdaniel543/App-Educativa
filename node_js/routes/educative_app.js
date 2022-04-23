@@ -12,6 +12,7 @@ const materia = require('../services/materia');
 const asignacion = require('../services/assing');
 
 const actividad =require('../services/actividad');
+const publicacion = require('../services/publicacion');
 
 //const csv = require('fast-csv');
 //const multer = require('multer');
@@ -168,5 +169,13 @@ router.put('/update_actividad',actividad.update);
 router.delete('/delete_actividad',actividad.delete_);
 
 router.get('/get_actividades',actividad.selectActividades);
+
+
+/*
+Publicacion
+*/ 
+
+router.post('/publicacion_get_by_materia_id', publicacion.publicacion_get_by_materia_id);
+router.post('/publicacion_insert', publicacion.insert);
 
  module.exports = router

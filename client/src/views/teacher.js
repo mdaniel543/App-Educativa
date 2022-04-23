@@ -23,6 +23,10 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
 import {
+  Collapse,
+  CardHeader,
+  CardBody,
+  Card,
   Table,
   Button,
   Container,
@@ -43,23 +47,40 @@ class teacher extends Component {
       bandera: true,
       seleccion: {},
       Actividades: [],
+      Publicaciones: [],
       modalInsertar_A: false,
       modalInsert_P: false,
       modalUpdate_P: false,
       data_A: {
-        Nombre: "",
-        Descripcion: "",
+        nombre: "",
+        descripcion: "",
+        valor: 0,
       },
+      data_P: {
+        descripcion: "",
+      },
+      collapsePublicacion: false,
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeP = this.handleChangeP.bind(this);
     this.fetchMaestro();
   }
 
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({
-      data: {
-        ...this.state.data,
+      data_A: {
+        ...this.state.data_A,
+        [name]: value,
+      },
+    });
+  }
+
+  handleChangeP(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data_P: {
+        ...this.state.data_P,
         [name]: value,
       },
     });
@@ -121,6 +142,46 @@ class teacher extends Component {
         this.setState({ Actividades: data });
       });
   }
+
+  FetchPublicaciones(data) {
+    fetch("/app/publicacion_get_by_materia_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Publicaciones: data });
+      });
+  }
+
+  insertPublicaciones() {
+    console.log(this.state.data_P.descripcion)
+    fetch("/app/publicacion_insert", {
+      method: "POST",
+      body: JSON.stringify({
+        descripcion: this.state.data_P.descripcion,
+        id_materia: this.state.seleccion.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ collapsePublicacion: !this.state.collapsePublicacion });
+        Swal.fire("Mensaje!", data.msg, "success");
+        this.FetchPublicaciones(this.state.seleccion);
+      });
+  }
+
   insertarActividad(FA, FE) {
     let fecha_A = `${FA.getFullYear()}/${FA.getMonth() + 1}/${FA.getDate()}`;
     let fecha_E = `${FE.getFullYear()}/${FE.getMonth() + 1}/${FE.getDate()}`;
@@ -130,12 +191,12 @@ class teacher extends Component {
     fetch("/app/insert_actividad", {
       method: "POST",
       body: JSON.stringify({
-        titulo: this.state.data.nombre,
-        descripcion: this.state.data.descripcion,
+        titulo: this.state.data_A.nombre,
+        descripcion: this.state.data_A.descripcion,
         id_materia: this.state.seleccion.idMateria,
         fecha_publicacion: fecha_A,
-        fecha_entrega: fecha_E, 
-        valor: this.state.data.valor
+        fecha_entrega: fecha_E,
+        valor: this.state.data_A.valor,
       }),
       headers: {
         Accept: "application/json",
@@ -153,6 +214,7 @@ class teacher extends Component {
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
     this.fetchActividades(datos);
+    this.FetchPublicaciones(datos);
   }
   cerrarMostrar() {
     this.setState({ bandera: true });
@@ -198,6 +260,9 @@ class teacher extends Component {
           });
       }
     });
+  }
+  mostrarcollapsePublicacion(){
+    this.setState({ collapsePublicacion: !this.state.collapsePublicacion });
   }
 
   render() {
@@ -303,7 +368,90 @@ function Materia(props) {
 }
 
 function Publicacion(props) {
-  return <div></div>;
+  return (
+    <Container>
+      <div className="boxer"></div>
+      <Button
+        color="primary"
+        onClick={() => props.this.mostrarcollapsePublicacion()}
+      >
+        Crear Nueva Publicacion
+      </Button>
+      <Collapse isOpen={props.this.state.collapsePublicacion}>
+        <Card >
+         <center><h5>Ingrese Publicacion</h5></center>
+          <CardBody>
+            <textarea
+              class="form-control"
+              name="descripcion"
+              onChange={props.this.handleChangeP}
+            />
+            <div className="boxer"></div>
+            <Button
+            color="primary"
+            onClick={() => props.this.insertPublicaciones()}
+          >
+            Crear
+          </Button>
+          </CardBody>
+        </Card>
+      </Collapse>
+      <Table striped>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.this.state.Publicaciones.map((dato) =>
+            (() => {
+              if (dato.Estado === 0) {
+                return;
+              } else {
+                return (
+                  <tr key={dato.idPublicacion}>
+                    <td>
+                      <center>
+                        <p>
+                          <b>Descripcion: </b> {dato.Descripcion}
+                        </p>
+                        <p>
+                          <b>Fecha Publicacion: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_publicacion}
+                          </Moment>
+                        </p>
+                      </center>
+                    </td>
+                    <td>
+                      <div className="boxer"></div>
+                      <Button
+                        color="info"
+                        onClick={() => props.this.eliminar_Actividad(dato)}
+                      >
+                        Editar
+                      </Button>
+                    </td>
+                    <td>
+                      <div className="boxer"></div>
+                      <Button
+                        color="warning"
+                        onClick={() => props.this.eliminar_Actividad(dato)}
+                      >
+                        Eliminar
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              }
+            })()
+          )}
+        </tbody>
+      </Table>
+    </Container>
+  );
 }
 
 function Actividad(props) {
