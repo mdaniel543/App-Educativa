@@ -161,4 +161,8 @@ router.post('/insert_actividad',actividad.insert);
 
 router.get('/get_actividad_by_id',actividad.actividad_by_id);
 
+router.put('/update_actividad',actividad.update);
+
+router.delete('/delete_actividad',actividad.delete_);
+
  module.exports = router

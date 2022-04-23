@@ -17,15 +17,33 @@ async function insert(req,res){
 
 
 async function update(req,res){
-
+  let data = req.body
+  var rows = await db.query(
+    `CALL actividad_update_delete("1",${data.idActividad},"${data.titulo}", "${data.descripcion}",${data.id_materia}, "${data.fecha_publicacion}", "${data.fecha_entrega}",${data.valor},${data.estado});`
+  );
+  const resp = rows[0];
+  if (resp[0].msg_err != "") {
+    console.log(resp[0].msg_err);
+    res.json({ msg: `${resp[0].msg_err}` });
+  }
+  res.json({ msg: resp[0].resp });
 }
 
 async function delete_(req,res){
-
+    let data = req.body
+    var rows = await db.query(
+      `CALL actividad_update_delete("2",${data.idActividad},"", "","", "", "","","0");`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      res.json({ msg: `${resp[0].msg_err}` });
+    }
+    res.json({ msg: resp[0].resp });
 }
 
 async function selectActividades(req,res){
-
+    
 }
 
 async function actividad_by_id(req,res){
