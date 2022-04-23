@@ -165,4 +165,6 @@ router.put('/update_actividad',actividad.update);
 
 router.delete('/delete_actividad',actividad.delete_);
 
+router.get('/get_actividades',actividad.selectActividades);
+
  module.exports = router

@@ -43,13 +43,18 @@ async function delete_(req,res){
 }
 
 async function selectActividades(req,res){
-    
+    let data = req.body;
+    const rows = await db.query(
+        `CALL actividad_TODO();`       
+    );
+    const resp = rows[0];
+    res.json(resp);
 }
 
 async function actividad_by_id(req,res){
     let data = req.body;
     const result = await db.query(
-      `CALL actividad_get_by_id(${data.id_actividad})`
+      `CALL actividad_get_by_id(${data.id_actividad});`
     );
     const resp = result[0];
     res.json(resp[0]);
@@ -60,5 +65,6 @@ module.exports = {
     delete_,
     insert,
     selectActividades,
-    actividad_by_id
+    actividad_by_id,
+    selectActividades
 }
