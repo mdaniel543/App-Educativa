@@ -42,6 +42,7 @@ class student extends Component {
       Pensum: [],
       bandera: true,
       seleccion: {},
+      Actividades: [],
     };
     this.fetchAlumno();
   }
@@ -110,9 +111,39 @@ class student extends Component {
         this.setState({ Pensum: data });
       });
   }
+  handleFiles = (files) => {
+    var reader = new FileReader();
+    reader.readAsText(files[0]);
+    const formData = new FormData();
+    formData.append("file", files[0]);
+    axios.post("/app/carga", formData, {}).then((res) => {
+      console.log(res.data.msg);
+    });
+  };
+
+  fetchActividades(data) {
+    console.log(data)
+    fetch("/app/actividad_get_by_materia_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idCurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Actividades: data });
+      });
+  }
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
+    this.fetchActividades(datos);
   }
+
   cerrarMostrar() {
     this.setState({ bandera: true });
   }
@@ -181,12 +212,14 @@ function MateriasA(props) {
 function Materia(props) {
   return (
     <Container>
-      <div className="xml">
-        <u>
-          <h3 style={{ textTransform: "uppercase" }}>
-            {props.this.state.seleccion.Nombre}
-          </h3>
-        </u>
+      <div>
+        <center>
+          <u>
+            <h3 style={{ textTransform: "uppercase" }}>
+              {props.this.state.seleccion.Nombre}
+            </h3>
+          </u>
+        </center>
       </div>
       <Button
         style={{ float: "right" }}
@@ -204,7 +237,76 @@ function Materia(props) {
           <Tab>Notificaciones</Tab>
           <Tab>Examenes</Tab>
         </TabList>
+        <TabPanel>
+          <div></div>
+        </TabPanel>
+        <TabPanel>
+          <Actividad this={props.this}/>
+        </TabPanel>
       </Tabs>
+    </Container>
+  );
+}
+
+function Actividad(props) {
+  return (
+    <Container>
+      <div className="boxer"></div>
+      <div className="box"></div>
+      <Table striped>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.this.state.Actividades.map((dato) =>
+            (() => {
+              if (dato.Estado === 0) {
+                return;
+              } else {
+                return (
+                  <tr key={dato.idActividad}>
+                    <td>
+                      <p>
+                        <b>Fecha Entrega: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_entrega}
+                        </Moment>
+                      </p>
+                      <center>
+                        <p>
+                          <b>Titulo: </b> {dato.Titulo}
+                        </p>
+                        <p>
+                          <b>Descripcion: </b> {dato.Descripcion}
+                        </p>
+                        <p>
+                          <b>Valor: </b>
+                          {dato.Valor}
+                        </p>
+                      </center>
+                    </td>
+                    <td>
+                      <div className="boxer"></div>
+                      <div className="boxer"></div>
+                      <div className="boxer"></div>
+                      <ReactFileReader
+                        multipleFiles={false}
+                        fileTypes={[".*"]}
+                        handleFiles={props.this.handleFiles}
+                      >
+                        <Button color="link">Entregar Actividad</Button>
+                      </ReactFileReader>
+                    </td>
+                  </tr>
+                );
+              }
+            })()
+          )}
+        </tbody>
+      </Table>
     </Container>
   );
 }
