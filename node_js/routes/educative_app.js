@@ -159,6 +159,8 @@ router.post('/assign_alumno_carrera',asignacion.assing_alumno_carrera);
 
 router.post('/insert_actividad',actividad.insert);
 
+router.post('/actividad_get_by_materia_id',actividad.actividad_get_by_materia_id);
+
 router.get('/get_actividad_by_id',actividad.actividad_by_id);
 
 router.put('/update_actividad',actividad.update);

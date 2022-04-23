@@ -41,10 +41,28 @@ class teacher extends Component {
       datos: [],
       materias: [],
       bandera: true,
-      seleccion:{}
+      seleccion: {},
+      Actividades: [],
+      modalInsertar_A: false,
+      modalInsert_P: false,
+      modalUpdate_P: false,
+      data_A: {
+        Nombre: "",
+        Descripcion: "",
+      },
     };
+    this.handleChange = this.handleChange.bind(this);
     this.fetchMaestro();
-    //
+  }
+
+  handleChange(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data: {
+        ...this.state.data,
+        [name]: value,
+      },
+    });
   }
 
   fetchMaestro() {
@@ -85,16 +103,102 @@ class teacher extends Component {
         this.setState({ materias: data });
       });
   }
+
+  fetchActividades(data) {
+    fetch("/app/actividad_get_by_materia_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Actividades: data });
+      });
+  }
+  insertarActividad(FA, FE) {
+    let fecha_A = `${FA.getFullYear()}/${FA.getMonth() + 1}/${FA.getDate()}`;
+    let fecha_E = `${FE.getFullYear()}/${FE.getMonth() + 1}/${FE.getDate()}`;
+    console.log(fecha_A);
+    console.log(fecha_E);
+    console.log(this.state.data);
+    fetch("/app/insert_actividad", {
+      method: "POST",
+      body: JSON.stringify({
+        titulo: this.state.data.nombre,
+        descripcion: this.state.data.descripcion,
+        id_materia: this.state.seleccion.idMateria,
+        fecha_publicacion: fecha_A,
+        fecha_entrega: fecha_E, 
+        valor: this.state.data.valor
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "success");
+        this.fetchActividades(this.state.seleccion);
+        this.setState({ modalInsertar_A: false });
+      });
+  }
+
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
+    this.fetchActividades(datos);
   }
-  cerrarMostrar(){
+  cerrarMostrar() {
     this.setState({ bandera: true });
   }
 
   cerrarSesion = () => {
     window.location.href = "../";
   };
+
+  cerrarModalInsertar_A() {
+    this.setState({ modalInsertar_A: false });
+  }
+
+  mostrarModalInsertar_A() {
+    this.setState({ modalInsertar_A: true });
+  }
+
+  eliminar_Actividad(dato) {
+    Swal.fire({
+      title: "Deseas eliminar la actividad?",
+      text: "No se puede revertir!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch("/app/delete_actividad", {
+          method: "DELETE",
+          body: JSON.stringify({
+            idActividad: dato.idActividad,
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            Swal.fire("Eliminado!", data.msg, "success");
+            this.fetchActividades(this.state.seleccion);
+          });
+      }
+    });
+  }
 
   render() {
     return (
@@ -150,7 +254,8 @@ function MateriasA(props) {
             </p>
             <p class="card__apply">
               <a class="card__link" onClick={() => props.this.mostrar(dato)}>
-              <h2 class="card__title">{dato.Nombre}</h2> <i class="fas fa-arrow-right"></i>
+                <h2 class="card__title">{dato.Nombre}</h2>{" "}
+                <i class="fas fa-arrow-right"></i>
               </a>
             </p>
             <text>{dato.Descripcion}</text>
@@ -164,17 +269,21 @@ function MateriasA(props) {
 function Materia(props) {
   return (
     <Container>
-    <div className="xml">
-        <u><h3 style={{ textTransform: "uppercase" }}>{props.this.state.seleccion.Nombre}</h3></u>
-    </div>
+      <div className="xml">
+        <u>
+          <h3 style={{ textTransform: "uppercase" }}>
+            {props.this.state.seleccion.Nombre}
+          </h3>
+        </u>
+      </div>
       <Button
-        style={{ float: "right" }} 
+        style={{ float: "right" }}
         className="btn btn-danger"
         onClick={() => props.this.cerrarMostrar()}
       >
         X
       </Button>
-        <div className="box"></div>
+      <div className="box"></div>
       <Tabs>
         <TabList>
           <Tab>Publicacion</Tab>
@@ -182,7 +291,172 @@ function Materia(props) {
           <Tab>Examen</Tab>
           <Tab>Alumnos</Tab>
         </TabList>
+        <TabPanel>
+          <Publicacion this={props.this} />
+        </TabPanel>
+        <TabPanel>
+          <Actividad this={props.this} />
+        </TabPanel>
       </Tabs>
+    </Container>
+  );
+}
+
+function Publicacion(props) {
+  return <div></div>;
+}
+
+function Actividad(props) {
+  var [startDate, setStartDate] = useState(null);
+  var [EndDate, setEndDate] = useState(null);
+  return (
+    <Container>
+      <div className="boxer"></div>
+      <Button
+        color="primary"
+        onClick={() => props.this.mostrarModalInsertar_A()}
+      >
+        Crear Actividad
+      </Button>
+      <div className="box"></div>
+      <Table striped>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.this.state.Actividades.map((dato) =>
+            (() => {
+              if (dato.Estado === 0) {
+                return;
+              } else {
+                return (
+                  <tr key={dato.idActividad}>
+                    <td>
+                      <center>
+                        <p>
+                          <b>Titulo: </b> {dato.Titulo}
+                        </p>
+                        <p>
+                          <b>Descripcion: </b> {dato.Descripcion}
+                        </p>
+                        <p>
+                          <b>Fecha Publicacion: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_publicacion}
+                          </Moment>
+                        </p>
+                        <p>
+                          <b>Fecha Entrega: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_entrega}
+                          </Moment>
+                        </p>
+                        <p>
+                          <b>Valor: </b>
+                          {dato.Valor}
+                        </p>
+                      </center>
+                    </td>
+                    <td>
+                      <div className="boxer"></div>
+                      <div className="boxer"></div>
+                      <div className="boxer"></div>
+                      <Button
+                        color="warning"
+                        onClick={() => props.this.eliminar_Actividad(dato)}
+                      >
+                        Eliminar
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              }
+            })()
+          )}
+        </tbody>
+      </Table>
+      <Modal isOpen={props.this.state.modalInsertar_A} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Crear Actividad</h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label>Titulo</label>
+            <input
+              className="form-control"
+              name="nombre"
+              type="text"
+              onChange={props.this.handleChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Descripicion</label>
+            <textarea
+              class="form-control"
+              name="descripcion"
+              onChange={props.this.handleChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Fecha Publicacion:</label>
+            <DatePicker
+              className="form-control"
+              name="fecha"
+              dateFormat="dd/MM/yyyy"
+              isClearable
+              showYearDropdown
+              placeholderText="Selecciona Fecha"
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              fixedHeight
+              //withPortal
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Fecha Entrega:</label>
+            <DatePicker
+              className="form-control"
+              name="fecha"
+              dateFormat="dd/MM/yyyy"
+              isClearable
+              showYearDropdown
+              placeholderText="Selecciona Fecha"
+              selected={EndDate}
+              onChange={(date) => setEndDate(date)}
+              fixedHeight
+              //withPortal
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Valor</label>
+            <input
+              className="form-control"
+              name="valor"
+              type="number"
+              onChange={props.this.handleChange}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={() => props.this.insertarActividad(startDate, EndDate)}
+          >
+            Crear
+          </Button>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalInsertar_A()}
+          >
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Container>
   );
 }

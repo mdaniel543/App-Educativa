@@ -12,7 +12,7 @@ async function insert(req,res){
         console.log(resp[0].msg_err);
         res.json({ msg: `${resp[0].msg_err}` });
     }
-    res.json({ msg: "datos actualizado correctamente" });
+    res.json({ msg: "Actividad Creada correctamente" });
 }
 
 
@@ -32,7 +32,7 @@ async function update(req,res){
 async function delete_(req,res){
     let data = req.body
     var rows = await db.query(
-      `CALL actividad_update_delete("2",${data.idActividad},"", "","", "", "","","0");`
+      `CALL actividad_update_delete(2,${data.idActividad},"", "","2000/10/10", "2000/10/10", 0.0,0);`
     );
     const resp = rows[0];
     if (resp[0].msg_err != "") {
@@ -60,11 +60,22 @@ async function actividad_by_id(req,res){
     res.json(resp[0]);
 }
 
+async function actividad_get_by_materia_id(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL actividad_get_by_materia_id(${data.idMateria});`
+  );
+  const resp = result[0];
+  res.json(resp);
+}
+
+
 module.exports = {
     update,
     delete_,
     insert,
     selectActividades,
     actividad_by_id,
-    selectActividades
+    selectActividades,
+    actividad_get_by_materia_id
 }
