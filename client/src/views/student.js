@@ -43,6 +43,7 @@ class student extends Component {
       bandera: true,
       seleccion: {},
       Actividades: [],
+      Publicaciones: []
     };
     this.fetchAlumno();
   }
@@ -111,6 +112,25 @@ class student extends Component {
         this.setState({ Pensum: data });
       });
   }
+
+  FetchPublicaciones(data) {
+    fetch("/app/publicacion_get_by_materia_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idCurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Publicaciones: data });
+      });
+  }
+
   handleFiles = (files) => {
     var reader = new FileReader();
     reader.readAsText(files[0]);
@@ -122,7 +142,7 @@ class student extends Component {
   };
 
   fetchActividades(data) {
-    console.log(data)
+    console.log(data);
     fetch("/app/actividad_get_by_materia_id", {
       method: "POST",
       body: JSON.stringify({
@@ -139,9 +159,11 @@ class student extends Component {
         this.setState({ Actividades: data });
       });
   }
+
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
     this.fetchActividades(datos);
+    this.FetchPublicaciones(datos);
   }
 
   cerrarMostrar() {
@@ -238,12 +260,55 @@ function Materia(props) {
           <Tab>Examenes</Tab>
         </TabList>
         <TabPanel>
-          <div></div>
+          <Publicacion this={props.this} />
         </TabPanel>
         <TabPanel>
-          <Actividad this={props.this}/>
+          <Actividad this={props.this} />
         </TabPanel>
       </Tabs>
+    </Container>
+  );
+}
+
+function Publicacion(props) {
+  return (
+    <Container>
+      <div className="box"></div>
+      <Table striped>
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.this.state.Publicaciones.map((dato) =>
+            (() => {
+              if (dato.Estado === 0) {
+                return;
+              } else {
+                return (
+                  <tr key={dato.idPublicacion}>
+                    <td>
+                      <p>
+                        <b>Fecha Publicacion: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_publicacion}
+                        </Moment>
+                      </p>
+                      <center>
+                        <p>
+                          <h5><b>Descripcion: </b> {dato.Descripcion}</h5>
+                        </p>
+                        <div className="boxer"></div>
+                      </center>
+                    </td>
+                  </tr>
+                );
+              }
+            })()
+          )}
+        </tbody>
+      </Table>
     </Container>
   );
 }
@@ -277,7 +342,7 @@ function Actividad(props) {
                       </p>
                       <center>
                         <p>
-                          <b>Titulo: </b> {dato.Titulo}
+                          <h5><b>Titulo: </b> {dato.Titulo}</h5>
                         </p>
                         <p>
                           <b>Descripcion: </b> {dato.Descripcion}
