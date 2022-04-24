@@ -60,6 +60,7 @@ class teacher extends Component {
         descripcion: "",
       },
       collapsePublicacion: false,
+      collapsePublicacion_Editar: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -162,7 +163,7 @@ class teacher extends Component {
   }
 
   insertPublicaciones() {
-    console.log(this.state.data_P.descripcion)
+    console.log(this.state.data_P.descripcion);
     fetch("/app/publicacion_insert", {
       method: "POST",
       body: JSON.stringify({
@@ -213,8 +214,8 @@ class teacher extends Component {
 
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
-    this.fetchActividades(datos);
     this.FetchPublicaciones(datos);
+    this.fetchActividades(datos);
   }
   cerrarMostrar() {
     this.setState({ bandera: true });
@@ -230,6 +231,58 @@ class teacher extends Component {
 
   mostrarModalInsertar_A() {
     this.setState({ modalInsertar_A: true });
+  }
+
+  editar_publicacion() {
+    fetch("/app/publicacion_update", {
+      method: "PUT",
+      body: JSON.stringify({
+        idPublicacion: this.state.data_P.idPublicacion,
+        descripcion: this.state.data_P.Descripcion,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Actualizado!", data.msg, "success");
+        this.FetchPublicaciones(this.state.seleccion);
+        this.setState({
+          collapsePublicacion_Editar: !this.state.collapsePublicacion_Editar,
+        });
+      });
+  }
+
+  eliminar_publicacion(dato) {
+    Swal.fire({
+      title: "Deseas eliminar la publicacion?",
+      text: "No se puede revertir!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch("/app/publicacion_delete", {
+          method: "PUT",
+          body: JSON.stringify({
+            idPublicacion: dato.idPublicacion,
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            Swal.fire("Eliminado!", data.msg, "success");
+            this.FetchPublicaciones(this.state.seleccion);
+          });
+      }
+    });
   }
 
   eliminar_Actividad(dato) {
@@ -261,10 +314,21 @@ class teacher extends Component {
       }
     });
   }
-  mostrarcollapsePublicacion(){
+  mostrarcollapsePublicacion() {
     this.setState({ collapsePublicacion: !this.state.collapsePublicacion });
   }
 
+  mostrarEdicion(dato) {
+    this.setState({
+      collapsePublicacion_Editar: !this.state.collapsePublicacion_Editar,
+      data_P: dato,
+    });
+  }
+  cancelar_editar_publicacion() {
+    this.setState({
+      collapsePublicacion_Editar: !this.state.collapsePublicacion_Editar,
+    });
+  }
   render() {
     return (
       <div>
@@ -378,8 +442,10 @@ function Publicacion(props) {
         Crear Nueva Publicacion
       </Button>
       <Collapse isOpen={props.this.state.collapsePublicacion}>
-        <Card >
-         <center><h5>Ingrese Publicacion</h5></center>
+        <Card>
+          <center>
+            <h5>Ingrese Publicacion</h5>
+          </center>
           <CardBody>
             <textarea
               class="form-control"
@@ -388,11 +454,11 @@ function Publicacion(props) {
             />
             <div className="boxer"></div>
             <Button
-            color="primary"
-            onClick={() => props.this.insertPublicaciones()}
-          >
-            Crear
-          </Button>
+              color="primary"
+              onClick={() => props.this.insertPublicaciones()}
+            >
+              Crear
+            </Button>
           </CardBody>
         </Card>
       </Collapse>
@@ -423,13 +489,14 @@ function Publicacion(props) {
                             {dato.Fecha_publicacion}
                           </Moment>
                         </p>
+                        <div className="boxer"></div>
                       </center>
                     </td>
                     <td>
                       <div className="boxer"></div>
                       <Button
                         color="info"
-                        onClick={() => props.this.eliminar_Actividad(dato)}
+                        onClick={() => props.this.mostrarEdicion(dato)}
                       >
                         Editar
                       </Button>
@@ -438,7 +505,7 @@ function Publicacion(props) {
                       <div className="boxer"></div>
                       <Button
                         color="warning"
-                        onClick={() => props.this.eliminar_Actividad(dato)}
+                        onClick={() => props.this.eliminar_publicacion(dato)}
                       >
                         Eliminar
                       </Button>
@@ -450,6 +517,38 @@ function Publicacion(props) {
           )}
         </tbody>
       </Table>
+      <Modal isOpen={props.this.state.collapsePublicacion_Editar} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Editar Publicacion</h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label>Descripcion</label>
+            <textarea
+              class="form-control"
+              name="Descripcion"
+              value={props.this.state.data_P.Descripcion}
+              onChange={props.this.handleChangeP}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={() => props.this.editar_publicacion()}
+          >
+            Editar
+          </Button>
+          <Button
+            color="danger"
+            onClick={() => props.this.cancelar_editar_publicacion()}
+          >
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Container>
   );
 }

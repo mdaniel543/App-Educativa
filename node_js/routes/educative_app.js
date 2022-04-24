@@ -177,5 +177,7 @@ Publicacion
 
 router.post('/publicacion_get_by_materia_id', publicacion.publicacion_get_by_materia_id);
 router.post('/publicacion_insert', publicacion.insert);
+router.put('/publicacion_update', publicacion.update);
+router.put('/publicacion_delete', publicacion.delete_)
 
  module.exports = router
