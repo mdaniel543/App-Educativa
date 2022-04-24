@@ -61,6 +61,7 @@ class teacher extends Component {
       },
       collapsePublicacion: false,
       collapsePublicacion_Editar: false,
+      Alumnos: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -162,6 +163,24 @@ class teacher extends Component {
       });
   }
 
+  fetchAlumnos(data) {
+    fetch("/app/alumnos_get_by_id_materia", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Alumnos: data });
+      });
+  }
+
   insertPublicaciones() {
     console.log(this.state.data_P.descripcion);
     fetch("/app/publicacion_insert", {
@@ -216,6 +235,7 @@ class teacher extends Component {
     this.setState({ bandera: false, seleccion: datos });
     this.FetchPublicaciones(datos);
     this.fetchActividades(datos);
+    this.fetchAlumnos(datos);
   }
   cerrarMostrar() {
     this.setState({ bandera: true });
@@ -425,6 +445,12 @@ function Materia(props) {
         </TabPanel>
         <TabPanel>
           <Actividad this={props.this} />
+        </TabPanel>
+        <TabPanel>
+          <Examen this={props.this} />
+        </TabPanel>
+        <TabPanel>
+          <Alumnos this={props.this} />
         </TabPanel>
       </Tabs>
     </Container>
@@ -704,6 +730,54 @@ function Actividad(props) {
           </Button>
         </ModalFooter>
       </Modal>
+    </Container>
+  );
+}
+
+function Examen(props) {
+  return <div></div>;
+}
+
+function Alumnos(props) {
+  return (
+    <Container>
+      <div className="box"></div>
+      <Table hover>
+        <thead>
+          <tr>
+            <th>Carnet</th>
+            <th>Nombre Completo</th>
+            <th>Correo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.this.state.Alumnos.map((dato) =>
+            (() => {
+              if (dato.Estado === 1) {
+                return (
+                  <tr key={dato.idAlumno}>
+                    <td>{dato.Carnet}</td>
+                    <td>
+                      {dato.Nombre} {dato.Apellido}
+                    </td>
+                    <td>{dato.Correo_electronico}</td>
+                    <td>
+                      <Button
+                        color="secondary"
+                        onClick={() => props.this.mostrarModallista(dato)}
+                      >
+                        Actividades
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              }
+              return;
+            })()
+          )}
+        </tbody>
+      </Table>
     </Container>
   );
 }

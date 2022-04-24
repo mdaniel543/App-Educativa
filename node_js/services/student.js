@@ -75,11 +75,20 @@ async function selectEstudiantes(page){
   }
 }
 
+async function alumnos_get_by_id_materia(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL alumnos_get_by_id_materia(${data.idMateria});`
+  );
+  const resp = result[0];
+  res.json(resp);
+}
 
 module.exports = {
   insert,
   update, 
   delete_,
   get_by_id,
-  selectEstudiantes
+  selectEstudiantes, 
+  alumnos_get_by_id_materia
 };

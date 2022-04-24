@@ -90,6 +90,7 @@ router.put('/update_alumno', student.update);
 
 router.delete('/delete_alumno', student.delete_);
 
+router.post('/alumnos_get_by_id_materia', student.alumnos_get_by_id_materia)
 
 /**
  * CRUD MAESTRO
