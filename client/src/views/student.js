@@ -22,6 +22,13 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
 import {
+  Collapse,
+  CardHeader,
+  CardTitle,
+  CardSubtitle,
+  CardText,
+  CardBody,
+  Card,
   Table,
   Button,
   Container,
@@ -43,7 +50,7 @@ class student extends Component {
       bandera: true,
       seleccion: {},
       Actividades: [],
-      Publicaciones: []
+      Publicaciones: [],
     };
     this.fetchAlumno();
   }
@@ -273,42 +280,40 @@ function Materia(props) {
 function Publicacion(props) {
   return (
     <Container>
-      <div className="box"></div>
-      <Table striped>
-        <thead>
-          <tr>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.this.state.Publicaciones.map((dato) =>
-            (() => {
-              if (dato.Estado === 0) {
-                return;
-              } else {
-                return (
-                  <tr key={dato.idPublicacion}>
-                    <td>
-                      <p>
+      <div className="boxer"></div>
+      {props.this.state.Publicaciones.map((dato) =>
+        (() => {
+          if (dato.Estado === 0) {
+            return;
+          } else {
+            return (
+              <center>
+                <div style={{ height: "6cm" }}>
+                  <Card
+                    style={{ width: "100%", height: "80%" }}
+                    color="success"
+                    outline
+                  >
+                    <CardBody>
+                      <CardTitle tag="h4">Publicacion</CardTitle>
+                      <CardSubtitle className="mb-2 text-muted" tag="h5">
                         <b>Fecha Publicacion: </b>{" "}
                         <Moment format="DD/MM/YYYY">
                           {dato.Fecha_publicacion}
                         </Moment>
-                      </p>
-                      <center>
-                        <p>
-                          <h5><b>Descripcion: </b> {dato.Descripcion}</h5>
-                        </p>
-                        <div className="boxer"></div>
-                      </center>
-                    </td>
-                  </tr>
-                );
-              }
-            })()
-          )}
-        </tbody>
-      </Table>
+                      </CardSubtitle>
+                      <CardText>
+                        <b>Descripcion: </b> {dato.Descripcion}
+                      </CardText>
+                    </CardBody>
+                  </Card>
+                </div>
+                <div className="boxer"></div>
+              </center>
+            );
+          }
+        })()
+      )}
     </Container>
   );
 }
@@ -317,33 +322,31 @@ function Actividad(props) {
   return (
     <Container>
       <div className="boxer"></div>
-      <div className="box"></div>
-      <Table striped>
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.this.state.Actividades.map((dato) =>
-            (() => {
-              if (dato.Estado === 0) {
-                return;
-              } else {
-                return (
-                  <tr key={dato.idActividad}>
-                    <td>
-                      <p>
-                        <b>Fecha Entrega: </b>{" "}
-                        <Moment format="DD/MM/YYYY">
-                          {dato.Fecha_entrega}
-                        </Moment>
-                      </p>
-                      <center>
+
+      {props.this.state.Actividades.map((dato) =>
+        (() => {
+          if (dato.Estado === 0) {
+            return;
+          } else {
+            return (
+              <center>
+                <div style={{ height: "9cm" }}>
+                  <Card
+                    style={{ width: "100%", height: "80%" }}
+                    color="danger"
+                    outline
+                  >
+                    <CardBody>
+                      <CardTitle tag="h3">{dato.Titulo}</CardTitle>
+                      <CardSubtitle className="mb-2 text-muted" tag="h4">
                         <p>
-                          <h5><b>Titulo: </b> {dato.Titulo}</h5>
+                          <b>Fecha Entrega: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_entrega}
+                          </Moment>
                         </p>
+                      </CardSubtitle>
+                      <CardText>
                         <p>
                           <b>Descripcion: </b> {dato.Descripcion}
                         </p>
@@ -351,27 +354,24 @@ function Actividad(props) {
                           <b>Valor: </b>
                           {dato.Valor}
                         </p>
+                      </CardText>
+                      <center>
+                        <ReactFileReader
+                          multipleFiles={false}
+                          fileTypes={[".*"]}
+                          handleFiles={props.this.handleFiles}
+                        >
+                          <Button color="secondary">Entregar Actividad</Button>
+                        </ReactFileReader>
                       </center>
-                    </td>
-                    <td>
-                      <div className="boxer"></div>
-                      <div className="boxer"></div>
-                      <div className="boxer"></div>
-                      <ReactFileReader
-                        multipleFiles={false}
-                        fileTypes={[".*"]}
-                        handleFiles={props.this.handleFiles}
-                      >
-                        <Button color="link">Entregar Actividad</Button>
-                      </ReactFileReader>
-                    </td>
-                  </tr>
-                );
-              }
-            })()
-          )}
-        </tbody>
-      </Table>
+                    </CardBody>
+                  </Card>
+                </div>
+              </center>
+            );
+          }
+        })()
+      )}
     </Container>
   );
 }

@@ -25,6 +25,9 @@ import "react-tabs/style/react-tabs.css";
 import {
   Collapse,
   CardHeader,
+  CardTitle,
+  CardSubtitle,
+  CardText,
   CardBody,
   Card,
   Table,
@@ -61,7 +64,7 @@ class teacher extends Component {
       },
       collapsePublicacion: false,
       collapsePublicacion_Editar: false,
-      Alumnos: []
+      Alumnos: [],
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -468,18 +471,21 @@ function Publicacion(props) {
         Crear Nueva Publicacion
       </Button>
       <Collapse isOpen={props.this.state.collapsePublicacion}>
-        <Card>
+      <div style={{height:"8cm"}}>
+        <Card style={{width:"100%", height:"100%"}}>
           <center>
             <h5>Ingrese Publicacion</h5>
           </center>
           <CardBody>
             <textarea
+              style={{height:"4cm"}}
               class="form-control"
               name="descripcion"
               onChange={props.this.handleChangeP}
             />
             <div className="boxer"></div>
             <Button
+              style={{width:"100%"}}
               color="primary"
               onClick={() => props.this.insertPublicaciones()}
             >
@@ -487,62 +493,53 @@ function Publicacion(props) {
             </Button>
           </CardBody>
         </Card>
+        </div>
       </Collapse>
-      <Table striped>
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.this.state.Publicaciones.map((dato) =>
-            (() => {
-              if (dato.Estado === 0) {
-                return;
-              } else {
-                return (
-                  <tr key={dato.idPublicacion}>
-                    <td>
+
+      {props.this.state.Publicaciones.map((dato) =>
+        (() => {
+          if (dato.Estado === 0) {
+            return;
+          } else {
+            return (
+              <center>
+                <div style={{height:"7cm"}}>
+                  <Card style={{width:"100%", height:"90%"}}>
+                    <CardBody>
+                      <CardTitle tag="h5">Publicacion</CardTitle>
+                      <CardSubtitle className="mb-2 text-muted" tag="h6">
+                        <b>Fecha Publicacion: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_publicacion}
+                        </Moment>
+                      </CardSubtitle>
+                      <CardText>
+                        <b>Descripcion: </b> {dato.Descripcion}
+                      </CardText>
+                      <div className="boxer"></div>
                       <center>
-                        <p>
-                          <b>Descripcion: </b> {dato.Descripcion}
-                        </p>
-                        <p>
-                          <b>Fecha Publicacion: </b>{" "}
-                          <Moment format="DD/MM/YYYY">
-                            {dato.Fecha_publicacion}
-                          </Moment>
-                        </p>
-                        <div className="boxer"></div>
+                        <Button
+                          color="info"
+                          onClick={() => props.this.mostrarEdicion(dato)}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          color="warning"
+                          onClick={() => props.this.eliminar_publicacion(dato)}
+                        >
+                          Eliminar
+                        </Button>
                       </center>
-                    </td>
-                    <td>
-                      <div className="boxer"></div>
-                      <Button
-                        color="info"
-                        onClick={() => props.this.mostrarEdicion(dato)}
-                      >
-                        Editar
-                      </Button>
-                    </td>
-                    <td>
-                      <div className="boxer"></div>
-                      <Button
-                        color="warning"
-                        onClick={() => props.this.eliminar_publicacion(dato)}
-                      >
-                        Eliminar
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              }
-            })()
-          )}
-        </tbody>
-      </Table>
+                    </CardBody>
+                  </Card>
+                </div>
+              </center>
+            );
+          }
+        })()
+      )}
+
       <Modal isOpen={props.this.state.collapsePublicacion_Editar} fade={false}>
         <ModalHeader>
           <div>
@@ -591,66 +588,60 @@ function Actividad(props) {
       >
         Crear Actividad
       </Button>
-      <div className="box"></div>
-      <Table striped>
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.this.state.Actividades.map((dato) =>
-            (() => {
-              if (dato.Estado === 0) {
-                return;
-              } else {
-                return (
-                  <tr key={dato.idActividad}>
-                    <td>
-                      <center>
+      <div className="boxer"></div>
+
+      {props.this.state.Actividades.map((dato) =>
+        (() => {
+          if (dato.Estado === 0) {
+            return;
+          } else {
+            return (
+              <center>
+                <div style={{height: "8.5cm"}}>
+                  <Card style={{width:"100%", height:"90%"}}>
+                    <CardBody>
+                      <CardTitle tag="h3">{dato.Titulo}</CardTitle>
+                      <CardSubtitle className="mb-2 text-muted" tag="h6">
                         <p>
-                          <b>Titulo: </b> {dato.Titulo}
+                        <b>Fecha Publicacion: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_publicacion}
+                        </Moment>
                         </p>
+                        <p>
+                        <b>Fecha Entrega: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_entrega}
+                        </Moment>
+                        </p>
+                      </CardSubtitle>
+                      <CardText>
                         <p>
                           <b>Descripcion: </b> {dato.Descripcion}
-                        </p>
-                        <p>
-                          <b>Fecha Publicacion: </b>{" "}
-                          <Moment format="DD/MM/YYYY">
-                            {dato.Fecha_publicacion}
-                          </Moment>
-                        </p>
-                        <p>
-                          <b>Fecha Entrega: </b>{" "}
-                          <Moment format="DD/MM/YYYY">
-                            {dato.Fecha_entrega}
-                          </Moment>
                         </p>
                         <p>
                           <b>Valor: </b>
                           {dato.Valor}
                         </p>
+                        <center>
+                        <Button
+                          color="warning"
+                          onClick={() => props.this.eliminar_Actividad(dato)}
+                        >
+                          Eliminar
+                        </Button>
                       </center>
-                    </td>
-                    <td>
-                      <div className="boxer"></div>
-                      <div className="boxer"></div>
-                      <div className="boxer"></div>
-                      <Button
-                        color="warning"
-                        onClick={() => props.this.eliminar_Actividad(dato)}
-                      >
-                        Eliminar
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              }
-            })()
-          )}
-        </tbody>
-      </Table>
+                      </CardText>
+                      
+                    </CardBody>
+                  </Card>
+                </div>
+              </center>
+            );
+          }
+        })()
+      )}
+
       <Modal isOpen={props.this.state.modalInsertar_A} fade={false}>
         <ModalHeader>
           <div>
