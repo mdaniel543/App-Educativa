@@ -10,6 +10,10 @@ const professor = require('../services/profesor');
 const carrera = require('../services/carrera');
 const materia = require('../services/materia');
 const asignacion = require('../services/assing');
+
+const actividad =require('../services/actividad');
+const publicacion = require('../services/publicacion');
+const entrega = require('../services/entrega-1');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -86,6 +90,7 @@ router.put('/update_alumno', student.update);
 
 router.delete('/delete_alumno', student.delete_);
 
+router.post('/alumnos_get_by_id_materia', student.alumnos_get_by_id_materia)
 
 /**
  * CRUD MAESTRO
@@ -149,4 +154,44 @@ router.post('/assign_maestro_curso',asignacion.assign_maestro_curso);
 
 router.post('/assign_alumno_carrera',asignacion.assing_alumno_carrera);
 
+
+/**
+ * ACTIVIDAD
+ */
+
+router.post('/insert_actividad',actividad.insert);
+
+router.post('/actividad_get_by_materia_id',actividad.actividad_get_by_materia_id);
+
+router.get('/get_actividad_by_id',actividad.actividad_by_id);
+
+router.put('/update_actividad',actividad.update);
+
+router.delete('/delete_actividad',actividad.delete_);
+
+router.get('/get_actividades',actividad.selectActividades);
+
+router.post('/get_actividades_by_alumno',actividad.getActividades_by_student);
+
+router.put('/update_entrega_student',actividad.updateEntregaStudent);
+
+
+/*
+Publicacion
+*/ 
+
+router.post('/publicacion_get_by_materia_id', publicacion.publicacion_get_by_materia_id);
+router.post('/publicacion_insert', publicacion.insert);
+router.put('/publicacion_update', publicacion.update);
+router.put('/publicacion_delete', publicacion.delete_)
+
+/**
+ * Entrega
+ */
+
+ router.post('/entrega_by_actividad', entrega.entrega_by_id_actividad);
+ router.post('/actividad_by_alumno', entrega.actividad_by_alumno);
+
+ router.post('/entrega_calificar_', entrega.entrega_calificar_) ;
+ 
  module.exports = router
