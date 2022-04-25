@@ -171,6 +171,10 @@ router.delete('/delete_actividad',actividad.delete_);
 
 router.get('/get_actividades',actividad.selectActividades);
 
+router.get('/get_actividades_by_alumno',actividad.getActividades_by_student);
+
+router.get('/update_entrega_student',actividad.updateEntregaStudent);
+
 
 /*
 Publicacion
