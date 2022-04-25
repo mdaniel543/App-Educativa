@@ -31,5 +31,4 @@ module.exports = {
     entrega_calificar_,
     entrega_by_id_actividad,
     actividad_by_alumno,
-    
 }

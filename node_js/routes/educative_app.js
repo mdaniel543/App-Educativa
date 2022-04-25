@@ -171,7 +171,7 @@ router.delete('/delete_actividad',actividad.delete_);
 
 router.get('/get_actividades',actividad.selectActividades);
 
-router.get('/get_actividades_by_alumno',actividad.getActividades_by_student);
+router.post('/get_actividades_by_alumno',actividad.getActividades_by_student);
 
 router.put('/update_entrega_student',actividad.updateEntregaStudent);
 
@@ -194,8 +194,4 @@ router.put('/publicacion_delete', publicacion.delete_)
 
  router.post('/entrega_calificar_', entrega.entrega_calificar_) ;
  
- 
- 
- 
-
  module.exports = router

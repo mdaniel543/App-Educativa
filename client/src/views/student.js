@@ -52,6 +52,10 @@ class student extends Component {
       Actividades: [],
       Publicaciones: [],
       entrega: {},
+      Notas: {
+        Actividades: [],
+        Total: 0,
+      },
     };
     this.fetchAlumno();
   }
@@ -139,6 +143,25 @@ class student extends Component {
       });
   }
 
+  fetchNotas(data) {
+    fetch("/app/get_actividades_by_alumno", {
+      method: "POST",
+      body: JSON.stringify({
+        alumno_id: this.state.id,
+        materia_id: data.idCurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Notas: data });
+      });
+  }
+
   handleFiles = (files) => {
     var reader = new FileReader();
     reader.readAsText(files[0]);
@@ -149,7 +172,7 @@ class student extends Component {
         method: "PUT",
         body: JSON.stringify({
           entrega_id: this.state.entrega.idEntrega,
-          path_file: res.data.msg
+          path_file: res.data.msg,
         }),
         headers: {
           Accept: "application/json",
@@ -158,7 +181,11 @@ class student extends Component {
       })
         .then((res) => res.json())
         .then((data) => {
-          Swal.fire("Entregada!", "Actividad Entregada Correctamente", "success");
+          Swal.fire(
+            "Entregada!",
+            "Actividad Entregada Correctamente",
+            "success"
+          );
           this.fetchActividades(this.state.seleccion);
         });
     });
@@ -188,6 +215,7 @@ class student extends Component {
     this.setState({ bandera: false, seleccion: datos });
     this.fetchActividades(datos);
     this.FetchPublicaciones(datos);
+    this.fetchNotas(datos);
   }
 
   cerrarMostrar() {
@@ -283,15 +311,24 @@ function Materia(props) {
         <TabList>
           <Tab>Publicacion</Tab>
           <Tab>Actividades</Tab>
-          <Tab>Notas</Tab>
           <Tab>Notificaciones</Tab>
           <Tab>Examenes</Tab>
+          <Tab>Notas</Tab>
         </TabList>
         <TabPanel>
           <Publicacion this={props.this} />
         </TabPanel>
         <TabPanel>
           <Actividad this={props.this} />
+        </TabPanel>
+        <TabPanel>
+          <div></div>
+        </TabPanel>
+        <TabPanel>
+          <div></div>
+        </TabPanel>
+        <TabPanel>
+          <Notas this={props.this} />
         </TabPanel>
       </Tabs>
     </Container>
@@ -408,6 +445,39 @@ function Actividad(props) {
         })()
       )}
     </Container>
+  );
+}
+
+function Notas(props) {
+  return (
+    <Table dark>
+      <thead>
+        <tr>
+          <th>Actividad</th>
+          <th>Nota</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.this.state.Notas.Actividades.map((dato) => (
+          <tr key={dato.idEntrega}>
+            <td>{dato.Titulo}</td>
+            <td>
+              {(() => {
+                if (dato.Puntuacion == null) {
+                  return;
+                } else {
+                  return <text>{dato.Puntuacion}</text>;
+                }
+              })()}
+            </td>
+          </tr>
+        ))}
+        <tr>
+          <td><b>Total</b></td>
+          <td>{props.this.state.Notas.Total}</td>
+        </tr>
+      </tbody>
+    </Table>
   );
 }
 
