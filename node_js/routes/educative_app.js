@@ -16,6 +16,8 @@ const publicacion = require('../services/publicacion');
 const entrega = require('../services/entrega-1');
 
 const notificaciones = require('../services/notificacion');
+
+const examen = require('../services/examen');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -205,5 +207,22 @@ router.put('/publicacion_delete', publicacion.delete_)
 
   router.post('/notificacion_insert', notificaciones.insert)
   router.post('/notificacion_get', notificaciones.notificacion_get_by_materia_id_alumno)
+
+
+  /**
+   * EXAMEN
+   */
+
+router.post('/create_examen',examen.insert);
+
+router.put('/update_examen',examen.update);
   
+router.delete('/delete_examen',examen.delete_);
+
+router.get('/get_examen_todo',examen.get);
+
+router.get('/get_examen_by_id',examen.get_by_id);
+
+router.get('/get_examen_by_materia',examen.get_by_materia);
+
  module.exports = router
