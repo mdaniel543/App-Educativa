@@ -191,6 +191,8 @@ router.put('/publicacion_delete', publicacion.delete_)
 
  router.post('/entrega_by_actividad', entrega.entrega_by_id_actividad);
  router.post('/actividad_by_alumno', entrega.actividad_by_alumno);
+
+ router.post('/entrega_calificar_', entrega.entrega_calificar_) ;
  
  
  

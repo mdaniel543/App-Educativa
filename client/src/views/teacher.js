@@ -74,7 +74,7 @@ class teacher extends Component {
       collapsePublicacion_Editar: false,
       Alumnos: [],
       Entregas: [],
-      punteo: 0
+      punteo: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -95,7 +95,7 @@ class teacher extends Component {
   handleChangePu(e) {
     const { name, value } = e.target;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
@@ -414,17 +414,34 @@ class teacher extends Component {
     });
   }
 
-  calificar(){
-    console.log(this.state.punteo)
-    console.log(this.state.entrega.Valor)
-    if(this.state.punteo > this.state.entrega.Valor){
+  calificar() {
+    console.log(this.state.punteo);
+    console.log(this.state.entrega.Valor);
+    if (this.state.punteo > this.state.entrega.Valor) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Punteo mayor que el valor de la actividad",
       });
+    } else {
+      fetch("/app/entrega_calificar_", {
+        method: "POST",
+        body: JSON.stringify({
+          idEntrega: this.state.entrega.idEntrega,
+          Punteo: this.state.punteo,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Swal.fire("Mensaje!", "Calificado con exito", "success");
+          this.fetchActividades(this.state.seleccion);
+          this.setState({ modal_entregas_archivo: false, modal_entregas: false });
+        });
     }
-
   }
 
   render() {
@@ -900,25 +917,33 @@ function VerArchivo(props) {
           width="650"
           height="500"
         ></embed>
-        <Form inline>
-          <FormGroup>
-            <Label>Puntuacion:</Label>
-            {" "}
-            <input
-              style={{ width: "50%" }}
-              type="number"
-              name="punteo"
-              onChange={props.this.handleChangePu}
-              placeholder="Ingrese nota menor al valor"
-            />
-            {" "}
-            <Label>{`/${props.this.state.entrega.Valor}`}</Label>
-            {" "}
-            <Button color="primary" onClick={() => props.this.calificar()}>
-              Calificar
-            </Button>
-          </FormGroup>
-        </Form>
+        {(() => {
+          if (props.this.state.entrega.Puntuacion != null) {
+            return <Label>Calificado</Label>;
+          } else {
+            return (
+              <Form inline>
+                <FormGroup>
+                  <Label>Puntuacion:</Label>{" "}
+                  <input
+                    style={{ width: "50%" }}
+                    type="number"
+                    name="punteo"
+                    onChange={props.this.handleChangePu}
+                    placeholder="Ingrese nota menor al valor"
+                  />{" "}
+                  <Label>{`/${props.this.state.entrega.Valor}`}</Label>{" "}
+                  <Button
+                    color="primary"
+                    onClick={() => props.this.calificar()}
+                  >
+                    Calificar
+                  </Button>
+                </FormGroup>
+              </Form>
+            );
+          }
+        })()}
       </ModalBody>
       <ModalFooter>
         <Button
