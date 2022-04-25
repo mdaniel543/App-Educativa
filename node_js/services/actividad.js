@@ -2,6 +2,10 @@ const db = require("./db");
 const helper = require("../helper");
 const config = require("../config");
 
+
+
+
+
 async function insert(req,res){
     let data = req.body;
     const rows = await db.query(
@@ -72,8 +76,10 @@ async function actividad_get_by_materia_id(req,res){
 async function getActividades_by_student(req,res){
   let data = req.body;
   const result = await db.query(
+
     `CALL actividad_by_alumno(${data.alumno_id},${data.materia_id});`
   );
+
   let Notas = []
   let Total = 0;
   console.log(result)
@@ -107,6 +113,73 @@ async function getActividades_by_student(req,res){
 }
 
 
+
+async function asynForEach(array,callback){
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index],index,array);
+  }
+}
+
+
+async function getActividades_students(req,res){
+  let data = req.body;
+  const alumnos = await db.query(
+    `CALL alumnos_get_by_id_materia(${data.materia_id})`
+  );
+  const students = [];
+  await asynForEach(alumnos[0],async (alumno) =>{
+    //here i dadd a student info
+    const actividades = await db.query(
+      `CALL actividad_by_alumno( ${alumno.idAlumno} , ${data.materia_id} );`
+    );
+    let Notas = []
+    let Total = 0;
+    actividades[0].map(actividad =>{  
+      
+      let actividadSchema ={
+        "idEntrega":actividad.idEntrega,
+        "Fecha_creacion":actividad.Fecha_creacion,
+        "Fecha_entrega":actividad.Fecha_entrega,
+        "Path_archivo":actividad.Path_archivo,
+        "Estado":actividad.Estado,
+        "Puntuacion":actividad.Puntuacion,
+        "Observaciones":actividad.Observaciones,
+        "idActividad":actividad.idActividad,
+        "Titulo":actividad.Titulo,
+        "Descripcion":actividad.Descripcion,
+        "Valor": actividad.Valor,
+        "Estado":actividad.Estado
+      }
+
+      Notas.push(actividadSchema);    
+      Total += actividad.Puntuacion;
+    })
+    
+    let studentSchema = {
+      "idAlumno": alumno.idAlumno,
+      "Nombre": alumno.Nombre,
+      "Apellido": alumno.Apellido,
+      "Carnet": alumno.Carnet,
+      "Telefono": alumno.Telefono,
+      "Direccion":alumno.Direccion,
+      "Correo_electronico":alumno.Correo_electronico,
+      "Pass": alumno.Pass,
+      "Estado": alumno.Estado,
+      "idCarrera":alumno.idCarrera,
+      "Actividades":Notas,
+      "Nota":Total
+    }
+    students.push(studentSchema);
+  })
+  console.log(students)
+  res.contentType('aplication/json').status(200);
+  res.send(JSON.stringify(students));
+}
+
+
+
+
+
 async function updateEntregaStudent(req,res){
   let data = req.body
   console.log(data)
@@ -131,5 +204,6 @@ module.exports = {
     selectActividades,
     actividad_get_by_materia_id,
     getActividades_by_student,
-    updateEntregaStudent
+    updateEntregaStudent,
+    getActividades_students
 }
