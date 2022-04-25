@@ -79,9 +79,20 @@ async function getActividades_by_student(req,res){
   console.log(result)
   result[0].map(actividad =>{  
     let actividadSchema ={
-      "Materia":actividad.Nombre,
-      "Actividad":actividad.Titulo,
-      "Nota":actividad.Puntuacion
+      "idEntrega":actividad.idEntrega,
+      "idAlumno":actividad.idAlumno,
+      "Fecha_creacion":actividad.Fecha_creacion,
+      "Fecha_entrega":actividad.Fecha_entrega,
+      "Path_archivo":actividad.Path_archivo,
+      "Estado":actividad.Estado,
+      "Puntuacion":actividad.Puntuacion,
+      "Observaciones":actividad.Observaciones,
+      "idActividad":actividad.idActividad,
+      "Titulo":actividad.Titulo,
+      "Descripcion":actividad.Descripcion,
+      "idMateria":actividad.idMateria,
+      "Valor": actividad.Valor,
+      "Estado":actividad.Estado
     }
     Notas.push(actividadSchema);    
     Total += actividad.Puntuacion;
