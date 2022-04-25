@@ -108,6 +108,7 @@ create table Pregunta(
   idPregunta int auto_increment PRIMARY KEY,
   Enunciado_pregunta varchar(300),
   idExamen varchar(100),
+  Estado int,
   foreign KEY(idExamen) references Examen(idExamen)
 );
 
@@ -116,6 +117,7 @@ create table Respuesta(
   Texto_respuesta varchar(300),
   esRespuesta boolean,
   idPregunta int,
+  Estado int,
   foreign KEY(idPregunta) references Pregunta(idPregunta)
 );
 
@@ -139,7 +141,7 @@ create table Entrega(
   foreign key(idAlumno) references Alumno(idAlumno)
 );
 
-create table Notificaciones(
+create table Notificacion(
   idNotificacion int auto_increment PRIMARY KEY,
   Titulo varchar(100),
   Contenido varchar(5000),
