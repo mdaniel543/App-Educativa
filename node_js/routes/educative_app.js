@@ -175,6 +175,8 @@ router.post('/get_actividades_by_alumno',actividad.getActividades_by_student);
 
 router.put('/update_entrega_student',actividad.updateEntregaStudent);
 
+router.get('/get_actividades_students',actividad.getActividades_students)
+
 
 /*
 Publicacion
