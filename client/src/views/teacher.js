@@ -185,10 +185,10 @@ class teacher extends Component {
   }
 
   fetchAlumnos(data) {
-    fetch("/app/alumnos_get_by_id_materia", {
+    fetch("/app/get_actividades_students", {
       method: "POST",
       body: JSON.stringify({
-        idMateria: data.idMateria,
+        materia_id: data.idMateria,
       }),
       headers: {
         Accept: "application/json",
@@ -983,7 +983,7 @@ function Alumnos(props) {
   return (
     <Container>
       <div className="box"></div>
-      <Table hover>
+      <Table dark>
         <thead>
           <tr>
             <th>Carnet</th>
@@ -991,6 +991,7 @@ function Alumnos(props) {
             {props.this.state.Actividades.map((dato) => (
               <th>{dato.Titulo}</th>
             ))}
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -1003,8 +1004,16 @@ function Alumnos(props) {
                     <td>
                       {dato.Nombre} {dato.Apellido}
                     </td>
-                    <td></td>
-                    <td></td>
+                    {dato.Actividades.map((date) => (
+                      (() =>{
+                        if(date.Puntuacion != "NaN"){
+                          return <td>{date.Puntuacion}</td>
+                        }
+                        return <td></td>
+                      })()
+                    ))
+                    }
+                    <td>{dato.Nota}</td>
                   </tr>
                 );
               }

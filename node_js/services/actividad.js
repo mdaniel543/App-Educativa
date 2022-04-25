@@ -91,7 +91,7 @@ async function getActividades_by_student(req,res){
       "Fecha_entrega":actividad.Fecha_entrega,
       "Path_archivo":actividad.Path_archivo,
       "Estado":actividad.Estado,
-      "Puntuacion":actividad.Puntuacion,
+      "Puntuacion":parseFloat(actividad.Puntuacion).toFixed(2),
       "Observaciones":actividad.Observaciones,
       "idActividad":actividad.idActividad,
       "Titulo":actividad.Titulo,
@@ -105,7 +105,7 @@ async function getActividades_by_student(req,res){
   })
   let _actividades = {
     "Actividades":Notas,
-    "Total": Total
+    "Total": parseFloat(Total).toFixed(2)
   }
   console.log(_actividades);
   res.contentType('aplication/json').status(200);
@@ -138,12 +138,9 @@ async function getActividades_students(req,res){
       
       let actividadSchema ={
         "idEntrega":actividad.idEntrega,
-        "Fecha_creacion":actividad.Fecha_creacion,
-        "Fecha_entrega":actividad.Fecha_entrega,
         "Path_archivo":actividad.Path_archivo,
         "Estado":actividad.Estado,
-        "Puntuacion":actividad.Puntuacion,
-        "Observaciones":actividad.Observaciones,
+        "Puntuacion": parseFloat(actividad.Puntuacion).toFixed(2) ,
         "idActividad":actividad.idActividad,
         "Titulo":actividad.Titulo,
         "Descripcion":actividad.Descripcion,
@@ -167,7 +164,7 @@ async function getActividades_students(req,res){
       "Estado": alumno.Estado,
       "idCarrera":alumno.idCarrera,
       "Actividades":Notas,
-      "Nota":Total
+      "Nota": parseFloat(Total).toFixed(2)
     }
     students.push(studentSchema);
   })

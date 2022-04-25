@@ -505,7 +505,7 @@ function Notas(props) {
             <td>{dato.Titulo}</td>
             <td>
               {(() => {
-                if (dato.Puntuacion == null) {
+                if (dato.Puntuacion == "NaN") {
                   return;
                 } else {
                   return <text>{dato.Puntuacion}</text>;
