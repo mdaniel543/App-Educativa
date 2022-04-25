@@ -424,6 +424,21 @@ class teacher extends Component {
         text: "Punteo mayor que el valor de la actividad",
       });
     } else {
+      fetch("/app/notificacion_insert", {
+        method: "POST",
+        body: JSON.stringify({
+          titulo: this.state.NombreActividad,
+          contenido: this.state.punteo + "/" + this.state.entrega.Valor,
+          idAlumno: this.state.entrega.idAlumno,
+          id_materia: this.state.seleccion.idMateria
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {});
       fetch("/app/entrega_calificar_", {
         method: "POST",
         body: JSON.stringify({
@@ -439,7 +454,10 @@ class teacher extends Component {
         .then((data) => {
           Swal.fire("Mensaje!", "Calificado con exito", "success");
           this.fetchActividades(this.state.seleccion);
-          this.setState({ modal_entregas_archivo: false, modal_entregas: false });
+          this.setState({
+            modal_entregas_archivo: false,
+            modal_entregas: false,
+          });
         });
     }
   }

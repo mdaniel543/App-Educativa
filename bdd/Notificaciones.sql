@@ -71,3 +71,22 @@ BEGIN
 
 END//
 DELIMITER ;
+
+
+-- notificacion: obtiene todos los registros de la tabla notificacion
+DELIMITER //
+Drop PROCEDURE if EXISTS notificacion_get_by_alumno_id_materia//
+CREATE PROCEDURE notificacion_get_by_alumno_id_materia(par_id_alumno int, par_id_materia int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    select n.*  from Notificacion n
+    join Materia m on m.idMateria = n.idMateria
+    join Alumno a on a.idAlumno = n.idAlumno
+    where n.idAlumno = par_id_alumno and n.idMateria = par_id_materia;
+
+END//
+DELIMITER ;

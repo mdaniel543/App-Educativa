@@ -34,6 +34,8 @@ import {
   Container,
   Modal,
   ModalHeader,
+  Alert,
+  UncontrolledAlert,
   ModalBody,
   FormGroup,
   ModalFooter,
@@ -56,6 +58,7 @@ class student extends Component {
         Actividades: [],
         Total: 0,
       },
+      Notificaciones: [],
     };
     this.fetchAlumno();
   }
@@ -211,11 +214,31 @@ class student extends Component {
       });
   }
 
+  fetchNotificaciones(data) {
+    fetch("/app/notificacion_get", {
+      method: "POST",
+      body: JSON.stringify({
+        idAlumno: this.state.id,
+        idMateria: data.idCurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Notificaciones: data });
+      });
+  }
+
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
     this.fetchActividades(datos);
     this.FetchPublicaciones(datos);
     this.fetchNotas(datos);
+    this.fetchNotificaciones(datos);
   }
 
   cerrarMostrar() {
@@ -322,7 +345,7 @@ function Materia(props) {
           <Actividad this={props.this} />
         </TabPanel>
         <TabPanel>
-          <div></div>
+          <Notificaciones this={props.this} />
         </TabPanel>
         <TabPanel>
           <div></div>
@@ -448,6 +471,25 @@ function Actividad(props) {
   );
 }
 
+function Notificaciones(props) {
+  return (
+    <div>
+      {props.this.state.Notificaciones.map((dato) => (
+        <div>
+          <UncontrolledAlert>
+            <h4 className="alert-heading">{dato.Titulo}</h4>
+            <p>Nota Obtenida: {dato.Contenido}</p>
+            <hr />
+            <p className="mb-0">
+              <Moment format="DD/MM/YYYY">{dato.Fecha_hora_publicacion}</Moment>
+            </p>
+          </UncontrolledAlert>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Notas(props) {
   return (
     <Table dark>
@@ -473,7 +515,9 @@ function Notas(props) {
           </tr>
         ))}
         <tr>
-          <td><b>Total</b></td>
+          <td>
+            <b>Total</b>
+          </td>
           <td>{props.this.state.Notas.Total}</td>
         </tr>
       </tbody>

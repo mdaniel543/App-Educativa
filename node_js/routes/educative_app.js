@@ -14,6 +14,8 @@ const asignacion = require('../services/assing');
 const actividad =require('../services/actividad');
 const publicacion = require('../services/publicacion');
 const entrega = require('../services/entrega-1');
+
+const notificaciones = require('../services/notificacion');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -196,4 +198,12 @@ router.put('/publicacion_delete', publicacion.delete_)
 
  router.post('/entrega_calificar_', entrega.entrega_calificar_) ;
  
+ 
+ /**
+  * Notificaciones
+  */
+
+  router.post('/notificacion_insert', notificaciones.insert)
+  router.post('/notificacion_get', notificaciones.notificacion_get_by_materia_id_alumno)
+  
  module.exports = router
