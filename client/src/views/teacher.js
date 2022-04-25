@@ -38,6 +38,8 @@ import {
   ModalBody,
   FormGroup,
   ModalFooter,
+  Label,
+  Form,
 } from "reactstrap";
 
 class teacher extends Component {
@@ -55,7 +57,11 @@ class teacher extends Component {
       modalInsert_P: false,
       modalUpdate_P: false,
       modal_entregas: false,
+      modal_entregas_archivo: false,
       NombreActividad: "",
+      file: "",
+      ealumno: "",
+      entrega: {},
       data_A: {
         nombre: "",
         descripcion: "",
@@ -68,9 +74,11 @@ class teacher extends Component {
       collapsePublicacion_Editar: false,
       Alumnos: [],
       Entregas: [],
+      punteo: 0
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
+    this.handleChangePu = this.handleChangePu.bind(this);
     this.fetchMaestro();
   }
 
@@ -81,6 +89,13 @@ class teacher extends Component {
         ...this.state.data_A,
         [name]: value,
       },
+    });
+  }
+
+  handleChangePu(e) {
+    const { name, value } = e.target;
+    this.setState({
+      [name]: value
     });
   }
 
@@ -370,7 +385,11 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ Entregas: data, modal_entregas: true , NombreActividad: dato.Titulo});
+        this.setState({
+          Entregas: data,
+          modal_entregas: true,
+          NombreActividad: dato.Titulo,
+        });
       });
   }
 
@@ -378,6 +397,34 @@ class teacher extends Component {
     this.setState({
       modal_entregas: false,
     });
+  }
+
+  VerEntrega(dato) {
+    this.setState({
+      modal_entregas_archivo: true,
+      entrega: dato,
+      ealumno: dato.Nombre,
+      file: `http://localhost:8000/static/${dato.Path_archivo}`,
+    });
+  }
+
+  cerrarModalEntregas_Archivo() {
+    this.setState({
+      modal_entregas_archivo: false,
+    });
+  }
+
+  calificar(){
+    console.log(this.state.punteo)
+    console.log(this.state.entrega.Valor)
+    if(this.state.punteo > this.state.entrega.Valor){
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Punteo mayor que el valor de la actividad",
+      });
+    }
+
   }
 
   render() {
@@ -791,12 +838,17 @@ function Actividad(props) {
                         <td>
                           {(() => {
                             if (dato.Path_archivo == null) {
-                              return <text style={{ color: 'red' }}> Sin Entrega</text>;
+                              return (
+                                <text style={{ color: "red" }}>
+                                  {" "}
+                                  Sin Entrega
+                                </text>
+                              );
                             } else {
                               return (
                                 <Button
                                   color="info"
-                                  onClick={() => props.this.VerEntrega()}
+                                  onClick={() => props.this.VerEntrega(dato)}
                                 >
                                   Ver
                                 </Button>
@@ -822,7 +874,61 @@ function Actividad(props) {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <VerArchivo this={props.this} />
     </Container>
+  );
+}
+
+function VerArchivo(props) {
+  return (
+    <Modal
+      isOpen={props.this.state.modal_entregas_archivo}
+      fade={false}
+      size="lg"
+      style={{ maxWidth: "700px", width: "100%" }}
+    >
+      <ModalHeader>
+        <div>
+          <h3>Entrega: {props.this.state.ealumno} </h3>
+        </div>
+      </ModalHeader>
+      <ModalBody>
+        <embed
+          src={props.this.state.file}
+          alt="trial"
+          width="650"
+          height="500"
+        ></embed>
+        <Form inline>
+          <FormGroup>
+            <Label>Puntuacion:</Label>
+            {" "}
+            <input
+              style={{ width: "50%" }}
+              type="number"
+              name="punteo"
+              onChange={props.this.handleChangePu}
+              placeholder="Ingrese nota menor al valor"
+            />
+            {" "}
+            <Label>{`/${props.this.state.entrega.Valor}`}</Label>
+            {" "}
+            <Button color="primary" onClick={() => props.this.calificar()}>
+              Calificar
+            </Button>
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          className="btn btn-danger"
+          onClick={() => props.this.cerrarModalEntregas_Archivo()}
+        >
+          Cerrar
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }
 
@@ -839,12 +945,9 @@ function Alumnos(props) {
           <tr>
             <th>Carnet</th>
             <th>Nombre Completo</th>
-            {props.this.state.Actividades.map((dato) => 
-              <th>
-                {dato.Titulo}
-              </th>
-            )
-            }
+            {props.this.state.Actividades.map((dato) => (
+              <th>{dato.Titulo}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
