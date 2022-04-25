@@ -54,6 +54,8 @@ class teacher extends Component {
       modalInsertar_A: false,
       modalInsert_P: false,
       modalUpdate_P: false,
+      modal_entregas: false,
+      NombreActividad: "",
       data_A: {
         nombre: "",
         descripcion: "",
@@ -65,6 +67,7 @@ class teacher extends Component {
       collapsePublicacion: false,
       collapsePublicacion_Editar: false,
       Alumnos: [],
+      Entregas: [],
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
@@ -241,7 +244,7 @@ class teacher extends Component {
     this.fetchAlumnos(datos);
   }
   cerrarMostrar() {
-    this.setState({ bandera: true });
+    this.setState({ bandera: true, Publicaciones: [], Actividades: [] });
   }
 
   cerrarSesion = () => {
@@ -352,6 +355,31 @@ class teacher extends Component {
       collapsePublicacion_Editar: !this.state.collapsePublicacion_Editar,
     });
   }
+
+  Entregas_Actividad(dato) {
+    fetch("/app/entrega_by_actividad", {
+      method: "POST",
+      body: JSON.stringify({
+        idActividad: dato.idActividad,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Entregas: data, modal_entregas: true , NombreActividad: dato.Titulo});
+      });
+  }
+
+  cerrarModalEntregas() {
+    this.setState({
+      modal_entregas: false,
+    });
+  }
+
   render() {
     return (
       <div>
@@ -471,28 +499,28 @@ function Publicacion(props) {
         Crear Nueva Publicacion
       </Button>
       <Collapse isOpen={props.this.state.collapsePublicacion}>
-      <div style={{height:"8cm"}}>
-        <Card style={{width:"100%", height:"100%"}}>
-          <center>
-            <h5>Ingrese Publicacion</h5>
-          </center>
-          <CardBody>
-            <textarea
-              style={{height:"4cm"}}
-              class="form-control"
-              name="descripcion"
-              onChange={props.this.handleChangeP}
-            />
-            <div className="boxer"></div>
-            <Button
-              style={{width:"100%"}}
-              color="primary"
-              onClick={() => props.this.insertPublicaciones()}
-            >
-              Crear
-            </Button>
-          </CardBody>
-        </Card>
+        <div style={{ height: "8cm" }}>
+          <Card style={{ width: "100%", height: "100%" }}>
+            <center>
+              <h5>Ingrese Publicacion</h5>
+            </center>
+            <CardBody>
+              <textarea
+                style={{ height: "4cm" }}
+                class="form-control"
+                name="descripcion"
+                onChange={props.this.handleChangeP}
+              />
+              <div className="boxer"></div>
+              <Button
+                style={{ width: "100%" }}
+                color="primary"
+                onClick={() => props.this.insertPublicaciones()}
+              >
+                Crear
+              </Button>
+            </CardBody>
+          </Card>
         </div>
       </Collapse>
 
@@ -503,8 +531,8 @@ function Publicacion(props) {
           } else {
             return (
               <center>
-                <div style={{height:"7cm"}}>
-                  <Card style={{width:"100%", height:"90%"}}>
+                <div style={{ height: "8cm" }}>
+                  <Card style={{ width: "100%", height: "90%" }}>
                     <CardBody>
                       <CardTitle tag="h5">Publicacion</CardTitle>
                       <CardSubtitle className="mb-2 text-muted" tag="h6">
@@ -518,12 +546,14 @@ function Publicacion(props) {
                       </CardText>
                       <div className="boxer"></div>
                       <center>
-                        <Button
-                          color="info"
-                          onClick={() => props.this.mostrarEdicion(dato)}
-                        >
-                          Editar
-                        </Button>
+                        <p>
+                          <Button
+                            color="info"
+                            onClick={() => props.this.mostrarEdicion(dato)}
+                          >
+                            Editar
+                          </Button>
+                        </p>
                         <Button
                           color="warning"
                           onClick={() => props.this.eliminar_publicacion(dato)}
@@ -597,22 +627,22 @@ function Actividad(props) {
           } else {
             return (
               <center>
-                <div style={{height: "8.5cm"}}>
-                  <Card style={{width:"100%", height:"90%"}}>
+                <div style={{ height: "10cm" }}>
+                  <Card style={{ width: "100%", height: "90%" }}>
                     <CardBody>
                       <CardTitle tag="h3">{dato.Titulo}</CardTitle>
                       <CardSubtitle className="mb-2 text-muted" tag="h6">
                         <p>
-                        <b>Fecha Publicacion: </b>{" "}
-                        <Moment format="DD/MM/YYYY">
-                          {dato.Fecha_publicacion}
-                        </Moment>
+                          <b>Fecha Publicacion: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_publicacion}
+                          </Moment>
                         </p>
                         <p>
-                        <b>Fecha Entrega: </b>{" "}
-                        <Moment format="DD/MM/YYYY">
-                          {dato.Fecha_entrega}
-                        </Moment>
+                          <b>Fecha Entrega: </b>{" "}
+                          <Moment format="DD/MM/YYYY">
+                            {dato.Fecha_entrega}
+                          </Moment>
                         </p>
                       </CardSubtitle>
                       <CardText>
@@ -624,15 +654,26 @@ function Actividad(props) {
                           {dato.Valor}
                         </p>
                         <center>
-                        <Button
-                          color="warning"
-                          onClick={() => props.this.eliminar_Actividad(dato)}
-                        >
-                          Eliminar
-                        </Button>
-                      </center>
+                          <p>
+                            <Button
+                              style={{ width: "100%" }}
+                              color="secondary"
+                              onClick={() =>
+                                props.this.Entregas_Actividad(dato)
+                              }
+                            >
+                              Ver Entregas
+                            </Button>
+                          </p>
+                          <Button
+                            style={{ width: "100%" }}
+                            color="warning"
+                            onClick={() => props.this.eliminar_Actividad(dato)}
+                          >
+                            Eliminar
+                          </Button>
+                        </center>
                       </CardText>
-                      
                     </CardBody>
                   </Card>
                 </div>
@@ -721,6 +762,66 @@ function Actividad(props) {
           </Button>
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={props.this.state.modal_entregas} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Entregas de Actividad: {props.this.state.NombreActividad} </h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <Table hover>
+            <thead>
+              <tr>
+                <th>Carnet</th>
+                <th>Nombre Completo</th>
+                <th>Entrega</th>
+              </tr>
+            </thead>
+            <tbody>
+              {props.this.state.Entregas.map((dato) =>
+                (() => {
+                  if (dato.Estado === 1) {
+                    return (
+                      <tr key={dato.idAlumno}>
+                        <td>{dato.Carnet}</td>
+                        <td>
+                          {dato.Nombre} {dato.Apellido}
+                        </td>
+                        <td>
+                          {(() => {
+                            if (dato.Path_archivo == null) {
+                              return <text style={{ color: 'red' }}> Sin Entrega</text>;
+                            } else {
+                              return (
+                                <Button
+                                  color="info"
+                                  onClick={() => props.this.VerEntrega()}
+                                >
+                                  Ver
+                                </Button>
+                              );
+                            }
+                          })()}
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return;
+                })()
+              )}
+            </tbody>
+          </Table>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalEntregas()}
+          >
+            Cerrar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Container>
   );
 }
@@ -738,8 +839,12 @@ function Alumnos(props) {
           <tr>
             <th>Carnet</th>
             <th>Nombre Completo</th>
-            <th>Correo</th>
-            <th></th>
+            {props.this.state.Actividades.map((dato) => 
+              <th>
+                {dato.Titulo}
+              </th>
+            )
+            }
           </tr>
         </thead>
         <tbody>
@@ -752,15 +857,8 @@ function Alumnos(props) {
                     <td>
                       {dato.Nombre} {dato.Apellido}
                     </td>
-                    <td>{dato.Correo_electronico}</td>
-                    <td>
-                      <Button
-                        color="secondary"
-                        onClick={() => props.this.mostrarModallista(dato)}
-                      >
-                        Actividades
-                      </Button>
-                    </td>
+                    <td></td>
+                    <td></td>
                   </tr>
                 );
               }

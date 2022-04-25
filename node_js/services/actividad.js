@@ -98,6 +98,7 @@ async function getActividades_by_student(req,res){
 
 async function updateEntregaStudent(req,res){
   let data = req.body
+  console.log(data)
   var rows = await db.query(
     `CALL entrega_update_alumno(${data.entrega_id},"${data.path_file}");`
   );

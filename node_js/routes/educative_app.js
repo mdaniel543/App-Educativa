@@ -13,7 +13,7 @@ const asignacion = require('../services/assing');
 
 const actividad =require('../services/actividad');
 const publicacion = require('../services/publicacion');
-
+const entrega = require('../services/entrega-1');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 
@@ -173,7 +173,7 @@ router.get('/get_actividades',actividad.selectActividades);
 
 router.get('/get_actividades_by_alumno',actividad.getActividades_by_student);
 
-router.get('/update_entrega_student',actividad.updateEntregaStudent);
+router.put('/update_entrega_student',actividad.updateEntregaStudent);
 
 
 /*
@@ -184,5 +184,16 @@ router.post('/publicacion_get_by_materia_id', publicacion.publicacion_get_by_mat
 router.post('/publicacion_insert', publicacion.insert);
 router.put('/publicacion_update', publicacion.update);
 router.put('/publicacion_delete', publicacion.delete_)
+
+/**
+ * Entrega
+ */
+
+ router.post('/entrega_by_actividad', entrega.entrega_by_id_actividad);
+ router.post('/actividad_by_alumno', entrega.actividad_by_alumno);
+ 
+ 
+ 
+ 
 
  module.exports = router

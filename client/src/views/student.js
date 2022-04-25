@@ -51,6 +51,7 @@ class student extends Component {
       seleccion: {},
       Actividades: [],
       Publicaciones: [],
+      entrega: {},
     };
     this.fetchAlumno();
   }
@@ -144,15 +145,31 @@ class student extends Component {
     const formData = new FormData();
     formData.append("file", files[0]);
     axios.post("/app/carga", formData, {}).then((res) => {
-      console.log(res.data.msg);
+      fetch("/app/update_entrega_student", {
+        method: "PUT",
+        body: JSON.stringify({
+          entrega_id: this.state.entrega.idEntrega,
+          path_file: res.data.msg
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Swal.fire("Entregada!", "Actividad Entregada Correctamente", "success");
+          this.fetchActividades(this.state.seleccion);
+        });
     });
   };
 
   fetchActividades(data) {
     console.log(data);
-    fetch("/app/actividad_get_by_materia_id", {
+    fetch("/app/actividad_by_alumno", {
       method: "POST",
       body: JSON.stringify({
+        idAlumno: this.state.id,
         idMateria: data.idCurso,
       }),
       headers: {
@@ -174,12 +191,16 @@ class student extends Component {
   }
 
   cerrarMostrar() {
-    this.setState({ bandera: true });
+    this.setState({ bandera: true, Publicaciones: [], Actividades: [] });
   }
 
   cerrarSesion = () => {
     window.location.href = "../";
   };
+
+  SetEntrega(dato) {
+    this.setState({ entrega: dato });
+  }
 
   render() {
     return (
@@ -355,14 +376,28 @@ function Actividad(props) {
                           {dato.Valor}
                         </p>
                       </CardText>
+
                       <center>
-                        <ReactFileReader
-                          multipleFiles={false}
-                          fileTypes={[".*"]}
-                          handleFiles={props.this.handleFiles}
-                        >
-                          <Button color="secondary">Entregar Actividad</Button>
-                        </ReactFileReader>
+                        {(() => {
+                          if (dato.Path_archivo == null) {
+                            return (
+                              <ReactFileReader
+                                multipleFiles={false}
+                                fileTypes={[".*"]}
+                                handleFiles={props.this.handleFiles}
+                              >
+                                <Button
+                                  color="secondary"
+                                  onClick={() => props.this.SetEntrega(dato)}
+                                >
+                                  Entregar Actividad
+                                </Button>
+                              </ReactFileReader>
+                            );
+                          } else {
+                            return <text>Actividad Entregada</text>;
+                          }
+                        })()}
                       </center>
                     </CardBody>
                   </Card>
