@@ -52,13 +52,21 @@ async function delete_(req,res){
   }
   res.json({ msg: resp[0].resp });
   
+}
 
+async function by_maestro_id(req, res){
+  let data = req.body;
+    const result = await db.query(
+      `CALL materias_get_by_maestro_id(${data.idMaestro});`
+    );
+    const resp = result[0];
+    res.json(resp);
 }
 
 module.exports = {
   insert,
   select,
   update,
-  delete_
-
+  delete_,
+  by_maestro_id
 };

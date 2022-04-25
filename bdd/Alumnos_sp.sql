@@ -99,3 +99,22 @@ BEGIN
     
 END//
 DELIMITER ;
+
+
+-- envia id materia para el listado de alumnos asignados
+DELIMITER //
+Drop PROCEDURE if EXISTS alumnos_get_by_id_materia//
+CREATE PROCEDURE alumnos_get_by_id_materia(par_idMateria int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    Select A.* FROM Alumno A 
+    join Pensum p on p.idCarrera = A.idCarrera
+    join Materia m on m.idMateria = p.idMateria
+    Where m.idMateria = par_idMateria;
+
+END//
+DELIMITER ;

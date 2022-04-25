@@ -76,6 +76,12 @@ CREATE table Actividad(
   Foreign KEY(idMateria) references Materia(idMateria)
 );
 
+alter table Actividad add column Fecha_creacion date;
+alter table Actividad add column Fecha_publicacion date;
+alter table Actividad add column Fecha_entrega date;
+alter table Actividad add column Valor decimal(10,2);
+alter table Actividad add column Estado int;
+
 create table Publicacion(
   idPublicacion int auto_increment PRIMARY KEY,
   Descripcion varchar(100),
@@ -83,6 +89,8 @@ create table Publicacion(
   idMateria int,
   Foreign KEY(idMateria) references Materia(idMateria)
 );
+
+alter table Publicacion add column Estado int;
 
 create table Examen(
   idExamen varchar(100) PRIMARY KEY,
@@ -93,10 +101,14 @@ create table Examen(
   Foreign KEY(idMateria) references Materia(idMateria)
 );
 
+alter table Examen add column Estado int;
+alter table Examen add column Fecha_creacion datetime;
+
 create table Pregunta(
   idPregunta int auto_increment PRIMARY KEY,
   Enunciado_pregunta varchar(300),
   idExamen varchar(100),
+  Estado int,
   foreign KEY(idExamen) references Examen(idExamen)
 );
 
@@ -105,6 +117,7 @@ create table Respuesta(
   Texto_respuesta varchar(300),
   esRespuesta boolean,
   idPregunta int,
+  Estado int,
   foreign KEY(idPregunta) references Pregunta(idPregunta)
 );
 
@@ -128,3 +141,14 @@ create table Entrega(
   foreign key(idAlumno) references Alumno(idAlumno)
 );
 
+create table Notificacion(
+  idNotificacion int auto_increment PRIMARY KEY,
+  Titulo varchar(100),
+  Contenido varchar(5000),
+  Fecha_hora_publicacion datetime,
+  idAlumno int,
+  idMateria int,
+  Estado int,
+  foreign key(idAlumno) references Alumno(idAlumno),
+  Foreign KEY(idMateria) references Materia(idMateria)
+);
