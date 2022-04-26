@@ -18,6 +18,7 @@ const entrega = require('../services/entrega-1');
 const notificaciones = require('../services/notificacion');
 
 const examen = require('../services/examen');
+const e = require('cors');
 //const csv = require('fast-csv');
 //const multer = require('multer');
 

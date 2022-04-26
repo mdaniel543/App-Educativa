@@ -29,6 +29,14 @@ respuesta_get_by_pregunta_id
  * hora_fin time
  * id_materia int
  */
+
+ async function asynForEach(array,callback){
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index],index,array);
+    }
+  }
+
+
 async function insert(req, res) {
   console.log(req.body);
   let data = req.body;

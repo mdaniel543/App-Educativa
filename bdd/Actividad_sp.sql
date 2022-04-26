@@ -123,3 +123,42 @@ BEGIN
 
 END//
 DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS actividad_by_alumno//
+CREATE PROCEDURE actividad_by_alumno(alumno_id INT, materia_id INT)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+    
+    Select E.*, Ac.* FROM Alumno Al 
+	join Entrega E on E.idAlumno = Al.idAlumno
+	join Actividad Ac on Ac.idActividad = E.idActividad
+	join Materia m on m.IdMateria = Ac.IdMateria
+	where Al.idAlumno = alumno_id and m.idMateria = materia_id;
+	
+END//
+DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS actividad_alumnos//
+CREATE PROCEDURE actividad_alumnos(materia_id INT)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+    
+	Select Al.* ,E.*, Ac.* FROM Alumno Al 
+	join Entrega E on E.idAlumno = Al.idAlumno
+	join Actividad Ac on Ac.idActividad = E.idActividad
+	join Materia m on m.IdMateria = Ac.IdMateria
+	where m.idMateria = 1
+	Order by Al.idAlumno;
+	
+END//
+DELIMITER ;
