@@ -218,7 +218,6 @@ async function update_respuesta(req,res){
       `CALL respuesta_get_by_pregunta_id(${data.idPregunta})`
     );
     res.json(result[0]);
-  
   }
 
 

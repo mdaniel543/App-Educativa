@@ -181,7 +181,6 @@ class teacher extends Component {
 
   handleChangeRe(e) {
     const { name, value } = e.target;
-    console.log(value)
     this.setState({
       [name]: value,
     });
@@ -670,7 +669,7 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ idPregunta: data.msg });
+        this.setState({ idPregunta: data.msg, respuestas: [], preg: ""});
         this.fetchPreguntas();
       });
   }
@@ -719,10 +718,27 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         this.fetchRespuestas();
+        this.setState({textRespues: ""})
       });
   }
 
-
+  mostrarRespuestas(dato) {
+    fetch("/app/get_respuesta_by_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idPregunta: dato.idPregunta,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ respuestas: data, modal_respuestas: true});
+      });
+  }
 
   fetchRespuestas() {
     fetch("/app/get_respuesta_by_id", {
@@ -737,7 +753,7 @@ class teacher extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         this.setState({ respuestas: data, collapseNuevaRespuesta: false });
       });
   }
@@ -764,6 +780,15 @@ class teacher extends Component {
 
   mostrarcollapseExamen() {
     this.setState({ collapseExamen: !this.state.collapseExamen });
+  }
+
+  CerrarExamen(){
+    this.setState({
+      collapseExamen: !this.state.collapseExamen, 
+      collapseNuevoExamen: !this.state.collapseNuevoExamen,
+      collapsePregunta: !this.state.collapsePregunta,
+      collapseNuevaPregunta: !this.state.collapseNuevaPregunta
+    })
   }
 
   mostrarcollapsePublicacion() {
@@ -1513,6 +1538,15 @@ function Examen(props) {
                 Crear Preguntas
               </Button>
             </p>
+            <p className="lead">
+              <Button
+                style={{ width: "100%" }}
+                color="danger"
+                onClick={() => props.this.CerrarExamen()}
+              >
+                Cerrar Examen
+              </Button>
+            </p>
           </center>
         </div>
       </Collapse>
@@ -1553,6 +1587,7 @@ function Examen(props) {
                   className="form-control"
                   name="preg"
                   type="text"
+                  value={props.this.state.preg}
                   onChange={props.this.handleChangePr}
                 />
               </FormGroup>
@@ -1612,6 +1647,7 @@ function Examen(props) {
                 <Input
                   type="text"
                   name="textRespues"
+                  value={props.this.state.textRespues}
                   onChange={props.this.handleChangeRe}
                   placeholder="Ingrese Respuesta"
                 />
