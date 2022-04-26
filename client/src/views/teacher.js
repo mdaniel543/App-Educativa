@@ -40,6 +40,15 @@ import {
   ModalFooter,
   Label,
   Form,
+  Input,
+  Progress,
+  ListGroup,
+  ListGroupItem,
+  InputGroup,
+  ButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 
 class teacher extends Component {
@@ -75,10 +84,29 @@ class teacher extends Component {
       Alumnos: [],
       Entregas: [],
       punteo: 0,
+      collapseExamen: true,
+      collapseNuevoExamen: false,
+      examen: {
+        nombre: "",
+        date: "",
+        timeI: "",
+        timeF: "",
+      },
+      barra: 25,
+      collapsePregunta: false,
+      collapseNuevaPregunta: false,
+      collapseNuevaRespuesta: false,
+      preg: "",
+      modal_respuestas: false,
+      collapseNuevaRespuesta: false,
+      dropdownOpen: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
     this.handleChangePu = this.handleChangePu.bind(this);
+    this.handleChangeE = this.handleChangeE.bind(this);
+    this.handleChangePr = this.handleChangePr.bind(this);
+    this.toggleDropDown = this.toggleDropDown.bind(this);
     this.fetchMaestro();
   }
 
@@ -106,6 +134,29 @@ class teacher extends Component {
         ...this.state.data_P,
         [name]: value,
       },
+    });
+  }
+
+  handleChangePr(e) {
+    const { name, value } = e.target;
+    this.setState({
+      preg: value,
+    });
+  }
+
+  handleChangeE(e) {
+    const { name, value } = e.target;
+    this.setState({
+      examen: {
+        ...this.state.examen,
+        [name]: value,
+      },
+    });
+  }
+
+  toggleDropDown() {
+    this.setState({
+      dropdownOpen: !this.state.dropdownOpen
     });
   }
 
@@ -355,6 +406,33 @@ class teacher extends Component {
       }
     });
   }
+  Pregunta() {
+    this.setState({ collapseNuevaPregunta: false, modal_respuestas: true, collapseNuevaRespuesta: true });
+  }
+  NuevaRespuesta() {
+    this.setState({
+      collapseNuevaRespuesta: !this.state.collapseNuevaRespuesta,
+    });
+  }
+  cerrarModalRespuestas() {
+    this.setState({ modal_respuestas: false, collapseNuevaRespuesta: false });
+  }
+
+  CrearPreguntas() {
+    this.setState({
+      collapsePregunta: !this.state.collapsePregunta,
+      collapseNuevaPregunta: !this.state.collapseNuevaPregunta,
+    });
+  }
+
+  NuevaPregunta() {
+    this.setState({ collapseNuevaPregunta: !this.state.collapseNuevaPregunta });
+  }
+
+  mostrarcollapseExamen() {
+    this.setState({ collapseExamen: !this.state.collapseExamen });
+  }
+
   mostrarcollapsePublicacion() {
     this.setState({ collapsePublicacion: !this.state.collapsePublicacion });
   }
@@ -430,7 +508,7 @@ class teacher extends Component {
           titulo: this.state.NombreActividad,
           contenido: this.state.punteo + "/" + this.state.entrega.Valor,
           idAlumno: this.state.entrega.idAlumno,
-          id_materia: this.state.seleccion.idMateria
+          id_materia: this.state.seleccion.idMateria,
         }),
         headers: {
           Accept: "application/json",
@@ -460,6 +538,13 @@ class teacher extends Component {
           });
         });
     }
+  }
+
+  CrearExamen() {
+    this.setState({
+      collapseExamen: !this.state.collapseExamen,
+      collapseNuevoExamen: !this.state.collapseNuevoExamen,
+    });
   }
 
   render() {
@@ -976,7 +1061,210 @@ function VerArchivo(props) {
 }
 
 function Examen(props) {
-  return <div></div>;
+  return (
+    <Container>
+      <Collapse isOpen={props.this.state.collapseExamen}>
+        <div style={{ height: "15cm" }}>
+          <Card style={{ width: "100%", height: "90%" }}>
+            <CardBody>
+              <CardTitle tag="h3">Nuevo Examen</CardTitle>
+              <CardText>
+                <p>
+                  <FormGroup>
+                    <Label>Nombre Unico</Label>
+                    <input
+                      className="form-control"
+                      name="nombre"
+                      type="text"
+                      onChange={props.this.handleChangeE}
+                    />
+                  </FormGroup>
+                </p>
+                <p>
+                  <FormGroup>
+                    <Label>Fecha Publicacion</Label>
+                    <Input
+                      type="date"
+                      name="date"
+                      placeholder="Fecha"
+                      onChange={props.this.handleChangeE}
+                    />
+                  </FormGroup>
+                </p>
+                <p>
+                  <FormGroup>
+                    <Label>Hora Inicio</Label>
+                    <Input
+                      type="time"
+                      name="timeI"
+                      placeholder="Hora Inicio"
+                      onChange={props.this.handleChangeE}
+                    />
+                  </FormGroup>
+                </p>
+                <p>
+                  <FormGroup>
+                    <Label>Hora Fin</Label>
+                    <Input
+                      type="time"
+                      name="timeF"
+                      placeholder="Hora Fin"
+                      onChange={props.this.handleChangeE}
+                    />
+                  </FormGroup>
+                </p>
+                <center>
+                  <p>
+                    <Button
+                      style={{ width: "100%" }}
+                      color="primary"
+                      onClick={() => props.this.CrearExamen()}
+                    >
+                      Crear Examen
+                    </Button>
+                  </p>
+                </center>
+              </CardText>
+            </CardBody>
+          </Card>
+        </div>
+      </Collapse>
+
+      <Collapse isOpen={props.this.state.collapseNuevoExamen}>
+        <div className="box"></div>
+        <div className="boxer"></div>
+        <div className="jumbotron" style={{ height: "11cm" }}>
+          <center>
+            <h1 className="display-3">{props.this.state.examen.nombre}</h1>
+            <p className="lead">Hora Inicio: {props.this.state.examen.timeI}</p>
+            <p className="lead">Hora Fin: {props.this.state.examen.timeF}</p>
+            <hr className="my-2" />
+            <p>Fecha de Publicacion: {props.this.state.examen.date}</p>
+            <hr className="my-2" />
+            <div className="boxer"> </div>
+            <p>
+              <Progress
+                animated
+                color="secondary"
+                value={props.this.state.barra}
+              >
+                {" "}
+                Progreso de creacion de examen
+              </Progress>
+            </p>
+            <div className="boxer"> </div>
+            <p className="lead">
+              <Button
+                style={{ width: "100%" }}
+                color="secondary"
+                onClick={() => props.this.CrearPreguntas()}
+              >
+                Crear Preguntas
+              </Button>
+            </p>
+          </center>
+        </div>
+      </Collapse>
+      <Collapse isOpen={props.this.state.collapsePregunta}>
+        <div style={{ height: "18cm" }}>
+          <center>
+            {" "}
+            <h4>Preguntas</h4>{" "}
+          </center>
+
+          <hr className="my-2" />
+          <ListGroup>
+            <ListGroupItem
+              tag="button"
+              active
+              onClick={() => props.this.NuevaPregunta()}
+              action
+            >
+              Nueva Pregunta
+            </ListGroupItem>
+          </ListGroup>
+          <div className="boxer"></div>
+          <Collapse isOpen={props.this.state.collapseNuevaPregunta}>
+            <CardBody>
+              <FormGroup>
+                <Label>
+                  <b>Ingrese nueva pregunta</b>
+                </Label>
+                <Input
+                  className="form-control"
+                  name="preg"
+                  type="text"
+                  onChange={props.this.handleChangePr}
+                />
+              </FormGroup>
+              <center>
+                <Button
+                  style={{ width: "40%" }}
+                  color="secondary"
+                  onClick={() => props.this.Pregunta()}
+                >
+                  Ingresar Pregunta
+                </Button>
+              </center>
+            </CardBody>
+          </Collapse>
+        </div>
+      </Collapse>
+
+      <Modal isOpen={props.this.state.modal_respuestas} fade={false}>
+        <ModalHeader>
+          <div>
+            <h4>Respuestas de: {props.this.state.preg} </h4>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <ListGroup>
+            <ListGroupItem
+              color="info"
+              tag="button"
+              active
+              onClick={() => props.this.NuevaRespuesta()}
+              action
+            >
+              Nueva Respuesta
+            </ListGroupItem>
+          </ListGroup>
+          <div className="boxer"></div>
+          <Collapse isOpen={props.this.state.collapseNuevaRespuesta}>
+            <CardBody>
+              <InputGroup>
+                <Input
+                  type="text"
+                  name="resp"
+                  placeholder="Ingrese Respuesta"
+                />
+                <ButtonDropdown
+                  addonType="append"
+                  isOpen={props.this.state.dropdownOpen}
+                  toggle={props.this.toggleDropDown}
+                >
+                  <DropdownToggle caret>Tipo de Respuesta</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem>Incorrecta</DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem>Correcta</DropdownItem>
+                  </DropdownMenu>
+                </ButtonDropdown>
+              </InputGroup>
+            </CardBody>
+          </Collapse>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalRespuestas()}
+          >
+            Cerrar
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </Container>
+  );
 }
 
 function Alumnos(props) {
@@ -1004,15 +1292,14 @@ function Alumnos(props) {
                     <td>
                       {dato.Nombre} {dato.Apellido}
                     </td>
-                    {dato.Actividades.map((date) => (
-                      (() =>{
-                        if(date.Puntuacion != "NaN"){
-                          return <td>{date.Puntuacion}</td>
+                    {dato.Actividades.map((date) =>
+                      (() => {
+                        if (date.Puntuacion != "NaN") {
+                          return <td>{date.Puntuacion}</td>;
                         }
-                        return <td></td>
+                        return <td></td>;
                       })()
-                    ))
-                    }
+                    )}
                     <td>{dato.Nota}</td>
                   </tr>
                 );
