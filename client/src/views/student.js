@@ -265,6 +265,20 @@ class student extends Component {
   }
 
   RealizarExamen(dato) {
+    fetch("/app/get_examen_preguntas_respuestas", {
+      method: "POST",
+      body: JSON.stringify({
+        examen: dato.idExamen,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+          console.log(data)
+      });
     this.setState({ examen: dato, bander_examen: true });
   }
 

@@ -250,7 +250,7 @@ router.delete('/delete_respuesta',examen.delete_respuesta);
 
 router.post('/get_respuesta_by_id',examen.get_respuesta_by_id);
 
-
+router.post('/get_examen_preguntas_respuestas',examen.get_examen_preguntas_respuestas);
 
 
  module.exports = router
