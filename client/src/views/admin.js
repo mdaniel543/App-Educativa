@@ -615,7 +615,7 @@ class admin extends Component {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire("Mensaje!", data.msg, "info");
-        //this.fetchTasks2();
+        this.fetchTasks2();
       })
       .catch((err) => console.error(err));
     this.cerrarModalInsertarA();

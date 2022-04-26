@@ -56,9 +56,10 @@ class teacher extends Component {
     super(props);
     this.state = {
       id: props.id,
+      value: "",
       datos: [],
       materias: [],
-      bandera: true,
+      bandera: 0,
       seleccion: {},
       Actividades: [],
       Publicaciones: [],
@@ -93,23 +94,224 @@ class teacher extends Component {
         timeF: "",
       },
       barra: 25,
+      pagina: 0,
       collapsePregunta: false,
       collapseNuevaPregunta: false,
       collapseNuevaRespuesta: false,
       preg: "",
       modal_respuestas: false,
       collapseNuevaRespuesta: false,
-      dropdownOpen: false
+      dropdownOpen: false,
+      dropdownOpen2: false,
+      data: {},
+      rutacsv: "",
+      tasks2: [],
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeA = this.handleChangeA.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
     this.handleChangePu = this.handleChangePu.bind(this);
     this.handleChangeE = this.handleChangeE.bind(this);
     this.handleChangePr = this.handleChangePr.bind(this);
     this.toggleDropDown = this.toggleDropDown.bind(this);
+    this.toggleDropDown2 = this.toggleDropDown2.bind(this);
     this.fetchMaestro();
+    this.SigPag();
   }
 
+  /**
+   *
+   * los de alumnos
+   */
+
+  handleFiles = (files) => {
+    var reader = new FileReader();
+    reader.onload = (e) => {
+      // Use reader.result
+      this.setState({
+        value: reader.result,
+      });
+      console.log("hola");
+    };
+    reader.readAsText(files[0]);
+    const formData = new FormData();
+    formData.append("file", files[0]);
+    axios.post("/app/carga", formData, {}).then((res) => {
+      this.setState({ rutacsv: res.data.msg });
+      console.log(this.state.rutacsv);
+    });
+  };
+
+  Carga() {
+    fetch("/app/carga_sel", {
+      method: "POST",
+      body: JSON.stringify({
+        user: "Alumno",
+        ruta: this.state.rutacsv,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        Swal.fire("Mensaje!", data.msg, "info");
+        //this.fetchTasks2();
+        this.setState({ load2: false });
+      })
+      .catch((err) => console.error(err));
+  }
+
+  handleChangeA(e) {
+    const { name, value } = e.target;
+    this.setState({
+      data: {
+        ...this.state.data,
+        [name]: value,
+      },
+    });
+  }
+
+  mostrarModalInsertarA() {
+    this.setState({ modalInsertarA: true });
+  }
+  cerrarModalInsertarA() {
+    this.setState({ modalInsertarA: false });
+  }
+
+  SigPag() {
+    var page = this.state.pagina;
+    page++;
+    console.log(page);
+
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+        page: page,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+        this.setState({ pagina: page });
+      });
+  }
+  AntPag() {
+    var page = this.state.pagina;
+    page--;
+    console.log(page);
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+        page: page,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+        this.setState({ pagina: page });
+      });
+  }
+  fetchTasks2() {
+    var page = this.state.pagina;
+    fetch("/app/selectEstudiantes", {
+      //eliminar maestro
+      method: "POST",
+      body: JSON.stringify({
+        page: page,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        //console.log(data.data[0]);
+        this.setState({ tasks2: data.data[0] });
+      });
+  }
+
+  eliminarA(dato) {
+    Swal.fire({
+      title: "Deseas eliminar el alumno?",
+      text: "No se puede revertir!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ load2: true });
+        fetch("/app/delete_alumno", {
+          //eliminar alumno
+          method: "DELETE",
+          body: JSON.stringify({
+            Carnet: dato.Carnet, //envio solo carnet
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            Swal.fire("Eliminado!", data.msg, "success");
+            this.fetchTasks2();
+            this.setState({ load2: false });
+          })
+          .catch((err) => console.error(err));
+      }
+    });
+  }
+
+  insertarA() {
+    console.log(this.state.data);
+    fetch("/app/insert_alumno", {
+      ///insertar alumno
+      method: "POST",
+      body: JSON.stringify({
+        Nombre: this.state.data.nombre,
+        Apellido: this.state.data.apellido,
+        Carnet: this.state.data.carnet,
+        Telefono: this.state.data.telefono,
+        Direccion: this.state.data.direccion,
+        Correo: this.state.data.correo,
+        Pass: this.state.data.pass,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
+        this.fetchTasks2();
+      })
+      .catch((err) => console.error(err));
+    this.cerrarModalInsertarA();
+  }
+
+  /**
+   *
+   * lo normal
+   */
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({
@@ -156,7 +358,13 @@ class teacher extends Component {
 
   toggleDropDown() {
     this.setState({
-      dropdownOpen: !this.state.dropdownOpen
+      dropdownOpen: !this.state.dropdownOpen,
+    });
+  }
+
+  toggleDropDown2() {
+    this.setState({
+      dropdownOpen2: !this.state.dropdownOpen2,
     });
   }
 
@@ -304,13 +512,13 @@ class teacher extends Component {
   }
 
   mostrar(datos) {
-    this.setState({ bandera: false, seleccion: datos });
+    this.setState({ bandera: 2, seleccion: datos });
     this.FetchPublicaciones(datos);
     this.fetchActividades(datos);
     this.fetchAlumnos(datos);
   }
   cerrarMostrar() {
-    this.setState({ bandera: true, Publicaciones: [], Actividades: [] });
+    this.setState({ bandera: 1, Publicaciones: [], Actividades: [] });
   }
 
   cerrarSesion = () => {
@@ -407,7 +615,11 @@ class teacher extends Component {
     });
   }
   Pregunta() {
-    this.setState({ collapseNuevaPregunta: false, modal_respuestas: true, collapseNuevaRespuesta: true });
+    this.setState({
+      collapseNuevaPregunta: false,
+      modal_respuestas: true,
+      collapseNuevaRespuesta: true,
+    });
   }
   NuevaRespuesta() {
     this.setState({
@@ -547,6 +759,13 @@ class teacher extends Component {
     });
   }
 
+  materias_asignadas() {
+    this.setState({ bandera: 1 });
+  }
+  Laumnos() {
+    this.setState({ bandera: 3 });
+  }
+
   render() {
     return (
       <div>
@@ -568,16 +787,34 @@ class teacher extends Component {
             {this.state.datos.Nombre} {this.state.datos.Apellido}
           </h2>
           <h4>{this.state.datos.Correo_electronico}</h4>
+          <center>
+            <ButtonDropdown
+              isOpen={this.state.dropdownOpen2}
+              toggle={this.toggleDropDown2}
+            >
+              <DropdownToggle caret>Visualizar</DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={() => this.materias_asignadas()}>
+                  Materias Asignadas
+                </DropdownItem>
+                <DropdownItem onClick={() => this.Laumnos()}>
+                  Alumnos General
+                </DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
+          </center>
         </div>
         <div className="xmt">
           <h2>Modulo Maestro</h2>
         </div>
         <div className="box"></div>
         {(() => {
-          if (this.state.bandera === true) {
+          if (this.state.bandera === 1) {
             return <MateriasA this={this} />;
-          } else {
+          } else if (this.state.bandera === 2) {
             return <Materia this={this} />;
+          } else if (this.state.bandera === 3) {
+            return <Alumno_carga this={this} />;
           }
         })()}
       </div>
@@ -1310,6 +1547,237 @@ function Alumnos(props) {
         </tbody>
       </Table>
     </Container>
+  );
+}
+
+function Alumno_carga(props) {
+  return (
+    <Container>
+      <div className="boxer"></div>
+      <center>
+        <u>
+          <h3>Manejo de Alumnos</h3>
+        </u>
+      </center>
+      <div className="box"></div>
+      <Tabs>
+        <TabList>
+          <Tab>Carga</Tab>
+          <Tab>Alumnos</Tab>
+        </TabList>
+        <TabPanel>
+          <Carga this={props.this} />
+        </TabPanel>
+        <TabPanel>
+          <Manejo_Alumnos this={props.this} />
+        </TabPanel>
+      </Tabs>
+    </Container>
+  );
+}
+
+function Carga(props) {
+  return (
+    <Container>
+      <div className="boxer"></div>
+      <ReactFileReader
+        multipleFiles={false}
+        fileTypes={[".csv"]}
+        handleFiles={props.this.handleFiles}
+      >
+        <button className="btn">Subir Archivo</button>
+      </ReactFileReader>
+      <div className="boxer"></div>
+      <div className="boxer"></div>
+      <CsvToHtmlTable
+        data={props.this.state.value}
+        csvDelimiter=","
+        tableClassName="table table-striped table-hover"
+        //hasHeader = {false}
+      />
+      <div className="boxer"></div>
+      <Button fullWidth color="primary" onClick={() => props.this.Carga()}>
+        Cargar
+      </Button>
+    </Container>
+  );
+}
+
+function Manejo_Alumnos(props) {
+  return (
+    <div>
+      <Container>
+        <br />
+        <Button
+          color="primary"
+          onClick={() => props.this.mostrarModalInsertarA()}
+        >
+          Crear Alumno
+        </Button>
+        <br />
+        <br />
+        <Table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Carnet</th>
+              <th>Telefono</th>
+              <th>Direccion</th>
+              <th>Correo</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          {props.this.state.tasks2.map((dato) =>
+            (() => {
+              if (dato.Estado === 1) {
+                return <IfyesA dato={dato} this={props.this} />;
+              } else {
+                return <ElseA dato={dato} this={props.this} />;
+              }
+            })()
+          )}
+        </Table>
+        <center>
+          <b>{props.this.state.pagina}</b>
+        </center>
+        <Button color="secondary" onClick={() => props.this.AntPag()}>
+          Anterior Pagina
+        </Button>
+        <Button
+          style={{ float: "right" }}
+          color="secondary"
+          onClick={() => props.this.SigPag()}
+        >
+          Siguiente Pagina
+        </Button>
+        <div className="box"></div>
+      </Container>
+
+      <Modal isOpen={props.this.state.modalInsertarA} fade={false}>
+        <ModalHeader>
+          <div>
+            <h3>Crear Alumno</h3>
+          </div>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label>Nombre</label>
+            <input
+              className="form-control"
+              name="nombre"
+              type="text"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Apellido</label>
+            <input
+              className="form-control"
+              name="apellido"
+              type="text"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Carnet:</label>
+            <input
+              className="form-control"
+              name="carnet"
+              type="number"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Telefono:</label>
+            <input
+              className="form-control"
+              name="telefono"
+              type="text"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Direccion:</label>
+            <input
+              className="form-control"
+              name="direccion"
+              type="text"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Correo:</label>
+            <input
+              className="form-control"
+              name="correo"
+              type="email"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+          <FormGroup>
+            <label>Contraseña</label>
+            <input
+              className="form-control"
+              name="pass"
+              type="password"
+              onChange={props.this.handleChangeA}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={() => props.this.insertarA()}>
+            Insertar
+          </Button>
+          <Button
+            className="btn btn-danger"
+            onClick={() => props.this.cerrarModalInsertarA()}
+          >
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+}
+
+function IfyesA(props) {
+  var dato = props.dato;
+  return (
+    <tbody>
+      <tr key={dato.idAlumno}>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Carnet}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td>
+          <Button color="danger" onClick={() => props.this.eliminarA(dato)}>
+            Eliminar
+          </Button>
+        </td>
+      </tr>
+    </tbody>
+  );
+}
+
+function ElseA(props) {
+  var dato = props.dato;
+  return (
+    <tbody style={{ backgroundColor: "#F44336" }}>
+      <tr key={dato.idAlumno}>
+        <td>{dato.Nombre}</td>
+        <td>{dato.Apellido}</td>
+        <td>{dato.Carnet}</td>
+        <td>{dato.Telefono}</td>
+        <td>{dato.Direccion}</td>
+        <td>{dato.Correo_electronico}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
   );
 }
 

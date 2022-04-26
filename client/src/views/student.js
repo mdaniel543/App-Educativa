@@ -21,6 +21,8 @@ import Swal from "sweetalert2";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
+import Pdf from "react-to-pdf";
+
 import {
   Collapse,
   CardHeader,
@@ -41,6 +43,8 @@ import {
   ModalFooter,
 } from "reactstrap";
 
+const ref1 = React.createRef();
+
 class student extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +62,11 @@ class student extends Component {
         Actividades: [],
         Total: 0,
       },
-      Notificaciones: [],
+      options: {
+        orientation: 'landscape',
+        unit: 'in',
+    },
+    Notificaciones: [],
     };
     this.fetchAlumno();
   }
@@ -492,36 +500,60 @@ function Notificaciones(props) {
 
 function Notas(props) {
   return (
-    <Table dark>
-      <thead>
-        <tr>
-          <th>Actividad</th>
-          <th>Nota</th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.this.state.Notas.Actividades.map((dato) => (
-          <tr key={dato.idEntrega}>
-            <td>{dato.Titulo}</td>
-            <td>
-              {(() => {
-                if (dato.Puntuacion == "NaN") {
-                  return;
-                } else {
-                  return <text>{dato.Puntuacion}</text>;
-                }
-              })()}
-            </td>
-          </tr>
-        ))}
-        <tr>
-          <td>
-            <b>Total</b>
-          </td>
-          <td>{props.this.state.Notas.Total}</td>
-        </tr>
-      </tbody>
-    </Table>
+    <div>
+      <div className="box"></div>
+      <div ref={ref1}>
+        <center>
+          <h2>Notas de {props.this.state.seleccion.Nombre}</h2>
+        </center>
+        <div className="boxer"></div>
+        <Table dark>
+          <thead>
+            <tr>
+              <th>Actividad</th>
+              <th>Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            {props.this.state.Notas.Actividades.map((dato) => (
+              <tr key={dato.idEntrega}>
+                <td>{dato.Titulo}</td>
+                <td>
+                  {(() => {
+                    if (dato.Puntuacion == "NaN") {
+                      return;
+                    } else {
+                      return <text>{dato.Puntuacion}</text>;
+                    }
+                  })()}
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td>
+                <b>Total</b>
+              </td>
+              <td>{props.this.state.Notas.Total}</td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
+      <div className="boxer"></div>
+      <Pdf
+        targetRef={ref1}
+        filename={"notas_" + props.this.state.seleccion.Nombre + "_" + props.this.state.datos.Carnet + ".pdf"}
+        options={props.this.state.options}
+        x={0.5}
+        y={0.5}
+        scale={0.8}
+      >
+        {({ toPdf }) => (
+          <Button color="success" style={{ float: "right" }} onClick={toPdf}>
+            Descargar Notas
+          </Button>
+        )}
+      </Pdf>
+    </div>
   );
 }
 
