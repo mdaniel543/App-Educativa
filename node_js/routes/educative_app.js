@@ -232,7 +232,7 @@ router.get('/get_examen_by_materia',examen.get_by_materia);
 
 router.post('/insert_pregunta',examen.insert_pregunta);
 
-router.get('/get_pregunta_by_examen',examen.pregunta_get_by_examen_id);
+router.post('/get_pregunta_by_examen',examen.pregunta_get_by_examen_id);
 
 router.put('/update_pregunta',examen.update_pregunta);
 
@@ -248,7 +248,7 @@ router.put('/update_respuesta',examen.update_respuesta);
 
 router.delete('/delete_respuesta',examen.delete_respuesta);
 
-router.get('/get_respuesta_by_id',examen.get_respuesta_by_id);
+router.post('/get_respuesta_by_id',examen.get_respuesta_by_id);
 
 
 

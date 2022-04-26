@@ -43,7 +43,7 @@ async function insert(req, res) {
         msg: resp[0].msg_err,
       };
     }
-    res.json({ msg: res[0].resp });
+    res.json({ msg: resp[0].resp });
   }
 
 
@@ -130,14 +130,11 @@ respuesta_get_by_pregunta_id
 async function insert_pregunta(req,res){
     let data = req.body;
     const resp = await db.query(
-        `CALL pregunta_create("${data.par_enunciado}",${data.par_id_examen});`
+        `CALL pregunta_create("${data.par_enunciado}","${data.examen}");`
     );
-    if (resp[0].msg_err != "") {
-        console.log(resp[0].msg_err);
-        res.json({ msg: `${resp[0].msg_err}` });
-    }  
-    res.contentType('aplication/json').status(200);
-    res.json({msg:resp[0].resp});
+    console.log(resp[0][0].resp)
+    res.json({ msg: resp[0][0].resp });
+  
 }
 
 
@@ -169,25 +166,22 @@ async function update_pregunta(req,res){
 
 async function pregunta_get_by_examen_id(req,res){
     let data = req.body;
+    console.log(data)
     const result = await db.query(
-      `CALL actividad_get_by_id(${data.id_str});`
+      `CALL pregunta_get_by_examen_id("${data.examen}");`
     );
     const resp = result[0];
-    res.json(resp[0]);
+    res.json(resp);
 }
 
 
 async function insert_respuesta(req,res){
     let data = req.body;
+    console.log(data)
     const resp = await db.query(
-        `CALL respuesta_create("${data.text_respuesta}","${data.es_respuesta}",${data.id_pregunta});`
+        `CALL respuesta_create("${data.respuesta}",${data.es_respuesta},${data.id_pregunta});`
     );
-    if (resp[0].msg_err != "") {
-        console.log(resp[0].msg_err);
-        res.json({ msg: `${resp[0].msg_err}` });
-    }  
-    res.contentType('aplication/json').status(200);
-    res.json({msg:resp[0].resp});
+    res.json({msg:resp[0][0].resp});
 }
 
 
@@ -223,8 +217,7 @@ async function update_respuesta(req,res){
     const result = await db.query(
       `CALL respuesta_get_by_pregunta_id(${data.idPregunta})`
     );
-    const resp = result[0];
-    res.json(resp[0]);
+    res.json(result[0]);
   
   }
 

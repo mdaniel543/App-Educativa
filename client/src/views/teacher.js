@@ -106,12 +106,17 @@ class teacher extends Component {
       data: {},
       rutacsv: "",
       tasks2: [],
+      respuestas: [],
+      preguntas: [],
+      idPregunta: 0,
+      textRespues: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeA = this.handleChangeA.bind(this);
     this.handleChangeP = this.handleChangeP.bind(this);
     this.handleChangePu = this.handleChangePu.bind(this);
     this.handleChangeE = this.handleChangeE.bind(this);
+    this.handleChangeRe = this.handleChangeRe.bind(this);
     this.handleChangePr = this.handleChangePr.bind(this);
     this.toggleDropDown = this.toggleDropDown.bind(this);
     this.toggleDropDown2 = this.toggleDropDown2.bind(this);
@@ -171,6 +176,14 @@ class teacher extends Component {
         ...this.state.data,
         [name]: value,
       },
+    });
+  }
+
+  handleChangeRe(e) {
+    const { name, value } = e.target;
+    console.log(value)
+    this.setState({
+      [name]: value,
     });
   }
 
@@ -614,13 +627,121 @@ class teacher extends Component {
       }
     });
   }
-  Pregunta() {
-    this.setState({
-      collapseNuevaPregunta: false,
-      modal_respuestas: true,
-      collapseNuevaRespuesta: true,
-    });
+
+  CrearExamen() {
+    fetch("/app/create_examen", {
+      method: "POST",
+      body: JSON.stringify({
+        titulo: this.state.examen.nombre,
+        fecha_publicacion: this.state.examen.date,
+        hora_inicio: this.state.examen.timeI,
+        hora_fin: this.state.examen.timeF,
+        id_materia: this.state.seleccion.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", data.msg, "info");
+        if (data.msg != "Ingresa un titulo diferente") {
+          this.setState({
+            collapseExamen: !this.state.collapseExamen,
+            collapseNuevoExamen: !this.state.collapseNuevoExamen,
+          });
+        }
+      });
   }
+
+  Pregunta() {
+    fetch("/app/insert_pregunta", {
+      method: "POST",
+      body: JSON.stringify({
+        par_enunciado: this.state.preg,
+        examen: this.state.examen.nombre,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ idPregunta: data.msg });
+        this.fetchPreguntas();
+      });
+  }
+
+  fetchPreguntas() {
+    fetch("/app/get_pregunta_by_examen", {
+      method: "POST",
+      body: JSON.stringify({
+        examen: this.state.examen.nombre,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          collapseNuevaPregunta: false,
+          modal_respuestas: true,
+          collapseNuevaRespuesta: true,
+          preguntas: data,
+        });
+      });
+  }
+
+  InsertRespuesta(tipo) {
+    let tp;
+    if (tipo == 1) {
+      tp = true;
+    } else {
+      tp = false;
+    }
+    fetch("/app/insert_respuesta", {
+      method: "POST",
+      body: JSON.stringify({
+        respuesta: this.state.textRespues,
+        es_respuesta: tp,
+        id_pregunta: this.state.idPregunta,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.fetchRespuestas();
+      });
+  }
+
+
+
+  fetchRespuestas() {
+    fetch("/app/get_respuesta_by_id", {
+      method: "POST",
+      body: JSON.stringify({
+        idPregunta: this.state.idPregunta,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        this.setState({ respuestas: data, collapseNuevaRespuesta: false });
+      });
+  }
+
   NuevaRespuesta() {
     this.setState({
       collapseNuevaRespuesta: !this.state.collapseNuevaRespuesta,
@@ -750,13 +871,6 @@ class teacher extends Component {
           });
         });
     }
-  }
-
-  CrearExamen() {
-    this.setState({
-      collapseExamen: !this.state.collapseExamen,
-      collapseNuevoExamen: !this.state.collapseNuevoExamen,
-    });
   }
 
   materias_asignadas() {
@@ -1408,9 +1522,17 @@ function Examen(props) {
             {" "}
             <h4>Preguntas</h4>{" "}
           </center>
-
           <hr className="my-2" />
           <ListGroup>
+            {props.this.state.preguntas.map((dato) => (
+              <ListGroupItem
+                tag="button"
+                onClick={() => props.this.mostrarRespuestas(dato)}
+                action
+              >
+                {dato.Enunciado_pregunta}
+              </ListGroupItem>
+            ))}
             <ListGroupItem
               tag="button"
               active
@@ -1456,6 +1578,23 @@ function Examen(props) {
         </ModalHeader>
         <ModalBody>
           <ListGroup>
+            {props.this.state.respuestas.map((dato) =>
+              (() => {
+                if (dato.esRespuesta == 1) {
+                  return (
+                    <ListGroupItem color="success" action>
+                      {dato.Texto_respuesta}
+                    </ListGroupItem>
+                  );
+                } else {
+                  return (
+                    <ListGroupItem color="danger" action>
+                      {dato.Texto_respuesta}
+                    </ListGroupItem>
+                  );
+                }
+              })()
+            )}
             <ListGroupItem
               color="info"
               tag="button"
@@ -1472,7 +1611,8 @@ function Examen(props) {
               <InputGroup>
                 <Input
                   type="text"
-                  name="resp"
+                  name="textRespues"
+                  onChange={props.this.handleChangeRe}
                   placeholder="Ingrese Respuesta"
                 />
                 <ButtonDropdown
@@ -1482,9 +1622,12 @@ function Examen(props) {
                 >
                   <DropdownToggle caret>Tipo de Respuesta</DropdownToggle>
                   <DropdownMenu>
-                    <DropdownItem>Incorrecta</DropdownItem>
-                    <DropdownItem divider />
-                    <DropdownItem>Correcta</DropdownItem>
+                    <DropdownItem onClick={() => props.this.InsertRespuesta(2)}>
+                      Incorrecta
+                    </DropdownItem>
+                    <DropdownItem onClick={() => props.this.InsertRespuesta(1)}>
+                      Correcta
+                    </DropdownItem>
                   </DropdownMenu>
                 </ButtonDropdown>
               </InputGroup>
