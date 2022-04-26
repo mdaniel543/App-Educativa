@@ -30,6 +30,14 @@ respuesta_get_by_pregunta_id
  * hora_fin time
  * id_materia int
  */
+
+ async function asynForEach(array,callback){
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index],index,array);
+    }
+  }
+
+
 async function insert(req, res) {
     console.log(req.body);
     let data = req.body
@@ -43,7 +51,7 @@ async function insert(req, res) {
         msg: resp[0].msg_err,
       };
     }
-    res.json({ msg: resp[0].resp });
+    res.json({ msg: res[0].resp });
   }
 
 
@@ -130,11 +138,14 @@ respuesta_get_by_pregunta_id
 async function insert_pregunta(req,res){
     let data = req.body;
     const resp = await db.query(
-        `CALL pregunta_create("${data.par_enunciado}","${data.examen}");`
+        `CALL pregunta_create("${data.par_enunciado}",${data.par_id_examen});`
     );
-    console.log(resp[0][0].resp)
-    res.json({ msg: resp[0][0].resp });
-  
+    if (resp[0].msg_err != "") {
+        console.log(resp[0].msg_err);
+        res.json({ msg: `${resp[0].msg_err}` });
+    }  
+    res.contentType('aplication/json').status(200);
+    res.json({msg:resp[0].resp});
 }
 
 
@@ -166,22 +177,25 @@ async function update_pregunta(req,res){
 
 async function pregunta_get_by_examen_id(req,res){
     let data = req.body;
-    console.log(data)
     const result = await db.query(
-      `CALL pregunta_get_by_examen_id("${data.examen}");`
+      `CALL actividad_get_by_id(${data.id_str});`
     );
     const resp = result[0];
-    res.json(resp);
+    res.json(resp[0]);
 }
 
 
 async function insert_respuesta(req,res){
     let data = req.body;
-    console.log(data)
     const resp = await db.query(
-        `CALL respuesta_create("${data.respuesta}",${data.es_respuesta},${data.id_pregunta});`
+        `CALL respuesta_create("${data.text_respuesta}","${data.es_respuesta}",${data.id_pregunta});`
     );
-    res.json({msg:resp[0][0].resp});
+    if (resp[0].msg_err != "") {
+        console.log(resp[0].msg_err);
+        res.json({ msg: `${resp[0].msg_err}` });
+    }  
+    res.contentType('aplication/json').status(200);
+    res.json({msg:resp[0].resp});
 }
 
 
@@ -217,12 +231,10 @@ async function update_respuesta(req,res){
     const result = await db.query(
       `CALL respuesta_get_by_pregunta_id(${data.idPregunta})`
     );
-    res.json(result[0]);
+    const resp = result[0];
+    res.json(resp[0]);
+  
   }
-
-
-
-
 
 
   module.exports = {
@@ -239,6 +251,6 @@ async function update_respuesta(req,res){
       insert_respuesta,
       update_respuesta,
       delete_respuesta,
-      get_respuesta_by_id,
+      get_respuesta_by_id
       
   }

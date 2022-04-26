@@ -19,7 +19,11 @@ async function insert(req,res){
     res.json({ msg: "Actividad Creada correctamente" });
 }
 
-
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 async function update(req,res){
   let data = req.body
   var rows = await db.query(
