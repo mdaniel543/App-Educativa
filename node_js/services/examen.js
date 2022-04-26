@@ -59,7 +59,7 @@ async function insert(req, res) {
   async function update(req,res){
     let data = req.body
     var rows = await db.query(
-      `CALL actividad_update_delete("1","${data.idExamen}","${data.fecha_publicacion}","${data.hora_inicio}","${data.hora_fin}",${data.Estado});`
+      `CALL pregunta_update_delete("1","${data.idExamen}","${data.fecha_publicacion}","${data.hora_inicio}","${data.hora_fin}",${data.Estado});`
     );
     const resp = rows[0];
     if (resp[0].msg_err != "") {
@@ -72,7 +72,7 @@ async function insert(req, res) {
   async function delete_(req,res){
     let data = req.body
     var rows = await db.query(
-      `CALL actividad_update_delete(2,"${data.idExamen}","","","",0);`
+      `CALL pregunta_update_delete(2,"${data.idExamen}","","","",0);`
     );
     const resp = rows[0];
     if (resp[0].msg_err != "") {
@@ -107,7 +107,7 @@ async function get_by_id(req,res){
   
   }
 
-  async function get_by_materia(req,res){
+async function get_by_materia(req,res){
     let data = req.body;
     const result = await db.query(
       `CALL examen_get_by_materia_id(${data.idMateria})`
@@ -115,7 +115,121 @@ async function get_by_id(req,res){
     const resp = result[0];
     res.json(resp[0]);
   
+}
+/*
+respuesta_create
+respuesta_update_delete
+respuesta_get_by_pregunta_id
+*/
+
+
+/**
+ * 
+ * par_enunciado varchar(100),ç varchar(100))
+ */
+async function insert_pregunta(req,res){
+    let data = req.body;
+    const resp = await db.query(
+        `CALL pregunta_create("${data.par_enunciado}",${data.par_id_examen});`
+    );
+    if (resp[0].msg_err != "") {
+        console.log(resp[0].msg_err);
+        res.json({ msg: `${resp[0].msg_err}` });
+    }  
+    res.contentType('aplication/json').status(200);
+    res.json({msg:resp[0].resp});
+}
+
+
+async function update_pregunta(req,res){
+    let data = req.body
+    var rows = await db.query(
+      `CALL pregunta_update_delete("1",${data.idPregunta},"${data.enunciado_pregunta}",${data.Estado});`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      res.json({ msg: `${resp[0].msg_err}` });
+    }
+    res.json({ msg: resp[0].resp });
   }
+
+  async function delete_pregunta(req,res){
+    let data = req.body
+    var rows = await db.query(
+      `CALL pregunta_update_delete("2",${data.idPregunta},"",0;`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      res.json({ msg: `${resp[0].msg_err}` });
+    }
+    res.json({ msg: resp[0].resp });
+  }
+
+async function pregunta_get_by_examen_id(req,res){
+    let data = req.body;
+    const result = await db.query(
+      `CALL actividad_get_by_id(${data.id_str});`
+    );
+    const resp = result[0];
+    res.json(resp[0]);
+}
+
+
+async function insert_respuesta(req,res){
+    let data = req.body;
+    const resp = await db.query(
+        `CALL respuesta_create("${data.text_respuesta}","${data.es_respuesta}",${data.id_pregunta});`
+    );
+    if (resp[0].msg_err != "") {
+        console.log(resp[0].msg_err);
+        res.json({ msg: `${resp[0].msg_err}` });
+    }  
+    res.contentType('aplication/json').status(200);
+    res.json({msg:resp[0].resp});
+}
+
+
+async function update_respuesta(req,res){
+    let data = req.body
+    var rows = await db.query(
+      `CALL respuesta_update_delete("1",${data.idRespuesta},"${data.texto_respuesta}","${data.es_respuesta}",${data.Estado});`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      res.json({ msg: `${resp[0].msg_err}` });
+    }
+    res.json({ msg: resp[0].resp });
+  }
+
+  async function delete_respuesta(req,res){
+    let data = req.body
+    var rows = await db.query(
+      `CALL respuesta_update_delete("2",${data.idRespuesta},"","",0;`
+    );
+    const resp = rows[0];
+    if (resp[0].msg_err != "") {
+      console.log(resp[0].msg_err);
+      res.json({ msg: `${resp[0].msg_err}` });
+    }
+    res.json({ msg: resp[0].resp });
+  }
+
+
+  async function get_respuesta_by_id(req,res){
+    let data = req.body;
+    const result = await db.query(
+      `CALL respuesta_get_by_pregunta_id(${data.idPregunta})`
+    );
+    const resp = result[0];
+    res.json(resp[0]);
+  
+  }
+
+
+
 
 
 
@@ -126,6 +240,13 @@ async function get_by_id(req,res){
       get,
       get_by_id,
       get_by_materia,
-
+      insert_pregunta,
+      update_pregunta,
+      delete_pregunta,
+      pregunta_get_by_examen_id,
+      insert_respuesta,
+      update_respuesta,
+      delete_respuesta,
+      get_respuesta_by_id,
       
   }
