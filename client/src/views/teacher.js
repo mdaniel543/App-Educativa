@@ -49,6 +49,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Spinner,
 } from "reactstrap";
 
 class teacher extends Component {
@@ -110,6 +111,7 @@ class teacher extends Component {
       preguntas: [],
       idPregunta: 0,
       textRespues: "",
+      cargaP: true,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeA = this.handleChangeA.bind(this);
@@ -451,7 +453,7 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ Publicaciones: data });
+        this.setState({ Publicaciones: data, cargaP: false });
       });
   }
 
@@ -530,7 +532,7 @@ class teacher extends Component {
     this.fetchAlumnos(datos);
   }
   cerrarMostrar() {
-    this.setState({ bandera: 1, Publicaciones: [], Actividades: [] });
+    this.setState({ bandera: 1, cargaP:true, Publicaciones: [], Actividades: [] });
   }
 
   cerrarSesion = () => {
@@ -669,7 +671,7 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ idPregunta: data.msg, respuestas: [], preg: ""});
+        this.setState({ idPregunta: data.msg, respuestas: [], preg: "" });
         this.fetchPreguntas();
       });
   }
@@ -718,7 +720,7 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         this.fetchRespuestas();
-        this.setState({textRespues: ""})
+        this.setState({ textRespues: "" });
       });
   }
 
@@ -736,7 +738,7 @@ class teacher extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ respuestas: data, modal_respuestas: true});
+        this.setState({ respuestas: data, modal_respuestas: true });
       });
   }
 
@@ -782,13 +784,13 @@ class teacher extends Component {
     this.setState({ collapseExamen: !this.state.collapseExamen });
   }
 
-  CerrarExamen(){
+  CerrarExamen() {
     this.setState({
-      collapseExamen: !this.state.collapseExamen, 
+      collapseExamen: !this.state.collapseExamen,
       collapseNuevoExamen: !this.state.collapseNuevoExamen,
       collapsePregunta: !this.state.collapsePregunta,
-      collapseNuevaPregunta: !this.state.collapseNuevaPregunta
-    })
+      collapseNuevaPregunta: !this.state.collapseNuevaPregunta,
+    });
   }
 
   mostrarcollapsePublicacion() {
@@ -954,6 +956,34 @@ class teacher extends Component {
             return <Materia this={this} />;
           } else if (this.state.bandera === 3) {
             return <Alumno_carga this={this} />;
+          } else {
+            return (
+              <center>
+                <div className="box"></div>
+                <div class="load-wrapp">
+                  <div class="load-6">
+                    <div class="letter-holder">
+                      <div class="l-1 letter">S</div>
+                      <div class="l-2 letter">e</div>
+                      <div class="l-3 letter">l</div>
+                      <div class="l-4 letter">e</div>
+                      <div class="l-5 letter">c</div>
+                      <div class="l-6 letter">c</div>
+                      <div class="l-7 letter">i</div>
+                      <div class="l-8 letter">o</div>
+                      <div class="l-9 letter">n</div>
+                      <div class="l-10 letter">e</div>
+                      <div class="l-11 letter">-</div>
+                      <div class="l-12 letter">V</div>
+                      <div class="l-13 letter">i</div>
+                      <div class="l-14 letter">s</div>
+                      <div class="l-15 letter">t</div>
+                      <div class="l-16 letter">a</div>
+                    </div>
+                  </div>
+                </div>
+              </center>
+            );
           }
         })()}
       </div>
@@ -1035,6 +1065,27 @@ function Publicacion(props) {
   return (
     <Container>
       <div className="boxer"></div>
+      {props.this.state.cargaP && (
+        <center>
+          <div>
+            <Spinner color="secondary" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="success" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="danger" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="info" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="warning" type="grow">
+              Loading...
+            </Spinner>
+          </div>
+        </center>
+      )}
       <Button
         color="primary"
         onClick={() => props.this.mostrarcollapsePublicacion()}

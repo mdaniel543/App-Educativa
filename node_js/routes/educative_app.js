@@ -223,7 +223,7 @@ router.get('/get_examen_todo',examen.get);
 
 router.get('/get_examen_by_id',examen.get_by_id);
 
-router.get('/get_examen_by_materia',examen.get_by_materia);
+router.post('/get_examen_by_materia',examen.get_by_materia);
 
 
 /**

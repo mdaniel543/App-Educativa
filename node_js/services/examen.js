@@ -113,7 +113,7 @@ async function get_by_materia(req,res){
       `CALL examen_get_by_materia_id(${data.idMateria})`
     );
     const resp = result[0];
-    res.json(resp[0]);
+    res.json(resp);
   
 }
 /*

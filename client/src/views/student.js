@@ -41,6 +41,7 @@ import {
   ModalBody,
   FormGroup,
   ModalFooter,
+  Spinner,
 } from "reactstrap";
 
 const ref1 = React.createRef();
@@ -63,10 +64,14 @@ class student extends Component {
         Total: 0,
       },
       options: {
-        orientation: 'landscape',
-        unit: 'in',
-    },
-    Notificaciones: [],
+        orientation: "landscape",
+        unit: "in",
+      },
+      Notificaciones: [],
+      Examenes: [],
+      bander_examen: false,
+      examen: {},
+      cargaP: true,
     };
     this.fetchAlumno();
   }
@@ -150,7 +155,7 @@ class student extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        this.setState({ Publicaciones: data });
+        this.setState({ Publicaciones: data, cargaP: false });
       });
   }
 
@@ -241,16 +246,55 @@ class student extends Component {
       });
   }
 
+  fetchExamenes(data) {
+    fetch("/app/get_examen_by_materia", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idCurso,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Examenes: data });
+      });
+  }
+
+  RealizarExamen(dato) {
+    this.setState({ examen: dato, bander_examen: true });
+  }
+
+  cerrarExamen(dato) {
+    Swal.fire({
+      title: "Desea cerra el examen?",
+      text: "Se perdera su progreso!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, Salir!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.setState({ bander_examen: false });
+      }
+    });
+  }
+
   mostrar(datos) {
     this.setState({ bandera: false, seleccion: datos });
     this.fetchActividades(datos);
     this.FetchPublicaciones(datos);
     this.fetchNotas(datos);
     this.fetchNotificaciones(datos);
+    this.fetchExamenes(datos);
   }
 
   cerrarMostrar() {
-    this.setState({ bandera: true, Publicaciones: [], Actividades: [] });
+    this.setState({ bandera: true, cargaP:true, Publicaciones: [], Actividades: [] });
   }
 
   cerrarSesion = () => {
@@ -356,7 +400,7 @@ function Materia(props) {
           <Notificaciones this={props.this} />
         </TabPanel>
         <TabPanel>
-          <div></div>
+          <Examen this={props.this} />
         </TabPanel>
         <TabPanel>
           <Notas this={props.this} />
@@ -370,6 +414,27 @@ function Publicacion(props) {
   return (
     <Container>
       <div className="boxer"></div>
+      {props.this.state.cargaP && (
+        <center>
+          <div>
+            <Spinner color="secondary" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="success" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="danger" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="info" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="warning" type="grow">
+              Loading...
+            </Spinner>
+          </div>
+        </center>
+      )}
       {props.this.state.Publicaciones.map((dato) =>
         (() => {
           if (dato.Estado === 0) {
@@ -498,6 +563,99 @@ function Notificaciones(props) {
   );
 }
 
+function Examen(props) {
+  return (
+    <div>
+      {(() => {
+        if (props.this.state.bander_examen === true) {
+          return <Responder_Examen this={props.this} />;
+        } else if (props.this.state.bander_examen === false) {
+          return <ListaExamen this={props.this} />;
+        }
+      })()}
+    </div>
+  );
+}
+
+function Responder_Examen(props) {
+  return (
+    <Container>
+      <div>
+        <div className="box"></div>
+        <center>
+          <u>
+            <h2 style={{ textTransform: "uppercase" }}>
+              {props.this.state.examen.idExamen}
+            </h2>
+          </u>
+        </center>
+      </div>
+      <Button
+        style={{ float: "right" }}
+        className="btn btn-danger"
+        onClick={() => props.this.cerrarExamen()}
+      >
+        X
+      </Button>
+      <div className="box"></div>
+    </Container>
+  );
+}
+
+function ListaExamen(props) {
+  return (
+    <div>
+      <div className="boxer"></div>
+      {props.this.state.Examenes.map((dato) => (
+        <center>
+          <div style={{ height: "8cm" }}>
+            <Card
+              style={{ width: "100%", height: "80%" }}
+              color="primary"
+              outline
+            >
+              <CardBody>
+                <CardTitle tag="h3">{dato.idExamen}</CardTitle>
+                <CardSubtitle className="mb-2 text-muted" tag="h4">
+                  <p>
+                    <b>Fecha Entrega: </b>{" "}
+                    <Moment format="DD/MM/YYYY">
+                      {dato.Fecha_publicacion}
+                    </Moment>
+                  </p>
+                </CardSubtitle>
+                <CardText>
+                  <p>
+                    <h6>
+                      <b>Hora Inicio: </b> {dato.Hora_inicio}
+                    </h6>
+                  </p>
+                  <p>
+                    <h6>
+                      <b>Fin: </b> {dato.Hora_fin}
+                    </h6>
+                  </p>
+                </CardText>
+                <center>
+                  <p>
+                    <Button
+                      style={{ width: "100%" }}
+                      color="primary"
+                      onClick={() => props.this.RealizarExamen(dato)}
+                    >
+                      Realizar Examen
+                    </Button>
+                  </p>
+                </center>
+              </CardBody>
+            </Card>
+          </div>
+        </center>
+      ))}
+    </div>
+  );
+}
+
 function Notas(props) {
   return (
     <div>
@@ -541,7 +699,13 @@ function Notas(props) {
       <div className="boxer"></div>
       <Pdf
         targetRef={ref1}
-        filename={"notas_" + props.this.state.seleccion.Nombre + "_" + props.this.state.datos.Carnet + ".pdf"}
+        filename={
+          "notas_" +
+          props.this.state.seleccion.Nombre +
+          "_" +
+          props.this.state.datos.Carnet +
+          ".pdf"
+        }
         options={props.this.state.options}
         x={0.5}
         y={0.5}
