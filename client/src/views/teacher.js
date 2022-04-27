@@ -865,13 +865,13 @@ class teacher extends Component {
   calificar() {
     console.log(this.state.punteo);
     console.log(this.state.entrega.Valor);
-    if (this.state.punteo > this.state.entrega.Valor) {
+    /*if (this.state.punteo > this.state.entrega.Valor) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Punteo mayor que el valor de la actividad",
-      });
-    } else {
+      });*/
+    //} else {
       fetch("/app/notificacion_insert", {
         method: "POST",
         body: JSON.stringify({
@@ -907,7 +907,7 @@ class teacher extends Component {
             modal_entregas: false,
           });
         });
-    }
+    //}
   }
 
   materias_asignadas() {
