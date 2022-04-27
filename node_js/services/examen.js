@@ -244,11 +244,39 @@ async function get_examen_preguntas_respuestas(req, res) {
   res.send(JSON.stringify(preguntas));
 }
 
+
 async function asynForEach(array,callback){
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index],index,array);
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index],index,array);
+    }
   }
+
+async function get_nota_examen(req,res){
+    let data = req.body;
+    //id alumno id examen
+    const arreglo = data.arreglo;
+    let total = 0;
+    let count = 0;
+    await asynForEach(arreglo,async (item)=>{
+        
+        const result = await db.query(
+            `CALL respuesta_get(${item.idRespuesta});`
+        );
+        count ++;
+        if(result[0][0].esRespuesta){
+            total ++;
+        }
+    })
+
+    let resultado = {
+        "Preguntas": count,
+        "Total": total
+    }
+    
+    res.send(JSON.stringify(resultado));
 }
+
+
 
 module.exports = {
   insert,
@@ -266,4 +294,5 @@ module.exports = {
   delete_respuesta,
   get_respuesta_by_id,
   get_examen_preguntas_respuestas,
+  get_nota_examen
 };
