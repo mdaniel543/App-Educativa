@@ -253,6 +253,6 @@ router.post('/get_respuesta_by_id',examen.get_respuesta_by_id);
 
 router.post('/get_examen_preguntas_respuestas',examen.get_examen_preguntas_respuestas);
 
-router.get('/get_nota_examen',examen.get_nota_examen);
+router.post('/get_nota_examen',examen.get_nota_examen);
 
  module.exports = router

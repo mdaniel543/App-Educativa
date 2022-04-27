@@ -352,14 +352,28 @@ class student extends Component {
       }
       aux.push(Schema)
     }
-    console.log(aux)
-    Swal.fire({
-      position: 'top-end',
-      icon: 'success',
-      title: 'Examen Realizado',
-      text: 'Nota: 2/5',
+    fetch("/app/get_nota_examen", {
+      method: "POST",
+      body: JSON.stringify({
+        idExamen: this.state.examen.idExamen,
+        idAlumno: this.state.id,
+        arreglo: aux
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
     })
-    this.setState({ bander_examen: false, date_examen: {} });
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Examen Realizado',
+          text: `Nota: ${data.Total}/ ${data.Preguntas}`,
+        })
+        this.setState({ bander_examen: false, date_examen: {} });
+      });
   }
 
   cerrarSesion = () => {

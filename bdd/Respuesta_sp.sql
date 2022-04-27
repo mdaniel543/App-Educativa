@@ -78,3 +78,18 @@ BEGIN
 
 END//
 DELIMITER ;
+
+DELIMITER //
+Drop PROCEDURE if EXISTS respuesta_get//
+CREATE PROCEDURE respuesta_get(par_id_respuesta int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    select * from Respuesta r
+    where r.idRespuesta = par_id_respuesta;
+
+END//
+DELIMITER ;

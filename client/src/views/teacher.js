@@ -531,16 +531,17 @@ class teacher extends Component {
     this.fetchActividades(datos);
     this.fetchAlumnos(datos);
   }
+
   cerrarMostrar() {
     this.setState({
       bandera: 1,
       cargaP: true,
       Publicaciones: [],
       Actividades: [],
-      collapseExamen: !this.state.collapseExamen,
-      collapseNuevoExamen: !this.state.collapseNuevoExamen,
-      collapsePregunta: !this.state.collapsePregunta,
-      collapseNuevaPregunta: !this.state.collapseNuevaPregunta,
+      collapseExamen: true,
+      collapseNuevoExamen: false,
+      collapsePregunta: false,
+      collapseNuevaPregunta: false,
     });
   }
 
