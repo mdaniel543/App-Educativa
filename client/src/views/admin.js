@@ -868,7 +868,7 @@ function Carga(props) {
         fileTypes={[".csv"]}
         handleFiles={props.this.handleFiles}
       >
-        <button className="btn">Subir Archivo</button>
+        <Button outline color="danger" size="lg">Subir Archivo</Button>
       </ReactFileReader>
       <div className="boxer"></div>
       <div className="boxer"></div>

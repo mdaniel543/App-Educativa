@@ -532,7 +532,16 @@ class teacher extends Component {
     this.fetchAlumnos(datos);
   }
   cerrarMostrar() {
-    this.setState({ bandera: 1, cargaP:true, Publicaciones: [], Actividades: [] });
+    this.setState({
+      bandera: 1,
+      cargaP: true,
+      Publicaciones: [],
+      Actividades: [],
+      collapseExamen: !this.state.collapseExamen,
+      collapseNuevoExamen: !this.state.collapseNuevoExamen,
+      collapsePregunta: !this.state.collapsePregunta,
+      collapseNuevaPregunta: !this.state.collapseNuevaPregunta,
+    });
   }
 
   cerrarSesion = () => {
@@ -973,12 +982,15 @@ class teacher extends Component {
                       <div class="l-8 letter">o</div>
                       <div class="l-9 letter">n</div>
                       <div class="l-10 letter">e</div>
-                      <div class="l-11 letter">-</div>
+                      <div class="l-11 letter">{'_'}</div>
                       <div class="l-12 letter">V</div>
                       <div class="l-13 letter">i</div>
                       <div class="l-14 letter">s</div>
                       <div class="l-15 letter">t</div>
                       <div class="l-16 letter">a</div>
+                      <div class="l-1 letter">-</div>
+                      <div class="l-2 letter">-</div>
+                      <div class="l-3 letter">{'>'}</div>
                     </div>
                   </div>
                 </div>
