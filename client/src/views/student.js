@@ -42,6 +42,8 @@ import {
   FormGroup,
   ModalFooter,
   Spinner,
+  Label,
+  Input,
 } from "reactstrap";
 
 const ref1 = React.createRef();
@@ -72,7 +74,11 @@ class student extends Component {
       bander_examen: false,
       examen: {},
       cargaP: true,
+      cargaE: false,
+      examen_re: [],
+      date_examen: {},
     };
+    this.onChangeValue = this.onChangeValue.bind(this);
     this.fetchAlumno();
   }
 
@@ -265,6 +271,7 @@ class student extends Component {
   }
 
   RealizarExamen(dato) {
+    this.setState({ cargaE: true });
     fetch("/app/get_examen_preguntas_respuestas", {
       method: "POST",
       body: JSON.stringify({
@@ -277,9 +284,14 @@ class student extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-          console.log(data)
+        console.log(data);
+        this.setState({
+          examen: dato,
+          examen_re: data,
+          bander_examen: true,
+          cargaE: false,
+        });
       });
-    this.setState({ examen: dato, bander_examen: true });
   }
 
   cerrarExamen(dato) {
@@ -293,7 +305,7 @@ class student extends Component {
       confirmButtonText: "Si, Salir!",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.setState({ bander_examen: false });
+        this.setState({ bander_examen: false, date_examen: {} });
       }
     });
   }
@@ -308,7 +320,46 @@ class student extends Component {
   }
 
   cerrarMostrar() {
-    this.setState({ bandera: true, cargaP:true, Publicaciones: [], Actividades: [] });
+    this.setState({
+      bandera: true,
+      cargaP: true,
+      Publicaciones: [],
+      Actividades: [],
+      bander_examen: false,
+    });
+  }
+
+  onChangeValue(e) {
+    const { name, value } = e.target;
+    this.setState({
+      date_examen: {
+        ...this.state.date_examen,
+        [name]: value,
+      },
+    });
+    console.log(e.target)
+  }
+
+  entregaExamen(){
+    console.log(this.state.id)
+    console.log(this.state.examen.idExamen)
+    let json = this.state.date_examen
+    var aux = []
+    for(let i in json){
+      let Schema = {
+        "idPregunta": i,
+        "idRespuesta": json[i]
+      }
+      aux.push(Schema)
+    }
+    console.log(aux)
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Examen Realizado',
+      text: 'Nota: 2/5',
+    })
+    this.setState({ bander_examen: false, date_examen: {} });
   }
 
   cerrarSesion = () => {
@@ -612,6 +663,38 @@ function Responder_Examen(props) {
         X
       </Button>
       <div className="box"></div>
+      <div>
+        {props.this.state.examen_re.map((dato, index) => (
+          <FormGroup style={{ marginLeft: "6em" }} tag="fieldset">
+            <legend>
+              {index + 1}. {dato.pregunta.Enunciado_pregunta}
+            </legend>
+            {dato.resp.map((respu) => (
+              <FormGroup
+                style={{ marginLeft: "2em" }}
+                onChange={props.this.onChangeValue}
+                check
+              >
+                <Label check>
+                  <Input
+                    type="radio"
+                    name={dato.pregunta.idPregunta}
+                    value={respu.idRespuesta}
+                  />
+                  {respu.Texto_respuesta}
+                </Label>
+              </FormGroup>
+            ))}
+          </FormGroup>
+        ))}
+      </div>
+      <Button
+        color="success"
+        style={{ float: "right" }}
+        onClick={() => props.this.entregaExamen()}
+      >
+        Entregar Examen
+      </Button>
     </Container>
   );
 }
@@ -619,53 +702,79 @@ function Responder_Examen(props) {
 function ListaExamen(props) {
   return (
     <div>
-      <div className="boxer"></div>
-      {props.this.state.Examenes.map((dato) => (
+      {props.this.state.cargaE && (
         <center>
-          <div style={{ height: "8cm" }}>
-            <Card
-              style={{ width: "100%", height: "80%" }}
-              color="primary"
-              outline
-            >
-              <CardBody>
-                <CardTitle tag="h3">{dato.idExamen}</CardTitle>
-                <CardSubtitle className="mb-2 text-muted" tag="h4">
-                  <p>
-                    <b>Fecha Entrega: </b>{" "}
-                    <Moment format="DD/MM/YYYY">
-                      {dato.Fecha_publicacion}
-                    </Moment>
-                  </p>
-                </CardSubtitle>
-                <CardText>
-                  <p>
-                    <h6>
-                      <b>Hora Inicio: </b> {dato.Hora_inicio}
-                    </h6>
-                  </p>
-                  <p>
-                    <h6>
-                      <b>Fin: </b> {dato.Hora_fin}
-                    </h6>
-                  </p>
-                </CardText>
-                <center>
-                  <p>
-                    <Button
-                      style={{ width: "100%" }}
-                      color="primary"
-                      onClick={() => props.this.RealizarExamen(dato)}
-                    >
-                      Realizar Examen
-                    </Button>
-                  </p>
-                </center>
-              </CardBody>
-            </Card>
+          <div className="boxer"></div>
+          <div>
+            <Spinner color="secondary" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="success" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="danger" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="info" type="grow">
+              Loading...
+            </Spinner>
+            <Spinner color="warning" type="grow">
+              Loading...
+            </Spinner>
           </div>
         </center>
-      ))}
+      )}
+      {!props.this.state.cargaE && (
+        <div>
+          <div className="boxer"></div>
+          {props.this.state.Examenes.map((dato) => (
+            <center>
+              <div style={{ height: "8cm" }}>
+                <Card
+                  style={{ width: "100%", height: "80%" }}
+                  color="primary"
+                  outline
+                >
+                  <CardBody>
+                    <CardTitle tag="h3">{dato.idExamen}</CardTitle>
+                    <CardSubtitle className="mb-2 text-muted" tag="h4">
+                      <p>
+                        <b>Fecha Entrega: </b>{" "}
+                        <Moment format="DD/MM/YYYY">
+                          {dato.Fecha_publicacion}
+                        </Moment>
+                      </p>
+                    </CardSubtitle>
+                    <CardText>
+                      <p>
+                        <h6>
+                          <b>Hora Inicio: </b> {dato.Hora_inicio}
+                        </h6>
+                      </p>
+                      <p>
+                        <h6>
+                          <b>Fin: </b> {dato.Hora_fin}
+                        </h6>
+                      </p>
+                    </CardText>
+                    <center>
+                      <p>
+                        <Button
+                          style={{ width: "100%" }}
+                          color="primary"
+                          onClick={() => props.this.RealizarExamen(dato)}
+                        >
+                          Realizar Examen
+                        </Button>
+                      </p>
+                    </center>
+                  </CardBody>
+                </Card>
+              </div>
+            </center>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
