@@ -65,7 +65,8 @@ A continuacion se listan los Procedimientos almacenados utilizados
 
 |  Nombre | Tipo  | Descripcion | Parametros  | Salida  |
 | :---    |:----: |:----:       |    :----:   |    ---: |
-|usuario_login|Usuario|"se utiliza para realizar el login de cualquier usuario registrado| recibe la iniciall del rol"|"usuario varchar|
+|usuario_login|Usuario|se utiliza para realizar el login de cualquier usuario registrado, recibe la iniciall del rol|"usuario varchar, pass varchar, rol char ('A', 'E', 'M')"|resp: contiene el id usuario, msg_err: contiene el detalle del error|
+|alumno_create|alumno|Se utiliza para la creacion de un alumno dentro de la plataforma|"nombre varchar, apellido varchar, carnet varchar, telefono varchar, direccion varchar, correo varchar, pass varchar"|"resp: contiene el id del alumno, msg_err: contiene el detalle del error"
 
 
 
