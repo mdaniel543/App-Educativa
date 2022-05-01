@@ -16,7 +16,14 @@ BEGIN
 	ELSE
 		insert into Examen(idExamen, Fecha_publicacion, Hora_inicio, Hora_fin, idMateria, Estado, Fecha_creacion) 
         values (par_titulo, par_fecha_publicacion, par_hora_inicio, par_hora_fin, par_id_materia, 1, now());
-		set resp = 'Examen creado exitosamente';
+		
+        Insert into Realizacion_examen (IdAlumno, idExamen, nota, estado)
+        Select A.IdAlumno, par_titulo, 0, 0 FROM Alumno A 
+        join Pensum P on P.idCarrera = A.idCarrera
+        join Materia M on M.idMateria = P.idMateria
+        where M.idMateria = par_id_materia;
+
+        set resp = 'Examen creado exitosamente';
 	END IF;
 
 	SELECT msg_err, resp;

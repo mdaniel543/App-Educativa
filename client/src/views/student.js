@@ -253,10 +253,11 @@ class student extends Component {
   }
 
   fetchExamenes(data) {
-    fetch("/app/get_examen_by_materia", {
+    fetch("/app/get_by_materia_id_alumno", {
       method: "POST",
       body: JSON.stringify({
         idMateria: data.idCurso,
+        idAlumno: this.state.id,
       }),
       headers: {
         Accept: "application/json",
@@ -337,27 +338,27 @@ class student extends Component {
         [name]: value,
       },
     });
-    console.log(e.target)
+    console.log(e.target);
   }
 
-  entregaExamen(){
-    console.log(this.state.id)
-    console.log(this.state.examen.idExamen)
-    let json = this.state.date_examen
-    var aux = []
-    for(let i in json){
+  entregaExamen() {
+    console.log(this.state.id);
+    console.log(this.state.examen.idExamen);
+    let json = this.state.date_examen;
+    var aux = [];
+    for (let i in json) {
       let Schema = {
-        "idPregunta": i,
-        "idRespuesta": json[i]
-      }
-      aux.push(Schema)
+        idPregunta: i,
+        idRespuesta: json[i],
+      };
+      aux.push(Schema);
     }
     fetch("/app/get_nota_examen", {
       method: "POST",
       body: JSON.stringify({
         idExamen: this.state.examen.idExamen,
         idAlumno: this.state.id,
-        arreglo: aux
+        arreglo: aux,
       }),
       headers: {
         Accept: "application/json",
@@ -367,12 +368,13 @@ class student extends Component {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Examen Realizado',
+          position: "top-end",
+          icon: "success",
+          title: "Examen Realizado",
           text: `Nota: ${data.Total}/ ${data.Preguntas}`,
-        })
+        });
         this.setState({ bander_examen: false, date_examen: {} });
+        this.fetchExamenes(this.state.seleccion)
       });
   }
 
@@ -772,15 +774,23 @@ function ListaExamen(props) {
                       </p>
                     </CardText>
                     <center>
-                      <p>
-                        <Button
-                          style={{ width: "100%" }}
-                          color="primary"
-                          onClick={() => props.this.RealizarExamen(dato)}
-                        >
-                          Realizar Examen
-                        </Button>
-                      </p>
+                      {(() => {
+                        if (dato.realizacion != 1) {
+                          return (
+                            <p>
+                              <Button
+                                style={{ width: "100%" }}
+                                color="primary"
+                                onClick={() => props.this.RealizarExamen(dato)}
+                              >
+                                Realizar Examen
+                              </Button>
+                            </p>
+                          );
+                        } else {
+                          return <text>Examen Entregado</text>;
+                        }
+                      })()}
                     </center>
                   </CardBody>
                 </Card>

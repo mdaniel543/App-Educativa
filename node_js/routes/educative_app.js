@@ -226,6 +226,8 @@ router.get('/get_examen_by_id',examen.get_by_id);
 
 router.post('/get_examen_by_materia',examen.get_by_materia);
 
+router.post('/get_by_materia_id_alumno', examen.get_by_materia_id_alumno);
+
 
 /**
  * PREGUNTA

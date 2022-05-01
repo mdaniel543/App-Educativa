@@ -656,12 +656,15 @@ class teacher extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        Swal.fire("Mensaje!", data.msg, "info");
+        console.log(data)
         if (data.msg != "Ingresa un titulo diferente") {
+          Swal.fire("Mensaje!", data.msg, "info");
           this.setState({
             collapseExamen: !this.state.collapseExamen,
             collapseNuevoExamen: !this.state.collapseNuevoExamen,
           });
+        }else {
+          Swal.fire("Mensaje!", "Ingrese otro titulo", "info");
         }
       });
   }

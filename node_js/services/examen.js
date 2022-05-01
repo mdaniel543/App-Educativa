@@ -117,6 +117,15 @@ async function get_by_materia(req, res) {
   const resp = result[0];
   res.json(resp);
 }
+
+async function get_by_materia_id_alumno(req, res) {
+  let data = req.body;
+  const result = await db.query(
+    `CALL examen_get_by_materia_id_alumno(${data.idMateria}, ${data.idAlumno})`
+  );
+  const resp = result[0];
+  res.json(resp);
+}
 /*
 respuesta_create
 respuesta_update_delete
@@ -272,6 +281,10 @@ async function get_nota_examen(req,res){
         "Preguntas": count,
         "Total": total
     }
+
+    const guardar = await db.query(
+      `CALL realizacion_examen_update(${data.idAlumno}, "${data.idExamen}", ${total})`
+    )
     
     res.send(JSON.stringify(resultado));
 }
@@ -294,5 +307,6 @@ module.exports = {
   delete_respuesta,
   get_respuesta_by_id,
   get_examen_preguntas_respuestas,
-  get_nota_examen
+  get_nota_examen,
+  get_by_materia_id_alumno,
 };
