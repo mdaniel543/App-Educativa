@@ -77,6 +77,15 @@ async function actividad_get_by_materia_id(req,res){
   res.json(resp);
 }
 
+async function actividad_get_by_materia_id_2(req,res){
+  let data = req.body;
+  const result = await db.query(
+    `CALL actividad_get_by_materia_id_2(${data.idMateria});`
+  );
+  const resp = result[0];
+  res.json(resp);
+}
+
 async function getActividades_by_student(req,res){
   let data = req.body;
   const result = await db.query(
@@ -107,6 +116,16 @@ async function getActividades_by_student(req,res){
     Notas.push(actividadSchema);    
     Total += actividad.Puntuacion;
   })
+  
+  const result2 = await db.query(
+    `CALL examen_get_by_materia_id_alumno(${data.materia_id}, ${data.alumno_id})`
+  );
+
+  result2[0].map(examen =>{
+    Notas.push(examen);
+    Total += examen.nota;
+  });
+
   let _actividades = {
     "Actividades":Notas,
     "Total": parseFloat(Total).toFixed(2)
@@ -156,6 +175,15 @@ async function getActividades_students(req,res){
       Total += actividad.Puntuacion;
     })
     
+    const result2 = await db.query(
+      `CALL examen_get_by_materia_id_alumno_2(${data.materia_id}, ${alumno.idAlumno})`
+    );
+  
+    result2[0].map(examen =>{
+      Notas.push(examen);
+      Total += examen.Puntuacion;
+    });
+
     let studentSchema = {
       "idAlumno": alumno.idAlumno,
       "Nombre": alumno.Nombre,
@@ -204,6 +232,7 @@ module.exports = {
     actividad_by_id,
     selectActividades,
     actividad_get_by_materia_id,
+    actividad_get_by_materia_id_2,
     getActividades_by_student,
     updateEntregaStudent,
     getActividades_students

@@ -111,6 +111,7 @@ class teacher extends Component {
       preguntas: [],
       idPregunta: 0,
       textRespues: "",
+      Actividad2: [],
       cargaP: true,
     };
     this.handleChange = this.handleChange.bind(this);
@@ -437,6 +438,21 @@ class teacher extends Component {
         console.log(data);
         this.setState({ Actividades: data });
       });
+    fetch("/app/actividad_get_by_materia_id_2", {
+      method: "POST",
+      body: JSON.stringify({
+        idMateria: data.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ Actividades2: data });
+      });
   }
 
   FetchPublicaciones(data) {
@@ -656,14 +672,14 @@ class teacher extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         if (data.msg != "Ingresa un titulo diferente") {
           Swal.fire("Mensaje!", data.msg, "info");
           this.setState({
             collapseExamen: !this.state.collapseExamen,
             collapseNuevoExamen: !this.state.collapseNuevoExamen,
           });
-        }else {
+        } else {
           Swal.fire("Mensaje!", "Ingrese otro titulo", "info");
         }
       });
@@ -875,41 +891,41 @@ class teacher extends Component {
         text: "Punteo mayor que el valor de la actividad",
       });*/
     //} else {
-      fetch("/app/notificacion_insert", {
-        method: "POST",
-        body: JSON.stringify({
-          titulo: this.state.NombreActividad,
-          contenido: this.state.punteo + "/" + this.state.entrega.Valor,
-          idAlumno: this.state.entrega.idAlumno,
-          id_materia: this.state.seleccion.idMateria,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {});
-      fetch("/app/entrega_calificar_", {
-        method: "POST",
-        body: JSON.stringify({
-          idEntrega: this.state.entrega.idEntrega,
-          Punteo: this.state.punteo,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          Swal.fire("Mensaje!", "Calificado con exito", "success");
-          this.fetchActividades(this.state.seleccion);
-          this.setState({
-            modal_entregas_archivo: false,
-            modal_entregas: false,
-          });
+    fetch("/app/notificacion_insert", {
+      method: "POST",
+      body: JSON.stringify({
+        titulo: this.state.NombreActividad,
+        contenido: this.state.punteo + "/" + this.state.entrega.Valor,
+        idAlumno: this.state.entrega.idAlumno,
+        id_materia: this.state.seleccion.idMateria,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {});
+    fetch("/app/entrega_calificar_", {
+      method: "POST",
+      body: JSON.stringify({
+        idEntrega: this.state.entrega.idEntrega,
+        Punteo: this.state.punteo,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Swal.fire("Mensaje!", "Calificado con exito", "success");
+        this.fetchActividades(this.state.seleccion);
+        this.setState({
+          modal_entregas_archivo: false,
+          modal_entregas: false,
         });
+      });
     //}
   }
 
@@ -986,7 +1002,7 @@ class teacher extends Component {
                       <div class="l-8 letter">o</div>
                       <div class="l-9 letter">n</div>
                       <div class="l-10 letter">e</div>
-                      <div class="l-11 letter">{'_'}</div>
+                      <div class="l-11 letter">{"_"}</div>
                       <div class="l-12 letter">V</div>
                       <div class="l-13 letter">i</div>
                       <div class="l-14 letter">s</div>
@@ -994,7 +1010,7 @@ class teacher extends Component {
                       <div class="l-16 letter">a</div>
                       <div class="l-1 letter">-</div>
                       <div class="l-2 letter">-</div>
-                      <div class="l-3 letter">{'>'}</div>
+                      <div class="l-3 letter">{">"}</div>
                     </div>
                   </div>
                 </div>
@@ -1759,7 +1775,7 @@ function Alumnos(props) {
           <tr>
             <th>Carnet</th>
             <th>Nombre Completo</th>
-            {props.this.state.Actividades.map((dato) => (
+            {props.this.state.Actividades2.map((dato) => (
               <th>{dato.Titulo}</th>
             ))}
             <th>Total</th>
@@ -1780,7 +1796,7 @@ function Alumnos(props) {
                         if (date.Puntuacion != "NaN") {
                           return <td>{date.Puntuacion}</td>;
                         }
-                        return <td></td>;
+                        return <td>0</td>;
                       })()
                     )}
                     <td>{dato.Nota}</td>

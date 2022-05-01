@@ -374,7 +374,8 @@ class student extends Component {
           text: `Nota: ${data.Total}/ ${data.Preguntas}`,
         });
         this.setState({ bander_examen: false, date_examen: {} });
-        this.fetchExamenes(this.state.seleccion)
+        this.fetchExamenes(this.state.seleccion);
+        this.fetchNotas(this.state.seleccion);
       });
   }
 
@@ -821,11 +822,21 @@ function Notas(props) {
           </thead>
           <tbody>
             {props.this.state.Notas.Actividades.map((dato) => (
-              <tr key={dato.idEntrega}>
-                <td>{dato.Titulo}</td>
+              <tr>
                 <td>
                   {(() => {
-                    if (dato.Puntuacion == "NaN") {
+                    if (dato.Titulo == undefined) {
+                      return <text>{dato.idExamen}</text>;
+                    } else {
+                      return <text>{dato.Titulo}</text>;
+                    }
+                  })()}
+                </td>
+                <td>
+                  {(() => {
+                    if(dato.Puntuacion == undefined){
+                      return <text>{dato.nota}</text>
+                    }else if (dato.Puntuacion == "NaN") {
                       return;
                     } else {
                       return <text>{dato.Puntuacion}</text>;

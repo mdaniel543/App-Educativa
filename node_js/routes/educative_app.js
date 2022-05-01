@@ -168,6 +168,8 @@ router.post('/insert_actividad',actividad.insert);
 
 router.post('/actividad_get_by_materia_id',actividad.actividad_get_by_materia_id);
 
+router.post('/actividad_get_by_materia_id_2',actividad.actividad_get_by_materia_id_2);
+
 router.get('/get_actividad_by_id',actividad.actividad_by_id);
 
 router.put('/update_actividad',actividad.update);

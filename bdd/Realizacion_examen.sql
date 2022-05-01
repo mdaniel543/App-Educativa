@@ -16,6 +16,24 @@ BEGIN
 END//
 DELIMITER ;
 
+-- examen: obtiene todos los registros de la tabla examen
+DELIMITER //
+Drop PROCEDURE if EXISTS examen_get_by_materia_id_alumno_2//
+CREATE PROCEDURE examen_get_by_materia_id_alumno_2(par_id_materia int, par_id_alumnno int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    select e.idExamen as Titulo, r.nota as Puntuacion from Examen e
+    join Materia m on m.idMateria = e.idMateria
+    join Realizacion_examen r on e.idExamen = r.idExamen
+    where m.idMateria = par_id_materia and r.idAlumno = par_id_alumnno;
+
+END//
+DELIMITER ;
+
 DELIMITER //
 Drop PROCEDURE if EXISTS realizacion_examen_update//
 CREATE PROCEDURE realizacion_examen_update(par_id_alumnno int, par_idexamen varchar(100), par_nota int)
