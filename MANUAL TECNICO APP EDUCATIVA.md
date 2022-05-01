@@ -62,8 +62,9 @@ En el caso de uso se detalla el rol a desempeñar en relación con la aplicació
 Para el desarrollo de la aplicación se han implementado procedimientos almacenados para recuperar, modificar y eliminar información en la base de datos. Para el uso de estos no se necesita escribir una sentencia SQL cada vez que se inserte, actualice o elimine información en la Base de Datos.
 
 A continuacion se listan los Procedimientos almacenados utilizados
+
 |  Nombre | Tipo  | Descripcion | Parametros  | Salida  |
-|  :----: |       |             |             |         |
+| :---    |:----: |:----:       |    :----:   |    ---: |
 |usuario_login|Usuario|"se utiliza para realizar el login de cualquier usuario registrado| recibe la iniciall del rol"|"usuario varchar|
 
 
