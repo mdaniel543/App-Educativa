@@ -1,7 +1,7 @@
 -- actividad: Creacion
 DELIMITER //
 Drop PROCEDURE if EXISTS actividad_create//
-CREATE PROCEDURE actividad_create(par_titulo VARCHAR(100), par_descripcion VARCHAR(100), 
+CREATE PROCEDURE actividad_create(par_titulo VARCHAR(100), par_descripcion VARCHAR(100),
 par_id_materia int, par_fecha_publicacion date, par_fecha_entrega date, par_valor decimal(10,2))
 BEGIN
 
@@ -14,13 +14,13 @@ BEGIN
 	if (par_titulo = '' or  par_descripcion = '' or numresp = 0) THEN
 		set msg_err = 'Datos incompletos';
 	ELSE
-		insert into Actividad(Titulo, Descripcion, idMateria, Fecha_creacion, Fecha_publicacion, Fecha_entrega, Valor, Estado) 
+		insert into Actividad(Titulo, Descripcion, idMateria, Fecha_creacion, Fecha_publicacion, Fecha_entrega, Valor, Estado)
         values (par_titulo, par_descripcion, par_id_materia, now(), par_fecha_publicacion, par_fecha_entrega, par_valor, 1);
-		
+
         SELECT LAST_INSERT_ID() into resp;
 
         Insert into Entrega (IdAlumno, idActividad, Fecha_creacion, Estado)
-        Select A.IdAlumno, resp, par_fecha_publicacion, 0 FROM Alumno A 
+        Select A.IdAlumno, resp, par_fecha_publicacion, 0 FROM Alumno A
         join Pensum P on P.idCarrera = A.idCarrera
         join Materia M on M.idMateria = P.idMateria
         where M.idMateria = par_id_materia;
@@ -34,7 +34,7 @@ DELIMITER ;
 -- actividad actualizacion y eliminacion
 DELIMITER //
 Drop PROCEDURE if EXISTS actividad_update_delete//
-CREATE PROCEDURE actividad_update_delete(par_tipo_operacion int, par_idactividad int, par_titulo VARCHAR(100), par_descripcion VARCHAR(100), 
+CREATE PROCEDURE actividad_update_delete(par_tipo_operacion int, par_idactividad int, par_titulo VARCHAR(100), par_descripcion VARCHAR(100),
 par_fecha_publicacion date, par_fecha_entrega date, par_valor decimal(10,2), par_estado int)
 BEGIN
 
@@ -53,7 +53,7 @@ BEGIN
             Fecha_entrega = par_fecha_entrega,
             Valor = par_valor
             where idActividad = par_idactividad;
-            
+
             set resp = 'actividad actualizada correctamente';
         elseif (par_tipo_operacion = 2) THEN
             update Actividad
@@ -101,9 +101,9 @@ BEGIN
 
     if(par_idactividad >0) then
         select a.*, m.Nombre as Nombre_materia from Actividad a
-    join Materia m on m.idMateria = a.idMateria where a.idActividad = par_idactividad;    
+    join Materia m on m.idMateria = a.idMateria where a.idActividad = par_idactividad;
     end if;
-    
+
 END//
 DELIMITER ;
 
@@ -133,13 +133,13 @@ BEGIN
 	DECLARE resp VARCHAR(100) DEFAULT '';
 	DECLARE msg_err VARCHAR(100) DEFAULT '';
     DECLARE numresp int;
-    
-    Select E.*, Ac.* FROM Alumno Al 
+
+    Select E.*, Ac.* FROM Alumno Al
 	join Entrega E on E.idAlumno = Al.idAlumno
 	join Actividad Ac on Ac.idActividad = E.idActividad
 	join Materia m on m.IdMateria = Ac.IdMateria
 	where Al.idAlumno = alumno_id and m.idMateria = materia_id;
-	
+
 END//
 DELIMITER ;
 
@@ -152,13 +152,35 @@ BEGIN
 	DECLARE resp VARCHAR(100) DEFAULT '';
 	DECLARE msg_err VARCHAR(100) DEFAULT '';
     DECLARE numresp int;
-    
-	Select Al.* ,E.*, Ac.* FROM Alumno Al 
+
+	Select Al.* ,E.*, Ac.* FROM Alumno Al
 	join Entrega E on E.idAlumno = Al.idAlumno
 	join Actividad Ac on Ac.idActividad = E.idActividad
 	join Materia m on m.IdMateria = Ac.IdMateria
 	where m.idMateria = 1
 	Order by Al.idAlumno;
-	
+
+END//
+DELIMITER ;
+
+-- actividad obtiene todos los registros de la tabla actividad
+DELIMITER //
+Drop PROCEDURE if EXISTS actividad_get_by_materia_id_2//
+CREATE PROCEDURE actividad_get_by_materia_id_2(par_id_materia int)
+BEGIN
+
+	DECLARE resp VARCHAR(100) DEFAULT '';
+	DECLARE msg_err VARCHAR(100) DEFAULT '';
+    DECLARE numresp int;
+
+    select a.* from Actividad a
+    join Materia m on m.idMateria = a.idMateria
+    where m.idMateria = par_id_materia
+    union
+    select e.idExamen as idActividad, e.idExamen as Titulo, '' as Descripcion, e.idMateria, e.Fecha_creacion,
+    e.Fecha_publicacion, '' as Fecha_entrega, 0, e.Estado  from Examen e
+    join Materia m on m.idMateria = e.idMateria
+    where m.idMateria = par_id_materia;
+
 END//
 DELIMITER ;
