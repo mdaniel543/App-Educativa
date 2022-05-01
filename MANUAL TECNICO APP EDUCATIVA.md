@@ -64,10 +64,57 @@ Para el desarrollo de la aplicación se han implementado procedimientos almacena
 A continuacion se listan los Procedimientos almacenados utilizados
 
 |  Nombre | Tipo  | Descripcion | Parametros  | Salida  |
-| :---    |:----: |:----:       |    :----:   |    ---: |
+| :---    |:----: |:----:       |    :----:   |    :--- |
 |usuario_login|Usuario|se utiliza para realizar el login de cualquier usuario registrado, recibe la iniciall del rol|"usuario varchar, pass varchar, rol char ('A', 'E', 'M')"|resp: contiene el id usuario, msg_err: contiene el detalle del error|
 |alumno_create|alumno|Se utiliza para la creacion de un alumno dentro de la plataforma|"nombre varchar, apellido varchar, carnet varchar, telefono varchar, direccion varchar, correo varchar, pass varchar"|"resp: contiene el id del alumno, msg_err: contiene el detalle del error"|
-
+|alumno_update_delete|alumno|se utiliza para actualizar los campos del alumno excepto el password y el carnet|tipo_operacion int (1 = update, 2= delete), nombre varchar, apellido varchar, carnet varchar, telefono varchar, direccion varchar, correo varchar, estado int|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|alumno_TODO|alumno|obtiene todos los registros de la tabla alumno|"offset int, page int"|Tabla con el numero de resultados segun el valor de offset|
+|alumno_get_by_id|alumno|Busca un alumnosegun el carnet o segun su id. Tiene como prioridad el carnet y como segunda opcion el id.|"idAlumno int (enviar 0 si no se tiene), carnet varchar (Enviar '' si no se tiene)"|	Tabla con 1 o 0 registros encontrados|
+|maestro_create|maestro|Se utiliza para la creacion de un maestro dentro de la plataforma|"nombre varchar, apellido varchar, registro varchar, telefono varchar, direccion varchar, correo varchar, fecha_nacimiento date (YYYY/mm/dd), dpi varchar, path_foto varchar, pass varchar"|"resp: contiene el id del maestro, msg_err: contiene el detalle del error"|
+|maestro_update_delete|maestro|se utiliza para actualizar los campos del maestro excepto el password y el registro|"tipo_operacion int (1 = update, 2= delete), nombre varchar, apellido varchar, registro varchar, telefono varchar, direccion varchar, correo varchar, fecha_nac date, dpi varchar, path_foto varchar, estado int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|maestro_TODO|maestro|obtiene todos los registros de la tabla maestro|"offset int, page int"|Tabla con el numero de resultados segun el valor de offset|
+|maestro_get_by_id|maestro|Busca un maestro el registro o segun su id. Tiene como prioridad el registro y como segunda opcion el id.|"idMaestro int (enviar 0 si no se tiene), registro varchar (Enviar '' si no se tiene)"	|Tabla con 1 o 0 registros encontrados|
+|carrera_create|carrera|Se utiliza para la creacion de una carrera|"nombre_carrera varchar, descripcion varchar"|"resp: contiene el id de la carrera, msg_err: contiene el detalle del error"|
+|carrera_update_delete|carrera|se utiliza para actualizar los campos de la tabla carrera|"tipo_operacion int (1 = update, 2= delete), idCarrera int, nombre_carrera varchar, descripcion varchar, estado int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|carrera_TODO|carrera|obtiene todos los registros de la tabla carrera||taba con todas las carreras existentes|
+|carrera_get_by_id|carrera|Busca una carrera por id o por nombre. Tiene como prioridad el id y como segunda opcion el nombre.|"idCarrera int (enviar 0 si no se tiene), Nombre_carrera varchar (Enviar '' si no se tiene)"|Tabla con 1 o 0 registros encontrados|
+|materia_create|materia|Se utiliza para la creacion de una materia|"nombre varchar, descripcion varchar"|"resp: contiene el id de la materia, msg_err: contiene el detalle del error"|
+|materia_update_delete|materia|se utiliza para actualizar los campos de la tabla materia|"tipo_operacion int (1 = update, 2= delete), idMateria int, nombre_materia varchar, descripcion varchar, estado int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|materia_TODO|materia|obtiene todos los registros de la tabla materia||tabla con todas las materias existentes|
+|materia_get_by_id|materia|Busca una materia por id o por nombre. Tiene como prioridad el id y como segunda opcion el nombre.|"idCarrera int (enviar 0 si no se tiene), Nombre_materia varchar (Enviar '' si no se tiene)"|Tabla con 1 o 0 registros encontrados|
+|pensum_asignar|pensum|asigna el id enviado al id de la carrera enviada|"id_materia int, id_carrera int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|pensum_TODO|pensum|Devuelve todas las carreras con todas las materias asignadas||tabla con todas las carreras existentes|
+|materias_get_by_carrera_id|pensum|Devueve todas las materias asignadas a una carrera|id_carrera int|tabla con todas las materias asignadas al id de la carrera enviada|
+|materia_asignar_maestro|asignacion_maestro||"id_materia int, id_maestro int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|Asignacion_maestro_TODO|asignacion_maestro|||tabla con todas las materias asignadas a los maestros|
+|materias_get_by_maestro_id|asignacion_maestro||id_maestro int|tabla con todas las materias asignadas al id maestro enviado|
+|alumno_asignar_carrera|Alumno|Asigna un alumno a una carrera|"id_carrera int, id_alumno int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|materias_get_by_alumno_id|Alumno|Devuelve las materias asignadas a la carrera del alumno|id_alumno int	|tabla con todas las materias asignadas a la carrera|
+|actividad_create|actividad|se utiliza para la creacion de una actividad|"titulo varchar, descripcion varchar, id_materia int, fecha_publicacion date(YYYY/mm/dd), fecha_entrega date (YYYY/mm/dd), valor decimal(10,2)"|"resp: contiene el id de la materia, msg_err: contiene el detalle del error"|
+|actividad_update_delete|actividad|Se utiliza para actualizar los campos de una actividad o eliminarla|"tipo_operacion int (1 = update, 2= delete), idActividad int, titulo varchar, descripcion varchar, id_materia int, fecha_publicacion date(YYYY/mm/dd), fecha_entrega date (YYYY/mm/dd), valor decimal(10,2), estado int"|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|actividad_TODO|actividad|Obtiene todas las actividades disponibles||tabla con todas las actividades creadas|
+|actividad_get_by_id|actividad|Obtiene la actividad con el id enviado|id_actividad	|Tabla con 1 o 0 registros encontrados|
+|actividad_get_by_materia_id|actividad|Obtiene todas las actividades disponibles asociadas a una materia|id_materia	|Tabla con todas las actividades creadas para la materia enviada como parametro|
+|publicacion_create|publicacion|crea publicaciones|"descripcion, id materia "	|"resp: contiene el id de la publicacion, msg contiene el detalle del error"|
+|publicacion_get_by_materia_id|publicacion|Obtiene las publicaciones de la materia|idMateria	|tabla con la publicaciones |
+|publicacion_update_delete|publicacion|utiliza para manipular publicaciones |"tipo_operacion int (1= update, 2 = delete), idPublicacion, descripcion, estado"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|alumnos_get_by_id_materia|alumnos|se utiliza para obtener todos los alumnos asignados a una materia de su respectiva carrera |idMateria	|tabla con los alumnos|
+|actividad_by_alumno|actividad|se utiliza para obtener las actividades de un alumno de una materia en especifico|alumno_id INT, materia_id INT	|Tabla con de actividades|
+|actividad_by_alumno|entrega|se utiliza para la entrega de una actividad del alumno|entrega_id INT path_file VARCHAR||
+|examen_create|examen|Utilizado para que un maestro cree un examen asociado a una materia|"titulo varchar, fecha_publicacion date, hora_inicio time, hora_fin time, id_materia int"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|examen_update_delete|examen|Modifica un examen creado|"tipo_operacion int (1= update, 2 = delete), idExamen varchar, Fecha_publicacion date, Hora_inicio time, hora_fin time, estado in"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|examen_TODO|examen|obtiene todos los examenes||tabla con todos los examenes|
+|examen_get_by_id|examen|obtiene un examen en especifico|id_str_Examen varchar	|Tabla con 1 o 0 registros encontrados|
+|examen_get_by_materia_id|examen|obtiene los examenes de una materia|idMateria int	|Tabla con el listado de examenes creados para la materia|
+|notificacion_create|notificacion|Crea una notificacion|"titulo varchar, contenido varchar, idAlumno int, idMateria int"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|notificacion_update_delete|notificacion|cambia el estado de una notificacion|"id_notificacion int, estado int"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|notificacion_get_by_alumno_id|notificacion|obtiene todas las notificaciones asignadas a un alumno|id_alumno int	|Tabla con las notificaciones asignados al alumno|
+|notificacion_create|notificacion|Crea una pregunta|"enunciado_pregunta varchar, id_str_examen varchar"	|"resp: id de la pregunta creada, msg_err: contiene el detalle del error"|
+|pregunta_update_delete|pregunta|Modifica una pregunta creada|"tipo_operacion int (1= update, 2 = delete), id_pregunta int, enunciado_pregunta varchar, estado int"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|pregunta_get_by_examen_id|pregunta|Devuelve todas las preguntas de un examen|id_str_examen varchar	|Tabla con lista de preguntas asociadas al examen|
+|respuesta_create|respuesta|crea una respuesta para una pregunta|"texto_respuesta varchar, es_respuesta boolean, id_pregunta int"	|"resp: id de la respuesta creada, msg_err: contiene el detalle del error"|
+|respuesta_update_delete|respuesta|Modica una respuesta|"tipo_operacion int (1= update, 2 = delete), id_respuesta int, texto_respuesta varchar, es_respuesta boolean, estado int"	|"resp: mensaje de exito, msg_err: contiene el detalle del error"|
+|respuesta_get_by_pregunta_id|respuesta|devuelve las respuestas asociadas a una pregunta| id_pregunta int	|Tabla con lista de respuestas asociadas a la pregunta|
 
 
 
