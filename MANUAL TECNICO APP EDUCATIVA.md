@@ -26,13 +26,16 @@ El sistema de APP-EDUCATIVA cuenta con una arquitectura **CLIENTE-SERVIDOR** y s
 
 ### Entornos para el Desarrollo del Sistema
 - - - -
-1.1 React Js 
+1.1 React Js
+
 React permite a desarrolladores el crear una gran variedad de aplicaciones web que pueden cambiar información sin necesidad de recargar la pagina. El propósito general de React es ser rápido, escala le y simple. Esto funciona solo en interfaces de usuario.  Esto corresponde a la vista en el  template MVC. Este pude ser usado con combinación de otras librerías de JavaScript o Frameworks tales como Angular JS en MVC.
  
 1.2 Nodejs
+
 Node js es primordialmente usado por non-blocking, event-driven servidores, tales como en su simple hilo natural. Este es usado tradicionalmente por web sites y servicios Back-end API, pero fue diseñado con un objetivo de arquitectura real-time, push-based.
 
 1.3 MySQL
+
 MySQL es un administrador de Bases de Datos. Este es utilizado para agregar, administrar y procesar información en una computadora, y este utiliza un un sistema como MySQL Server. MySQL es ideal para almacenar información para aplicaciones web, adicionalmente se necesita una base de datos relacional que es la que almacenara la información a través de multiples tablas. Como MySQL es una base de datos Relacional, es buena para conectar con aplicaciones que tengan una carga pensada en multi transacciones.
 
 ## Arquitectura Del Sistema
